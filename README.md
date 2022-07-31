@@ -3,7 +3,4 @@
 An app used for storing recipes and creating checklists for the grocery store
 
 ## Future Plans
- - Add ReorderableListView to make the checklist reorderable
- - Add amounts for each item, allowing the user to remember how much of something they want (ie 2 apples)
- - Allow the user to edit a recipe after it's been saved
- - Use a Recipe API to let the user explore fun recipes published by others
+Currently, I'm finishing up my recipe API, as well as making a PoC mobile app which utilizes its endpoints. The plan with this is to begin integrating the API endpoints into the grocery list app. I'm hoping to have a method to upload recipes, follow other users, and share recipes with each other. I have been creating a design which can be viewed on [Moqups](https://app.moqups.com/MltxY1FjFnH79G6LCsYqQ0UeCczZlPha/view/page/ad64222d5)
