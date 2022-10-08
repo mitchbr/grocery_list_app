@@ -104,14 +104,16 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
     return ListTile(
       key: Key('$index'),
       leading: const Icon(Icons.reorder_rounded),
-      trailing: IconButton(
-          onPressed: () async {
-            prevDeleted = await processor.deleteEntry(checklistEntries[index].item);
-            setState(() {
-              loadEntries();
-            });
-          },
-          icon: const Icon(Icons.close)),
+      trailing: checkedValues[index] == true
+          ? IconButton(
+              onPressed: () async {
+                prevDeleted = await processor.deleteEntry(checklistEntries[index].item);
+                setState(() {
+                  loadEntries();
+                });
+              },
+              icon: const Icon(Icons.close))
+          : null,
       title: Transform.translate(
         offset: const Offset(-40, 0),
         child: CheckboxListTile(
