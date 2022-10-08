@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:groceries/components/recipe_entry.dart';
+import 'package:groceries/types/recipe_entry.dart';
 import 'package:sqflite/sqflite.dart';
 
 class RecipesDatabase {
@@ -26,7 +26,6 @@ class RecipesDatabase {
     Database db = await _loadSqlStartup();
 
     List<Map> entries = await db.rawQuery('SELECT * FROM recipes_list');
-    db.close();
     return entries;
   }
 
@@ -39,8 +38,6 @@ class RecipesDatabase {
             [entry.recipe, json.encode(entry.ingredients), entry.instructions]);
       },
     );
-
-    db.close();
   }
 
   Future<void> deleteItem(title) async {
@@ -49,7 +46,5 @@ class RecipesDatabase {
     await db.transaction((txn) async {
       await txn.rawDelete('DELETE FROM recipes_list WHERE recipe = ?', [title]);
     });
-
-    db.close();
   }
 }

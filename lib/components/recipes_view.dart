@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:groceries/processors/recipes_processor.dart';
-import 'grocery_entry.dart';
+import '../types/grocery_entry.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:sqflite/sqflite.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 
 import 'new_recipe.dart';
-import 'recipe_entry.dart';
+import '../types/recipe_entry.dart';
 import 'recipe_details.dart';
 
 class RecipeEntries extends StatefulWidget {
@@ -28,8 +28,8 @@ class _RecipeEntriesState extends State<RecipeEntries> {
    * 
    */
   void loadEntries() async {
+    var entries = await recipesProcessor.loadRecipes();
     if (mounted) {
-      var entries = await recipesProcessor.loadRecipes();
       setState(() {
         checklistEntries = entries;
       });

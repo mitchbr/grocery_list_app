@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:groceries/components/edit_recipe.dart';
 import 'package:groceries/processors/checklist_processor.dart';
+import 'package:groceries/processors/recipes_processor.dart';
 import 'package:sqflite/sqflite.dart';
 
-import 'recipe_entry.dart';
+import '../types/recipe_entry.dart';
 import 'edit_recipe.dart';
 
 class RecipeDetails extends StatefulWidget {
@@ -20,6 +21,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
   _RecipeDetailsState(this.recipeEntry);
 
   final checklistProcessor = ChecklistProcessor();
+  final recipesProcessor = RecipesProcessor();
 
   late List<bool> checkedValues;
 
@@ -155,26 +157,13 @@ class _RecipeDetailsState extends State<RecipeDetails> {
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
-              deleteRecipe(title);
+              recipesProcessor.deleteRecipe(title);
+              setState(() {});
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
             },
             child: const Text('Yes'),
           ),
         ]);
-  }
-
-  void deleteRecipe(String title) async {
-    var sqlCreate = await rootBundle.loadString('assets/recipes.txt');
-    var db = await openDatabase('recipes.db', version: 1, onCreate: (Database db, int version) async {
-      await db.execute(sqlCreate);
-    });
-
-    await db.transaction((txn) async {
-      await txn.rawDelete('DELETE FROM recipes_list WHERE recipe = ?', [title]);
-    });
-
-    setState(() {
-      Navigator.of(context).pop();
-    });
   }
 }

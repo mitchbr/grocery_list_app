@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:groceries/components/recipe_entry.dart';
+import 'package:groceries/types/recipe_entry.dart';
 import 'package:groceries/database/recipes_database.dart';
 
 class RecipesProcessor {
@@ -22,8 +22,8 @@ class RecipesProcessor {
     await database.addItem(recipe);
   }
 
-  Future<void> deleteRecipe(recipe) async {
-    await database.deleteItem(recipe.title);
+  Future<void> deleteRecipe(title) async {
+    await database.deleteItem(title);
   }
 
   Future<void> updateRecipe(recipe, oldTitle) async {

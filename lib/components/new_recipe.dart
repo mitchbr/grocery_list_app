@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:groceries/processors/recipes_processor.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:convert';
 
-import 'recipe_entry.dart';
+import '../types/recipe_entry.dart';
 
 class NewRecipe extends StatefulWidget {
   const NewRecipe({Key? key}) : super(key: key);
@@ -29,6 +30,8 @@ class _NewRecipeState extends State<NewRecipe> {
   final TextEditingController _instructionsControl = TextEditingController();
   var savedRecipe = false;
   var savedInstructions = false;
+
+  final recipesProcessor = RecipesProcessor();
 
   /*
    *
@@ -59,8 +62,7 @@ class _NewRecipeState extends State<NewRecipe> {
                     const ListTile(
                         title: Text(
                       'Ingredients',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     )),
                   ]);
                 } else if (index == entryData.ingredients.length + 1) {
@@ -69,8 +71,7 @@ class _NewRecipeState extends State<NewRecipe> {
                     const ListTile(
                         title: Text(
                       'Instructions',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     )),
                     showInstructions(),
                     saveButton(context)
@@ -90,28 +91,7 @@ class _NewRecipeState extends State<NewRecipe> {
           if (currState != null) {
             if (currState.validate() && savedRecipe && savedInstructions) {
               currState.save();
-              var sqlCreate = await rootBundle.loadString('assets/recipes.txt');
-              var db = await openDatabase(
-                'recipes.db',
-                version: 1,
-                onCreate: (Database db, int version) async {
-                  await db.execute(sqlCreate);
-                },
-              );
-
-              await db.transaction(
-                (txn) async {
-                  await txn.rawInsert(
-                      'INSERT INTO recipes_list(recipe, ingredients, instructions) VALUES(?, ?, ?)',
-                      [
-                        entryData.recipe,
-                        json.encode(entryData.ingredients),
-                        entryData.instructions
-                      ]);
-                },
-              );
-
-              await db.close();
+              recipesProcessor.addRecipe(entryData);
 
               Navigator.of(context).pop();
             }
@@ -151,8 +131,7 @@ class _NewRecipeState extends State<NewRecipe> {
           title: TextFormField(
             autofocus: true,
             controller: _recipeNameControl,
-            decoration: const InputDecoration(
-                labelText: 'Recipe Name', border: OutlineInputBorder()),
+            decoration: const InputDecoration(labelText: 'Recipe Name', border: OutlineInputBorder()),
             textCapitalization: TextCapitalization.words,
             onSaved: (value) {
               if (value != null) {
@@ -199,8 +178,7 @@ class _NewRecipeState extends State<NewRecipe> {
         key: ingredientKey,
         child: ListTile(
           title: ingredientTextField(),
-          trailing: IconButton(
-              onPressed: (() => saveIngredient()), icon: const Icon(Icons.add)),
+          trailing: IconButton(onPressed: (() => saveIngredient()), icon: const Icon(Icons.add)),
         ));
   }
 
@@ -221,8 +199,7 @@ class _NewRecipeState extends State<NewRecipe> {
     return TextFormField(
       controller: _entryController,
       autofocus: true,
-      decoration: const InputDecoration(
-          labelText: 'New Ingredient', border: OutlineInputBorder()),
+      decoration: const InputDecoration(labelText: 'New Ingredient', border: OutlineInputBorder()),
       textCapitalization: TextCapitalization.words,
       onSaved: (value) {
         if (value != null) {
@@ -245,9 +222,7 @@ class _NewRecipeState extends State<NewRecipe> {
   Widget ingredientTile(int index) {
     return ListTile(
       title: Text('${entryData.ingredients[index]}'),
-      trailing: IconButton(
-          onPressed: (() => removeIngredient(index)),
-          icon: const Icon(Icons.close)),
+      trailing: IconButton(onPressed: (() => removeIngredient(index)), icon: const Icon(Icons.close)),
     );
   }
 
@@ -289,8 +264,7 @@ class _NewRecipeState extends State<NewRecipe> {
           title: TextFormField(
             autofocus: true,
             controller: _instructionsControl,
-            decoration: const InputDecoration(
-                labelText: 'Instructions', border: OutlineInputBorder()),
+            decoration: const InputDecoration(labelText: 'Instructions', border: OutlineInputBorder()),
             textCapitalization: TextCapitalization.sentences,
             keyboardType: TextInputType.multiline,
             maxLines: null,
@@ -310,9 +284,7 @@ class _NewRecipeState extends State<NewRecipe> {
               }
             },
           ),
-          trailing: IconButton(
-              onPressed: (() => saveInstructions()),
-              icon: const Icon(Icons.check)),
+          trailing: IconButton(onPressed: (() => saveInstructions()), icon: const Icon(Icons.check)),
         ));
   }
 
