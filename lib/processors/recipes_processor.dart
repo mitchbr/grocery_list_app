@@ -17,4 +17,17 @@ class RecipesProcessor {
       );
     }).toList();
   }
+
+  Future<void> addRecipe(recipe) async {
+    await database.addItem(recipe);
+  }
+
+  Future<void> deleteRecipe(recipe) async {
+    await database.deleteItem(recipe.title);
+  }
+
+  Future<void> updateRecipe(recipe, oldTitle) async {
+    await database.deleteItem(oldTitle);
+    await database.addItem(recipe);
+  }
 }

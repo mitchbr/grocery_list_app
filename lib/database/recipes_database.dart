@@ -1,10 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:groceries/components/recipe_entry.dart';
 import 'package:sqflite/sqflite.dart';
 
 class RecipesDatabase {
   String dbName = 'recipes_list';
 
-  Future<Database> loadSqlStartup() async {
+  Future<Database> _loadSqlStartup() async {
     Database db = await openDatabase('recipes.db', version: 2, onCreate: (Database db, int version) async {
       var sqlScript = await rootBundle.loadString('assets/recipes.txt');
       List<String> sqlScripts = sqlScript.split(";");
@@ -20,10 +23,33 @@ class RecipesDatabase {
   }
 
   Future<List<Map>> loadItems() async {
-    Database db = await loadSqlStartup();
+    Database db = await _loadSqlStartup();
 
     List<Map> entries = await db.rawQuery('SELECT * FROM recipes_list');
     db.close();
     return entries;
+  }
+
+  Future<void> addItem(RecipeEntry entry) async {
+    Database db = await _loadSqlStartup();
+
+    await db.transaction(
+      (txn) async {
+        await txn.rawInsert('INSERT INTO recipes_list(recipe, ingredients, instructions) VALUES(?, ?, ?)',
+            [entry.recipe, json.encode(entry.ingredients), entry.instructions]);
+      },
+    );
+
+    db.close();
+  }
+
+  Future<void> deleteItem(title) async {
+    Database db = await _loadSqlStartup();
+
+    await db.transaction((txn) async {
+      await txn.rawDelete('DELETE FROM recipes_list WHERE recipe = ?', [title]);
+    });
+
+    db.close();
   }
 }
