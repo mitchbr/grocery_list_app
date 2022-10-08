@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:groceries/processors/recipes_processor.dart';
 import 'grocery_entry.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:sqflite/sqflite.dart';
@@ -19,32 +20,18 @@ class _RecipeEntriesState extends State<RecipeEntries> {
   var checklistEntries;
   var sqlCreate;
 
+  final recipesProcessor = RecipesProcessor();
+
   /*
    *
    * Load SQL Data
    * 
    */
-  void loadSqlStartup() async {
-    sqlCreate = await rootBundle.loadString('assets/recipes.txt');
-  }
-
   void loadEntries() async {
-    loadSqlStartup();
-    var db = await openDatabase('recipes.db', version: 1,
-        onCreate: (Database db, int version) async {
-      await db.execute(sqlCreate);
-    });
-    List<Map> entries = await db.rawQuery('SELECT * FROM recipes_list');
-    final entriesList = entries.map((record) {
-      return RecipeEntry(
-        recipe: record['recipe'],
-        ingredients: json.decode(record['ingredients']),
-        instructions: record['instructions'],
-      );
-    }).toList();
     if (mounted) {
+      var entries = await recipesProcessor.loadRecipes();
       setState(() {
-        checklistEntries = entriesList;
+        checklistEntries = entries;
       });
     }
   }
@@ -58,8 +45,7 @@ class _RecipeEntriesState extends State<RecipeEntries> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: bodyBuilder(context),
-        floatingActionButton: FloatingActionButton(
-            onPressed: () => pushNewEntry(context), child: Icon(Icons.add)));
+        floatingActionButton: FloatingActionButton(onPressed: () => pushNewEntry(context), child: Icon(Icons.add)));
   }
 
   /*
@@ -116,16 +102,11 @@ class _RecipeEntriesState extends State<RecipeEntries> {
    * 
    */
   void pushNewEntry(BuildContext context) {
-    Navigator.push(
-            context, MaterialPageRoute(builder: (context) => NewRecipe()))
-        .then((data) => setState(() => {}));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => NewRecipe())).then((data) => setState(() => {}));
   }
 
   void pushRecipeDetails(BuildContext context, recipeEntry) {
-    Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => RecipeDetails(recipeEntry: recipeEntry)))
+    Navigator.push(context, MaterialPageRoute(builder: (context) => RecipeDetails(recipeEntry: recipeEntry)))
         .then((data) => setState(() => {}));
   }
 }
