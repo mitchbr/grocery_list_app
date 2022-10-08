@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
+
 import 'package:groceries/components/edit_recipe.dart';
 import 'package:groceries/processors/checklist_processor.dart';
 import 'package:groceries/processors/recipes_processor.dart';
-import 'package:sqflite/sqflite.dart';
-
-import '../types/recipe_entry.dart';
-import 'edit_recipe.dart';
+import 'package:groceries/types/recipe_entry.dart';
 
 class RecipeDetails extends StatefulWidget {
   final RecipeEntry recipeEntry;
@@ -149,7 +146,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
   Widget verifyDeleteRecipe(BuildContext context, String title) {
     return AlertDialog(
         title: const Text('Delete Recipe?'),
-        content: const Text('This will permenently remove the recipe'),
+        content: const Text('This will permanently remove the recipe'),
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.pop(context),

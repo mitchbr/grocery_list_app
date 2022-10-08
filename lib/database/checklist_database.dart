@@ -8,12 +8,11 @@ class ChecklistDatabase {
     Database db = await openDatabase('grocery.db', version: 2, onCreate: (Database db, int version) async {
       var sqlScript = await rootBundle.loadString('assets/grocery.txt');
       List<String> sqlScripts = sqlScript.split(";");
-      sqlScripts.forEach((v) {
+      for (var v in sqlScripts) {
         if (v.isNotEmpty) {
-          print(v.trim());
           db.execute(v.trim());
         }
-      });
+      }
     });
 
     return db;

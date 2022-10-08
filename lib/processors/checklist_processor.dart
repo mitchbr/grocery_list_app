@@ -1,4 +1,4 @@
-import 'package:groceries/components/grocery_entry.dart';
+import 'package:groceries/types/grocery_entry.dart';
 import 'package:groceries/database/checklist_database.dart';
 
 class ChecklistProcessor {

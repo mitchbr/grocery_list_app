@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:groceries/processors/recipes_processor.dart';
-import '../types/grocery_entry.dart';
-import 'package:flutter/services.dart' show rootBundle;
-import 'package:sqflite/sqflite.dart';
-import 'package:intl/intl.dart';
-import 'dart:convert';
 
-import 'new_recipe.dart';
-import '../types/recipe_entry.dart';
-import 'recipe_details.dart';
+import 'package:groceries/processors/recipes_processor.dart';
+import 'package:groceries/components/new_recipe.dart';
+import 'package:groceries/components/recipe_details.dart';
 
 class RecipeEntries extends StatefulWidget {
+  const RecipeEntries({Key? key}) : super(key: key);
+
   @override
   _RecipeEntriesState createState() => _RecipeEntriesState();
 }
@@ -45,7 +41,8 @@ class _RecipeEntriesState extends State<RecipeEntries> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: bodyBuilder(context),
-        floatingActionButton: FloatingActionButton(onPressed: () => pushNewEntry(context), child: Icon(Icons.add)));
+        floatingActionButton:
+            FloatingActionButton(onPressed: () => pushNewEntry(context), child: const Icon(Icons.add)));
   }
 
   /*
@@ -65,7 +62,7 @@ class _RecipeEntriesState extends State<RecipeEntries> {
   }
 
   Widget emptyWidget(BuildContext context) {
-    return Center(
+    return const Center(
         child: Icon(
       Icons.book,
       size: 100,
@@ -73,7 +70,7 @@ class _RecipeEntriesState extends State<RecipeEntries> {
   }
 
   Widget circularIndicator(BuildContext context) {
-    return Center(child: CircularProgressIndicator());
+    return const Center(child: CircularProgressIndicator());
   }
 
   /*
@@ -102,7 +99,8 @@ class _RecipeEntriesState extends State<RecipeEntries> {
    * 
    */
   void pushNewEntry(BuildContext context) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => NewRecipe())).then((data) => setState(() => {}));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const NewRecipe()))
+        .then((data) => setState(() => {}));
   }
 
   void pushRecipeDetails(BuildContext context, recipeEntry) {

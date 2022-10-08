@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+
 import 'package:groceries/processors/checklist_processor.dart';
-import 'grocery_entry.dart';
-import 'package:intl/intl.dart';
+import 'package:groceries/types/grocery_entry.dart';
 
 class ChecklistEntries extends StatefulWidget {
+  const ChecklistEntries({Key? key}) : super(key: key);
+
   @override
   _ChecklistEntriesState createState() => _ChecklistEntriesState();
 }
