@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:groceries/components/edit_recipe.dart';
+import 'package:groceries/processors/checklist_processor.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'recipe_entry.dart';
@@ -18,13 +19,14 @@ class _RecipeDetailsState extends State<RecipeDetails> {
   final RecipeEntry recipeEntry;
   _RecipeDetailsState(this.recipeEntry);
 
+  final checklistProcessor = ChecklistProcessor();
+
   late List<bool> checkedValues;
 
   @override
   void initState() {
     super.initState();
-    checkedValues =
-        List.filled(recipeEntry.ingredients.length, true, growable: false);
+    checkedValues = List.filled(recipeEntry.ingredients.length, true, growable: false);
   }
 
   /*
@@ -48,9 +50,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
             builder: (context) => IconButton(
               icon: const Icon(Icons.delete_rounded),
               onPressed: () => showDialog<String>(
-                  context: context,
-                  builder: (BuildContext context) =>
-                      verifyDeleteRecipe(context, recipeEntry.recipe)),
+                  context: context, builder: (BuildContext context) => verifyDeleteRecipe(context, recipeEntry.recipe)),
             ),
           ),
         ],
@@ -62,10 +62,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
   }
 
   void pushEditEntry(BuildContext context) {
-    Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => EditRecipe(entryData: recipeEntry)))
+    Navigator.push(context, MaterialPageRoute(builder: (context) => EditRecipe(entryData: recipeEntry)))
         .then((data) => setState(() => {}));
   }
 
@@ -107,8 +104,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
   }
 
   Widget itemTile(int index) {
-    return StatefulBuilder(
-        builder: (BuildContext context, StateSetter setState) {
+    return StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
       return CheckboxListTile(
         title: Text(recipeEntry.ingredients[index]),
         value: checkedValues[index],
@@ -132,22 +128,11 @@ class _RecipeDetailsState extends State<RecipeDetails> {
     return TextButton(
       child: const Text('Save to Grocery List'),
       onPressed: () async {
-        var sqlCreate = await rootBundle.loadString('assets/grocery.txt');
-        var db = await openDatabase('grocery.db', version: 1,
-            onCreate: (Database db, int version) async {
-          await db.execute(sqlCreate);
-        });
-
         for (int i = 0; i < recipeEntry.ingredients.length; i++) {
           if (checkedValues[i]) {
-            await db.transaction((txn) async {
-              await txn.rawInsert(
-                  'INSERT INTO grocery_checklist(item) VALUES(?)',
-                  [recipeEntry.ingredients[i]]);
-            });
+            await checklistProcessor.addEntry(recipeEntry.ingredients[i]);
           }
         }
-        await db.close();
 
         Navigator.of(context).pop();
       },
@@ -180,8 +165,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
 
   void deleteRecipe(String title) async {
     var sqlCreate = await rootBundle.loadString('assets/recipes.txt');
-    var db = await openDatabase('recipes.db', version: 1,
-        onCreate: (Database db, int version) async {
+    var db = await openDatabase('recipes.db', version: 1, onCreate: (Database db, int version) async {
       await db.execute(sqlCreate);
     });
 

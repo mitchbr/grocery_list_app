@@ -9,9 +9,7 @@ class ChecklistEntries extends StatefulWidget {
 }
 
 class _ChecklistEntriesState extends State<ChecklistEntries> {
-  var bodyWidget;
   var checklistEntries;
-  var sqlCreate;
   var prevDeleted = null;
 
   final processor = ChecklistProcessor();
@@ -72,7 +70,6 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
    * Entry List Widgets
    * 
    */
-  //TODO: Get ReorderableListView working
   Widget entriesList(BuildContext context) {
     return ReorderableListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -116,7 +113,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
       title: Transform.translate(
         offset: const Offset(-40, 0),
         child: CheckboxListTile(
-          title: Text('${checklistEntries[index].item}'),
+          title: Text(checklistEntries[index].item),
           value: checkedValues[index],
           onChanged: (newValue) {
             setState(() {
