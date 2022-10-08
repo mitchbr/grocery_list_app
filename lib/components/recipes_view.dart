@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'grocery_entry.dart';
-import 'package:flutter/services.dart' show rootBundle;
-import 'package:sqflite/sqflite.dart';
-import 'package:intl/intl.dart';
-import 'dart:convert';
 
-import 'new_recipe.dart';
-import 'recipe_entry.dart';
-import 'recipe_details.dart';
+import 'package:groceries/processors/recipes_processor.dart';
+import 'package:groceries/components/new_recipe.dart';
+import 'package:groceries/components/recipe_details.dart';
 
 class RecipeEntries extends StatefulWidget {
+  const RecipeEntries({Key? key}) : super(key: key);
+
   @override
   _RecipeEntriesState createState() => _RecipeEntriesState();
 }
@@ -19,32 +16,18 @@ class _RecipeEntriesState extends State<RecipeEntries> {
   var checklistEntries;
   var sqlCreate;
 
+  final recipesProcessor = RecipesProcessor();
+
   /*
    *
    * Load SQL Data
    * 
    */
-  void loadSqlStartup() async {
-    sqlCreate = await rootBundle.loadString('assets/recipes.txt');
-  }
-
   void loadEntries() async {
-    loadSqlStartup();
-    var db = await openDatabase('recipes.db', version: 1,
-        onCreate: (Database db, int version) async {
-      await db.execute(sqlCreate);
-    });
-    List<Map> entries = await db.rawQuery('SELECT * FROM recipes_list');
-    final entriesList = entries.map((record) {
-      return RecipeEntry(
-        recipe: record['recipe'],
-        ingredients: json.decode(record['ingredients']),
-        instructions: record['instructions'],
-      );
-    }).toList();
+    var entries = await recipesProcessor.loadRecipes();
     if (mounted) {
       setState(() {
-        checklistEntries = entriesList;
+        checklistEntries = entries;
       });
     }
   }
@@ -58,8 +41,8 @@ class _RecipeEntriesState extends State<RecipeEntries> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: bodyBuilder(context),
-        floatingActionButton: FloatingActionButton(
-            onPressed: () => pushNewEntry(context), child: Icon(Icons.add)));
+        floatingActionButton:
+            FloatingActionButton(onPressed: () => pushNewEntry(context), child: const Icon(Icons.add)));
   }
 
   /*
@@ -79,7 +62,7 @@ class _RecipeEntriesState extends State<RecipeEntries> {
   }
 
   Widget emptyWidget(BuildContext context) {
-    return Center(
+    return const Center(
         child: Icon(
       Icons.book,
       size: 100,
@@ -87,7 +70,7 @@ class _RecipeEntriesState extends State<RecipeEntries> {
   }
 
   Widget circularIndicator(BuildContext context) {
-    return Center(child: CircularProgressIndicator());
+    return const Center(child: CircularProgressIndicator());
   }
 
   /*
@@ -116,16 +99,12 @@ class _RecipeEntriesState extends State<RecipeEntries> {
    * 
    */
   void pushNewEntry(BuildContext context) {
-    Navigator.push(
-            context, MaterialPageRoute(builder: (context) => NewRecipe()))
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const NewRecipe()))
         .then((data) => setState(() => {}));
   }
 
   void pushRecipeDetails(BuildContext context, recipeEntry) {
-    Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => RecipeDetails(recipeEntry: recipeEntry)))
+    Navigator.push(context, MaterialPageRoute(builder: (context) => RecipeDetails(recipeEntry: recipeEntry)))
         .then((data) => setState(() => {}));
   }
 }

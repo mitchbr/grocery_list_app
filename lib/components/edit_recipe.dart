@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
-import 'package:sqflite/sqflite.dart';
-import 'dart:convert';
 
-import 'recipe_entry.dart';
-import 'new_recipe.dart';
+import 'package:groceries/processors/recipes_processor.dart';
+import 'package:groceries/types/recipe_entry.dart';
 
 class EditRecipe extends StatefulWidget {
   final RecipeEntry entryData;
@@ -30,6 +27,8 @@ class _EditRecipeState extends State<EditRecipe> {
   var savedRecipe = true;
   var savedInstructions = true;
   var oldTitle;
+
+  final recipesProcessor = RecipesProcessor();
 
   @override
   void initState() {
@@ -68,8 +67,7 @@ class _EditRecipeState extends State<EditRecipe> {
                     const ListTile(
                         title: Text(
                       'Ingredients',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     )),
                   ]);
                 } else if (index == widget.entryData.ingredients.length + 1) {
@@ -78,8 +76,7 @@ class _EditRecipeState extends State<EditRecipe> {
                     const ListTile(
                         title: Text(
                       'Instructions',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     )),
                     showInstructions(),
                     saveButton(context)
@@ -99,36 +96,9 @@ class _EditRecipeState extends State<EditRecipe> {
           if (currState != null) {
             if (currState.validate() && savedRecipe && savedInstructions) {
               currState.save();
-              var sqlCreate = await rootBundle.loadString('assets/recipes.txt');
-              var db = await openDatabase(
-                'recipes.db',
-                version: 1,
-                onCreate: (Database db, int version) async {
-                  await db.execute(sqlCreate);
-                },
-              );
+              // TODO: Throws index error (when increasing number of ingredients)
+              await recipesProcessor.updateRecipe(widget.entryData, oldTitle);
 
-              //TODO: change from DELETE/INSERT to UDPATE
-              await db.transaction((txn) async {
-                await txn.rawDelete(
-                    'DELETE FROM recipes_list WHERE recipe = ?', [oldTitle]);
-              });
-
-              await db.transaction(
-                (txn) async {
-                  await txn.rawInsert(
-                      'INSERT INTO recipes_list(recipe, ingredients, instructions) VALUES(?, ?, ?)',
-                      [
-                        widget.entryData.recipe,
-                        json.encode(widget.entryData.ingredients),
-                        widget.entryData.instructions
-                      ]);
-                },
-              );
-
-              await db.close();
-
-              //TODO: Pop to edited recipe
               Navigator.of(context).pop();
               Navigator.of(context).pop();
             }
@@ -168,8 +138,7 @@ class _EditRecipeState extends State<EditRecipe> {
           title: TextFormField(
             autofocus: true,
             controller: _recipeNameControl,
-            decoration: const InputDecoration(
-                labelText: 'Recipe Name', border: OutlineInputBorder()),
+            decoration: const InputDecoration(labelText: 'Recipe Name', border: OutlineInputBorder()),
             textCapitalization: TextCapitalization.words,
             onSaved: (value) {
               if (value != null) {
@@ -216,8 +185,7 @@ class _EditRecipeState extends State<EditRecipe> {
         key: ingredientKey,
         child: ListTile(
           title: ingredientTextField(),
-          trailing: IconButton(
-              onPressed: (() => saveIngredient()), icon: const Icon(Icons.add)),
+          trailing: IconButton(onPressed: (() => saveIngredient()), icon: const Icon(Icons.add)),
         ));
   }
 
@@ -238,8 +206,7 @@ class _EditRecipeState extends State<EditRecipe> {
     return TextFormField(
       controller: _entryController,
       autofocus: true,
-      decoration: const InputDecoration(
-          labelText: 'New Ingredient', border: OutlineInputBorder()),
+      decoration: const InputDecoration(labelText: 'New Ingredient', border: OutlineInputBorder()),
       textCapitalization: TextCapitalization.words,
       onSaved: (value) {
         if (value != null) {
@@ -262,9 +229,7 @@ class _EditRecipeState extends State<EditRecipe> {
   Widget ingredientTile(int index) {
     return ListTile(
       title: Text('${widget.entryData.ingredients[index]}'),
-      trailing: IconButton(
-          onPressed: (() => removeIngredient(index)),
-          icon: const Icon(Icons.close)),
+      trailing: IconButton(onPressed: (() => removeIngredient(index)), icon: const Icon(Icons.close)),
     );
   }
 
@@ -306,8 +271,7 @@ class _EditRecipeState extends State<EditRecipe> {
           title: TextFormField(
             autofocus: true,
             controller: _instructionsControl,
-            decoration: const InputDecoration(
-                labelText: 'Instructions', border: OutlineInputBorder()),
+            decoration: const InputDecoration(labelText: 'Instructions', border: OutlineInputBorder()),
             textCapitalization: TextCapitalization.sentences,
             keyboardType: TextInputType.multiline,
             maxLines: null,
@@ -327,9 +291,7 @@ class _EditRecipeState extends State<EditRecipe> {
               }
             },
           ),
-          trailing: IconButton(
-              onPressed: (() => saveInstructions()),
-              icon: const Icon(Icons.check)),
+          trailing: IconButton(onPressed: (() => saveInstructions()), icon: const Icon(Icons.check)),
         ));
   }
 

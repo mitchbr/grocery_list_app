@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
-import 'package:groceries/components/edit_recipe.dart';
-import 'package:sqflite/sqflite.dart';
 
-import 'recipe_entry.dart';
-import 'edit_recipe.dart';
+import 'package:groceries/components/edit_recipe.dart';
+import 'package:groceries/processors/checklist_processor.dart';
+import 'package:groceries/processors/recipes_processor.dart';
+import 'package:groceries/types/recipe_entry.dart';
 
 class RecipeDetails extends StatefulWidget {
   final RecipeEntry recipeEntry;
@@ -18,13 +17,15 @@ class _RecipeDetailsState extends State<RecipeDetails> {
   final RecipeEntry recipeEntry;
   _RecipeDetailsState(this.recipeEntry);
 
+  final checklistProcessor = ChecklistProcessor();
+  final recipesProcessor = RecipesProcessor();
+
   late List<bool> checkedValues;
 
   @override
   void initState() {
     super.initState();
-    checkedValues =
-        List.filled(recipeEntry.ingredients.length, true, growable: false);
+    checkedValues = List.filled(recipeEntry.ingredients.length, true, growable: false);
   }
 
   /*
@@ -48,9 +49,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
             builder: (context) => IconButton(
               icon: const Icon(Icons.delete_rounded),
               onPressed: () => showDialog<String>(
-                  context: context,
-                  builder: (BuildContext context) =>
-                      verifyDeleteRecipe(context, recipeEntry.recipe)),
+                  context: context, builder: (BuildContext context) => verifyDeleteRecipe(context, recipeEntry.recipe)),
             ),
           ),
         ],
@@ -62,10 +61,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
   }
 
   void pushEditEntry(BuildContext context) {
-    Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => EditRecipe(entryData: recipeEntry)))
+    Navigator.push(context, MaterialPageRoute(builder: (context) => EditRecipe(entryData: recipeEntry)))
         .then((data) => setState(() => {}));
   }
 
@@ -107,8 +103,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
   }
 
   Widget itemTile(int index) {
-    return StatefulBuilder(
-        builder: (BuildContext context, StateSetter setState) {
+    return StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
       return CheckboxListTile(
         title: Text(recipeEntry.ingredients[index]),
         value: checkedValues[index],
@@ -132,22 +127,11 @@ class _RecipeDetailsState extends State<RecipeDetails> {
     return TextButton(
       child: const Text('Save to Grocery List'),
       onPressed: () async {
-        var sqlCreate = await rootBundle.loadString('assets/grocery.txt');
-        var db = await openDatabase('grocery.db', version: 1,
-            onCreate: (Database db, int version) async {
-          await db.execute(sqlCreate);
-        });
-
         for (int i = 0; i < recipeEntry.ingredients.length; i++) {
           if (checkedValues[i]) {
-            await db.transaction((txn) async {
-              await txn.rawInsert(
-                  'INSERT INTO grocery_checklist(item) VALUES(?)',
-                  [recipeEntry.ingredients[i]]);
-            });
+            await checklistProcessor.addEntry(recipeEntry.ingredients[i]);
           }
         }
-        await db.close();
 
         Navigator.of(context).pop();
       },
@@ -162,7 +146,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
   Widget verifyDeleteRecipe(BuildContext context, String title) {
     return AlertDialog(
         title: const Text('Delete Recipe?'),
-        content: const Text('This will permenently remove the recipe'),
+        content: const Text('This will permanently remove the recipe'),
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -170,27 +154,13 @@ class _RecipeDetailsState extends State<RecipeDetails> {
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
-              deleteRecipe(title);
+              recipesProcessor.deleteRecipe(title);
+              setState(() {});
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
             },
             child: const Text('Yes'),
           ),
         ]);
-  }
-
-  void deleteRecipe(String title) async {
-    var sqlCreate = await rootBundle.loadString('assets/recipes.txt');
-    var db = await openDatabase('recipes.db', version: 1,
-        onCreate: (Database db, int version) async {
-      await db.execute(sqlCreate);
-    });
-
-    await db.transaction((txn) async {
-      await txn.rawDelete('DELETE FROM recipes_list WHERE recipe = ?', [title]);
-    });
-
-    setState(() {
-      Navigator.of(context).pop();
-    });
   }
 }
