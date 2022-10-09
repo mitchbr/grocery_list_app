@@ -40,6 +40,9 @@ class _RecipeEntriesState extends State<RecipeEntries> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          title: const Text("Recipes"),
+        ),
         body: bodyBuilder(context),
         floatingActionButton:
             FloatingActionButton(onPressed: () => pushNewEntry(context), child: const Icon(Icons.add)));

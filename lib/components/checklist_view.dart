@@ -50,6 +50,9 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Checklist"),
+      ),
       body: bodyBuilder(context),
       floatingActionButton: undoButton(),
     );
