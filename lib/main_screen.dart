@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:groceries/components/checklist_view.dart';
-import 'package:groceries/components/recipes_view.dart';
-import 'package:groceries/components/new_recipe.dart';
+import 'package:groceries/components/checklist/checklist_view.dart';
+import 'package:groceries/components/view_recipes/recipes_view.dart';
+import 'package:groceries/components/recipes_edit/new_recipe.dart';
 
 class Groceries extends StatefulWidget {
   const Groceries({Key? key}) : super(key: key);

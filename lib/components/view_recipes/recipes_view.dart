@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:groceries/processors/recipes_processor.dart';
-import 'package:groceries/components/new_recipe.dart';
-import 'package:groceries/components/recipe_details.dart';
+import 'package:groceries/components/recipes_edit/new_recipe.dart';
+import 'package:groceries/components/view_recipes/recipe_details.dart';
 
 class RecipeEntries extends StatefulWidget {
   const RecipeEntries({Key? key}) : super(key: key);
