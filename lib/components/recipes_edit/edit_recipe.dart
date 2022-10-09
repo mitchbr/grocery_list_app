@@ -136,7 +136,6 @@ class _EditRecipeState extends State<EditRecipe> {
         key: recipeKey,
         child: ListTile(
           title: TextFormField(
-            autofocus: true,
             controller: _recipeNameControl,
             decoration: const InputDecoration(labelText: 'Recipe Name', border: OutlineInputBorder()),
             textCapitalization: TextCapitalization.words,
@@ -205,7 +204,6 @@ class _EditRecipeState extends State<EditRecipe> {
   Widget ingredientTextField() {
     return TextFormField(
       controller: _entryController,
-      autofocus: true,
       decoration: const InputDecoration(labelText: 'New Ingredient', border: OutlineInputBorder()),
       textCapitalization: TextCapitalization.words,
       onSaved: (value) {
@@ -269,7 +267,6 @@ class _EditRecipeState extends State<EditRecipe> {
         key: instructionsKey,
         child: ListTile(
           title: TextFormField(
-            autofocus: true,
             controller: _instructionsControl,
             decoration: const InputDecoration(labelText: 'Instructions', border: OutlineInputBorder()),
             textCapitalization: TextCapitalization.sentences,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:groceries/components/checklist/checklist_view.dart';
 import 'package:groceries/components/view_recipes/recipes_view.dart';
 import 'package:groceries/components/recipes_edit/new_recipe.dart';
+import 'package:groceries/custom_theme.dart';
 
 class Groceries extends StatefulWidget {
   const Groceries({Key? key}) : super(key: key);
@@ -19,7 +20,7 @@ class _GroceriesState extends State<Groceries> {
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'Groceries',
-        theme: ThemeData(colorScheme: const ColorScheme.dark()),
+        theme: CustomTheme().customTheme(),
         home: DefaultTabController(length: 2, child: Builder(builder: (context) => groceriesScaffold(context))));
   }
 

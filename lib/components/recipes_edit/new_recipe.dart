@@ -89,8 +89,6 @@ class _NewRecipeState extends State<NewRecipe> {
             if (currState.validate() && savedRecipe && savedInstructions) {
               currState.save();
               recipesProcessor.addRecipe(entryData);
-
-              Navigator.of(context).pop();
             }
           }
         },
@@ -126,7 +124,6 @@ class _NewRecipeState extends State<NewRecipe> {
         key: recipeKey,
         child: ListTile(
           title: TextFormField(
-            autofocus: true,
             controller: _recipeNameControl,
             decoration: const InputDecoration(labelText: 'Recipe Name', border: OutlineInputBorder()),
             textCapitalization: TextCapitalization.words,
@@ -195,7 +192,6 @@ class _NewRecipeState extends State<NewRecipe> {
   Widget ingredientTextField() {
     return TextFormField(
       controller: _entryController,
-      autofocus: true,
       decoration: const InputDecoration(labelText: 'New Ingredient', border: OutlineInputBorder()),
       textCapitalization: TextCapitalization.words,
       onSaved: (value) {
@@ -259,7 +255,6 @@ class _NewRecipeState extends State<NewRecipe> {
         key: instructionsKey,
         child: ListTile(
           title: TextFormField(
-            autofocus: true,
             controller: _instructionsControl,
             decoration: const InputDecoration(labelText: 'Instructions', border: OutlineInputBorder()),
             textCapitalization: TextCapitalization.sentences,

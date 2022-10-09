@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:groceries/processors/checklist_processor.dart';
 import 'package:groceries/types/grocery_entry.dart';
+import 'package:groceries/custom_theme.dart';
 
 class ChecklistEntries extends StatefulWidget {
   const ChecklistEntries({Key? key}) : super(key: key);
@@ -15,6 +16,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
   var prevDeleted = null;
 
   final processor = ChecklistProcessor();
+  final theme = CustomTheme();
 
   final formKey = GlobalKey<FormState>();
   var entryData = GroceryEntry(item: '');
@@ -127,7 +129,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
               checkedValues[index] = newValue!;
             });
           },
-          activeColor: Colors.teal,
+          activeColor: theme.accentHighlightColor,
           controlAffinity: ListTileControlAffinity.leading,
         ),
       ),
@@ -151,7 +153,6 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
   Widget itemTextField() {
     return TextFormField(
       controller: _entryController,
-      autofocus: true,
       decoration: const InputDecoration(labelText: 'New Item', border: OutlineInputBorder()),
       textCapitalization: TextCapitalization.words,
       onSaved: (value) {

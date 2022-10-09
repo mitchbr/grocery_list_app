@@ -4,6 +4,7 @@ import 'package:groceries/components/recipes_edit/edit_recipe.dart';
 import 'package:groceries/processors/checklist_processor.dart';
 import 'package:groceries/processors/recipes_processor.dart';
 import 'package:groceries/types/recipe_entry.dart';
+import 'package:groceries/custom_theme.dart';
 
 class RecipeDetails extends StatefulWidget {
   final RecipeEntry recipeEntry;
@@ -19,6 +20,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
 
   final checklistProcessor = ChecklistProcessor();
   final recipesProcessor = RecipesProcessor();
+  final theme = CustomTheme();
 
   late List<bool> checkedValues;
 
@@ -112,7 +114,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
             checkedValues[index] = newValue!;
           });
         },
-        activeColor: Colors.teal,
+        activeColor: theme.accentHighlightColor,
         controlAffinity: ListTileControlAffinity.leading,
       );
     });
@@ -124,17 +126,20 @@ class _RecipeDetailsState extends State<RecipeDetails> {
    * 
    */
   Widget addToGroceryList(BuildContext context) {
-    return TextButton(
-      child: const Text('Save to Grocery List'),
-      onPressed: () async {
-        for (int i = 0; i < recipeEntry.ingredients.length; i++) {
-          if (checkedValues[i]) {
-            await checklistProcessor.addEntry(recipeEntry.ingredients[i]);
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: TextButton(
+        child: const Text('Save to Grocery List'),
+        onPressed: () async {
+          for (int i = 0; i < recipeEntry.ingredients.length; i++) {
+            if (checkedValues[i]) {
+              await checklistProcessor.addEntry(recipeEntry.ingredients[i]);
+            }
           }
-        }
 
-        Navigator.of(context).pop();
-      },
+          Navigator.of(context).pop();
+        },
+      ),
     );
   }
 
