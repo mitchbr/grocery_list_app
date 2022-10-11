@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:groceries/components/checklist/checklist_view.dart';
+import 'package:groceries/components/recipes_edit/new_recipe_options.dart';
 import 'package:groceries/components/view_recipes/recipes_view.dart';
-import 'package:groceries/components/recipes_edit/new_recipe.dart';
 import 'package:groceries/custom_theme.dart';
 
 class Groceries extends StatefulWidget {
@@ -14,7 +14,7 @@ class Groceries extends StatefulWidget {
 class _GroceriesState extends State<Groceries> {
   _GroceriesState();
 
-  final List<Widget> _views = [const ChecklistEntries(), const RecipeEntries(), const NewRecipe()];
+  final List<Widget> _views = [const ChecklistEntries(), const RecipeEntries(), const NewRecipeOptions()];
   var selectedIndex = 0;
 
   @override

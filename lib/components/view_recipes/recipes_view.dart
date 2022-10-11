@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:groceries/processors/recipes_processor.dart';
-import 'package:groceries/components/recipes_edit/new_recipe.dart';
+import 'package:groceries/components/recipes_edit/create_recipe.dart';
 import 'package:groceries/components/view_recipes/recipe_details.dart';
 import 'package:groceries/custom_theme.dart';
 
@@ -105,11 +105,6 @@ class _RecipeEntriesState extends State<RecipeEntries> {
    * Paths for Different Pages
    * 
    */
-  void pushNewEntry(BuildContext context) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const NewRecipe()))
-        .then((data) => setState(() => {}));
-  }
-
   void pushRecipeDetails(BuildContext context, recipeEntry) {
     Navigator.push(context, MaterialPageRoute(builder: (context) => RecipeDetails(recipeEntry: recipeEntry)))
         .then((data) => setState(() => {}));

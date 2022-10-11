@@ -4,14 +4,14 @@ import 'package:groceries/custom_theme.dart';
 import 'package:groceries/processors/recipes_processor.dart';
 import 'package:groceries/types/recipe_entry.dart';
 
-class NewRecipe extends StatefulWidget {
-  const NewRecipe({Key? key}) : super(key: key);
+class CreateRecipe extends StatefulWidget {
+  const CreateRecipe({Key? key}) : super(key: key);
 
   @override
-  _NewRecipeState createState() => _NewRecipeState();
+  _CreateRecipeState createState() => _CreateRecipeState();
 }
 
-class _NewRecipeState extends State<NewRecipe> {
+class _CreateRecipeState extends State<CreateRecipe> {
   /*
    *
    * Variable Declaration
@@ -93,6 +93,7 @@ class _NewRecipeState extends State<NewRecipe> {
             if (currState.validate() && savedRecipe && savedInstructions) {
               currState.save();
               recipesProcessor.addRecipe(entryData);
+              Navigator.of(context).pop();
             }
           }
         },
