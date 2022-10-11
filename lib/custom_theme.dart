@@ -40,4 +40,14 @@ class CustomTheme {
       fontFamily: 'Georgia',
     );
   }
+
+  InputDecoration textFormDecoration(label) {
+    return InputDecoration(
+      labelText: label,
+      floatingLabelStyle: TextStyle(color: accentHighlightColor),
+      focusedBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: accentHighlightColor),
+      ),
+    );
+  }
 }

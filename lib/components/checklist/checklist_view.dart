@@ -69,7 +69,10 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
   }
 
   Widget circularIndicator(BuildContext context) {
-    return const Center(child: CircularProgressIndicator());
+    return Center(
+        child: CircularProgressIndicator(
+      color: theme.accentHighlightColor,
+    ));
   }
 
   /*
@@ -153,8 +156,9 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
   Widget itemTextField() {
     return TextFormField(
       controller: _entryController,
-      decoration: const InputDecoration(labelText: 'New Item', border: OutlineInputBorder()),
-      textCapitalization: TextCapitalization.words,
+      cursorColor: theme.accentHighlightColor,
+      decoration: theme.textFormDecoration('New Item'),
+      textCapitalization: TextCapitalization.sentences,
       onSaved: (value) {
         if (value != null) {
           entryData.item = value;

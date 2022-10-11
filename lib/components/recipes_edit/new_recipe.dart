@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:groceries/custom_theme.dart';
 
 import 'package:groceries/processors/recipes_processor.dart';
 import 'package:groceries/types/recipe_entry.dart';
@@ -29,6 +30,7 @@ class _NewRecipeState extends State<NewRecipe> {
   var savedInstructions = false;
 
   final recipesProcessor = RecipesProcessor();
+  final theme = CustomTheme();
 
   /*
    *
@@ -82,7 +84,9 @@ class _NewRecipeState extends State<NewRecipe> {
 
 // TODO: Let user know when name or instructions aren't valid.
   Widget saveButton(BuildContext context) {
-    return TextButton(
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: TextButton(
         onPressed: () async {
           var currState = formKey.currentState;
           if (currState != null) {
@@ -92,7 +96,9 @@ class _NewRecipeState extends State<NewRecipe> {
             }
           }
         },
-        child: const Text('Save Recipe'));
+        child: const Text('Save Recipe'),
+      ),
+    );
   }
 
   /*
@@ -125,7 +131,8 @@ class _NewRecipeState extends State<NewRecipe> {
         child: ListTile(
           title: TextFormField(
             controller: _recipeNameControl,
-            decoration: const InputDecoration(labelText: 'Recipe Name', border: OutlineInputBorder()),
+            cursorColor: theme.accentHighlightColor,
+            decoration: theme.textFormDecoration('Recipe Name'),
             textCapitalization: TextCapitalization.words,
             onSaved: (value) {
               if (value != null) {
@@ -192,7 +199,8 @@ class _NewRecipeState extends State<NewRecipe> {
   Widget ingredientTextField() {
     return TextFormField(
       controller: _entryController,
-      decoration: const InputDecoration(labelText: 'New Ingredient', border: OutlineInputBorder()),
+      cursorColor: theme.accentHighlightColor,
+      decoration: theme.textFormDecoration('New Ingredient'),
       textCapitalization: TextCapitalization.words,
       onSaved: (value) {
         if (value != null) {
@@ -256,7 +264,8 @@ class _NewRecipeState extends State<NewRecipe> {
         child: ListTile(
           title: TextFormField(
             controller: _instructionsControl,
-            decoration: const InputDecoration(labelText: 'Instructions', border: OutlineInputBorder()),
+            cursorColor: theme.accentHighlightColor,
+            decoration: theme.textFormDecoration('Instructions'),
             textCapitalization: TextCapitalization.sentences,
             keyboardType: TextInputType.multiline,
             maxLines: null,

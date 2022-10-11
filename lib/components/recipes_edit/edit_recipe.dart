@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:groceries/custom_theme.dart';
 
 import 'package:groceries/processors/recipes_processor.dart';
 import 'package:groceries/types/recipe_entry.dart';
@@ -29,6 +30,7 @@ class _EditRecipeState extends State<EditRecipe> {
   var oldTitle;
 
   final recipesProcessor = RecipesProcessor();
+  final theme = CustomTheme();
 
   @override
   void initState() {
@@ -137,7 +139,8 @@ class _EditRecipeState extends State<EditRecipe> {
         child: ListTile(
           title: TextFormField(
             controller: _recipeNameControl,
-            decoration: const InputDecoration(labelText: 'Recipe Name', border: OutlineInputBorder()),
+            cursorColor: theme.accentHighlightColor,
+            decoration: theme.textFormDecoration('Recipe Name'),
             textCapitalization: TextCapitalization.words,
             onSaved: (value) {
               if (value != null) {
@@ -204,7 +207,8 @@ class _EditRecipeState extends State<EditRecipe> {
   Widget ingredientTextField() {
     return TextFormField(
       controller: _entryController,
-      decoration: const InputDecoration(labelText: 'New Ingredient', border: OutlineInputBorder()),
+      cursorColor: theme.accentHighlightColor,
+      decoration: theme.textFormDecoration('New Ingredient'),
       textCapitalization: TextCapitalization.words,
       onSaved: (value) {
         if (value != null) {
@@ -268,7 +272,8 @@ class _EditRecipeState extends State<EditRecipe> {
         child: ListTile(
           title: TextFormField(
             controller: _instructionsControl,
-            decoration: const InputDecoration(labelText: 'Instructions', border: OutlineInputBorder()),
+            cursorColor: theme.accentHighlightColor,
+            decoration: theme.textFormDecoration('Instructions'),
             textCapitalization: TextCapitalization.sentences,
             keyboardType: TextInputType.multiline,
             maxLines: null,
