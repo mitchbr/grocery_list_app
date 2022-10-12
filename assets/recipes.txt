@@ -1,1 +1,22 @@
-CREATE TABLE IF NOT EXISTS recipes_list(id INTEGER PRIMARY KEY AUTOINCREMENT, recipe TEXT NOT NULL, ingredients TEXT NOT NULL, instructions TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS recipes_list(
+    id INTEGER PRIMARY KEY AUTOINCREMENT, 
+    recipe TEXT NOT NULL, 
+    ingredients TEXT NOT NULL,
+    instructions TEXT NOT NULL,
+    category TEXT,
+    tags TEXT,
+    updatedAt INTEGER,
+    createdAt INTEGER,
+    timesMade INTEGER
+);
+
+ALTER TABLE recipes_list
+ADD COLUMN category TEXT;
+ALTER TABLE recipes_list
+ADD COLUMN tags TEXT;
+ALTER TABLE recipes_list
+ADD COLUMN updatedAt INTEGER;
+ALTER TABLE recipes_list
+ADD COLUMN createdAt INTEGER;
+ALTER TABLE recipes_list
+ADD COLUMN timesMade INTEGER;

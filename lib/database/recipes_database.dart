@@ -8,12 +8,12 @@ class RecipesDatabase {
   String dbName = 'recipes_list';
 
   Future<Database> _loadSqlStartup() async {
-    Database db = await openDatabase('recipes.db', version: 2, onCreate: (Database db, int version) async {
+    Database db = await openDatabase('recipes.db', version: 1, onOpen: (Database db) async {
       var sqlScript = await rootBundle.loadString('assets/recipes.txt');
       List<String> sqlScripts = sqlScript.split(";");
       for (var v in sqlScripts) {
         if (v.isNotEmpty) {
-          db.execute(v.trim());
+          await db.execute(v.trim());
         }
       }
     });
@@ -33,8 +33,18 @@ class RecipesDatabase {
 
     await db.transaction(
       (txn) async {
-        await txn.rawInsert('INSERT INTO recipes_list(recipe, ingredients, instructions) VALUES(?, ?, ?)',
-            [entry.recipe, json.encode(entry.ingredients), entry.instructions]);
+        await txn.rawInsert(
+            'INSERT INTO recipes_list(recipe, ingredients, instructions, category, tags, updatedAt, createdAt, timesMade) VALUES(?, ?, ?, ?, ?, ?, ?, ?)',
+            [
+              entry.recipe,
+              json.encode(entry.ingredients),
+              entry.instructions,
+              entry.category,
+              json.encode(entry.tags),
+              entry.updatedAt,
+              entry.createdAt,
+              entry.timesMade
+            ]);
       },
     );
   }

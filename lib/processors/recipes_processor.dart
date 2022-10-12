@@ -14,6 +14,11 @@ class RecipesProcessor {
         recipe: record['recipe'],
         ingredients: json.decode(record['ingredients']),
         instructions: record['instructions'],
+        category: "Entree",
+        tags: "temp",
+        updatedAt: DateTime.now().millisecondsSinceEpoch,
+        createdAt: DateTime.now().millisecondsSinceEpoch, // TODO: UPDATE
+        timesMade: 0,
       );
     }).toList();
   }

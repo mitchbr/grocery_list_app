@@ -22,7 +22,15 @@ class _CreateRecipeState extends State<CreateRecipe> {
   final ingredientKey = GlobalKey<FormState>();
   final instructionsKey = GlobalKey<FormState>();
 
-  var entryData = RecipeEntry(recipe: '', ingredients: [], instructions: '');
+  var entryData = RecipeEntry(
+      recipe: '',
+      ingredients: [],
+      instructions: '',
+      category: "Entree",
+      tags: "tag",
+      updatedAt: DateTime.now().millisecondsSinceEpoch,
+      createdAt: DateTime.now().millisecondsSinceEpoch,
+      timesMade: 0);
   final TextEditingController _entryController = TextEditingController();
   final TextEditingController _recipeNameControl = TextEditingController();
   final TextEditingController _instructionsControl = TextEditingController();
