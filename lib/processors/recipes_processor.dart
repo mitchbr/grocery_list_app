@@ -31,7 +31,8 @@ class RecipesProcessor {
     await database.deleteItem(title);
   }
 
-  Future<void> updateRecipe(recipe, oldTitle) async {
+  Future<void> updateRecipe(RecipeEntry recipe, String oldTitle) async {
+    recipe.updatedAt = DateTime.now().millisecondsSinceEpoch;
     await database.deleteItem(oldTitle);
     await database.addItem(recipe);
   }

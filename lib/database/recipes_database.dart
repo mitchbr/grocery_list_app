@@ -24,7 +24,7 @@ class RecipesDatabase {
   Future<List<Map>> loadItems() async {
     Database db = await _loadSqlStartup();
 
-    List<Map> entries = await db.rawQuery('SELECT * FROM recipes_list');
+    List<Map> entries = await db.rawQuery('SELECT * FROM recipes_list ORDER BY updatedAt DESC');
     return entries;
   }
 

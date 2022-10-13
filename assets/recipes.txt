@@ -9,14 +9,3 @@ CREATE TABLE IF NOT EXISTS recipes_list(
     createdAt INTEGER,
     timesMade INTEGER
 );
-
-ALTER TABLE recipes_list
-ADD COLUMN category TEXT;
-ALTER TABLE recipes_list
-ADD COLUMN tags TEXT;
-ALTER TABLE recipes_list
-ADD COLUMN updatedAt INTEGER;
-ALTER TABLE recipes_list
-ADD COLUMN createdAt INTEGER;
-ALTER TABLE recipes_list
-ADD COLUMN timesMade INTEGER;
