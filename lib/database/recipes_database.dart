@@ -21,10 +21,21 @@ class RecipesDatabase {
     return db;
   }
 
-  Future<List<Map>> loadItems() async {
+  Future<List<Map>> loadItems({sort}) async {
     Database db = await _loadSqlStartup();
 
-    List<Map> entries = await db.rawQuery('SELECT * FROM recipes_list ORDER BY updatedAt DESC');
+    const sortOptions = {
+      "updatedAtNewest": "ORDER BY updatedAt DESC",
+      "updatedAtOldest": "ORDER BY updatedAt ASC",
+      "createdAtNewest": "ORDER BY createdAt DESC",
+      "createdAtOldest": "ORDER BY createdAt ASC",
+      "timesMadeMost": "ORDER BY timesMade DESC",
+      "timesMadeLeast": "ORDER BY timesMade ASC",
+    };
+
+    sort = sortOptions.containsKey(sort) ? sort : "updatedAtNewest";
+
+    List<Map> entries = await db.rawQuery('SELECT * FROM recipes_list ${sortOptions[sort]}');
     return entries;
   }
 
