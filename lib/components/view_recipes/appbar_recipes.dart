@@ -5,7 +5,7 @@ import 'package:groceries/processors/recipes_processor.dart';
 
 class RecipesAppBar extends StatelessWidget implements PreferredSizeWidget {
   final double height;
-  final recipesProcessor;
+  final RecipesProcessor recipesProcessor;
 
   RecipesAppBar({Key? key, required this.height, required this.recipesProcessor}) : super(key: key);
 

@@ -22,4 +22,14 @@ class ChecklistProcessor {
   Future<void> addEntry(item) async {
     await database.addItem(item);
   }
+
+  Future<String> shareByText() async {
+    List<Map> entries = await database.loadItems();
+    String entriesString = 'Checklist:\n';
+    for (var entry in entries) {
+      entriesString += "- ${entry['item']}\n";
+    }
+
+    return entriesString;
+  }
 }

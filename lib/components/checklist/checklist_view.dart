@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:groceries/processors/checklist_processor.dart';
 import 'package:groceries/types/grocery_entry.dart';
@@ -13,7 +14,7 @@ class ChecklistEntries extends StatefulWidget {
 
 class _ChecklistEntriesState extends State<ChecklistEntries> {
   var checklistEntries;
-  var prevDeleted = null;
+  var prevDeleted;
 
   final processor = ChecklistProcessor();
   final theme = CustomTheme();
@@ -54,6 +55,18 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Checklist"),
+        actions: <Widget>[
+          IconButton(
+            onPressed: () async {
+              var checklistString = await processor.shareByText();
+              showDialog(
+                context: context,
+                builder: (BuildContext context) => buildPopupDialog(checklistString),
+              );
+            },
+            icon: const Icon(Icons.share),
+          ),
+        ],
       ),
       body: bodyBuilder(context),
       floatingActionButton: undoButton(),
@@ -208,6 +221,30 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
                   loadEntries();
                 })),
             icon: const Icon(Icons.undo),
-            label: const Text('Undo')));
+            label: const Text('Undo'),
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(theme.accentHighlightColor),
+            )));
+  }
+
+  /*
+   *
+   * Share checklist text
+   * 
+   */
+  Widget buildPopupDialog(checklist) {
+    return AlertDialog(
+      title: const Text('Share Checklist'),
+      content: Text(checklist),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () async {
+            ClipboardData data = ClipboardData(text: checklist);
+            await Clipboard.setData(data);
+          },
+          child: const Icon(Icons.copy),
+        ),
+      ],
+    );
   }
 }
