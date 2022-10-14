@@ -5,9 +5,10 @@ import 'package:groceries/database/recipes_database.dart';
 
 class RecipesProcessor {
   RecipesDatabase database = RecipesDatabase();
+  String sort = "updatedAtNewest";
 
   Future<List> loadRecipes() async {
-    List<Map> entries = await database.loadItems();
+    List<Map> entries = await database.loadItems(sort: sort);
 
     return entries.map((record) {
       return RecipeEntry(
@@ -21,6 +22,18 @@ class RecipesProcessor {
         timesMade: 0,
       );
     }).toList();
+  }
+
+  void setSort(newSort) {
+    const sortOptions = {
+      "Newest Updated": "updatedAtNewest",
+      "Oldest Updated": "updatedAtOldest",
+      "Newest": "createdAtNewest",
+      "Oldest": "createdAtOldest",
+      "Most Times Made": "timesMadeMost",
+      "Least Times Made": "timesMadeLeast"
+    };
+    sort = (sortOptions.containsKey(newSort) ? sortOptions[newSort] : sortOptions["Newest Updated"])!;
   }
 
   Future<void> addRecipe(recipe) async {

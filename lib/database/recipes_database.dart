@@ -8,7 +8,7 @@ class RecipesDatabase {
   String dbName = 'recipes_list';
 
   Future<Database> _loadSqlStartup() async {
-    Database db = await openDatabase('recipes.db', version: 1, onOpen: (Database db) async {
+    Database db = await openDatabase('recipes.db', version: 1, onCreate: (Database db, int version) async {
       var sqlScript = await rootBundle.loadString('assets/recipes.txt');
       List<String> sqlScripts = sqlScript.split(";");
       for (var v in sqlScripts) {

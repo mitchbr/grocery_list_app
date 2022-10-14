@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:groceries/components/view_recipes/appbar_recipes.dart';
 
 import 'package:groceries/processors/recipes_processor.dart';
 import 'package:groceries/components/recipes_edit/create_recipe.dart';
@@ -42,9 +43,7 @@ class _RecipeEntriesState extends State<RecipeEntries> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Recipes"),
-      ),
+      appBar: RecipesAppBar(height: 56, recipesProcessor: recipesProcessor),
       body: bodyBuilder(context),
     );
   }
@@ -87,10 +86,11 @@ class _RecipeEntriesState extends State<RecipeEntries> {
    */
   Widget entriesList(BuildContext context) {
     return ListView.builder(
-        itemCount: checklistEntries.length,
-        itemBuilder: (context, index) {
-          return groceryTile(index);
-        });
+      itemCount: checklistEntries.length,
+      itemBuilder: (context, index) {
+        return groceryTile(index);
+      },
+    );
   }
 
   Widget groceryTile(int index) {
