@@ -5,6 +5,7 @@ import 'package:groceries/processors/checklist_processor.dart';
 import 'package:groceries/processors/recipes_processor.dart';
 import 'package:groceries/types/recipe_entry.dart';
 import 'package:groceries/custom_theme.dart';
+import 'package:intl/intl.dart';
 
 class RecipeDetails extends StatefulWidget {
   final RecipeEntry recipeEntry;
@@ -77,18 +78,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
         itemCount: recipeEntry.ingredients.length + 1,
         itemBuilder: (context, index) {
           if (index == recipeEntry.ingredients.length) {
-            return Column(children: [
-              const ListTile(
-                  title: Text(
-                'Instructions',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              )),
-              ListTile(title: Text(recipeEntry.instructions)),
-              const ListTile(
-                  title: SizedBox(
-                height: 20,
-              ))
-            ]);
+            return metaDataDisplay();
           } else if (index == 0) {
             return Column(children: [
               const ListTile(
@@ -118,6 +108,70 @@ class _RecipeDetailsState extends State<RecipeDetails> {
         controlAffinity: ListTileControlAffinity.leading,
       );
     });
+  }
+
+  Widget metaDataDisplay() {
+    return Column(children: [
+      const ListTile(
+          title: Text(
+        'Instructions',
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      )),
+      ListTile(title: Text(recipeEntry.instructions)),
+      ExpansionTile(
+        title: const Text(
+          'More',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        textColor: theme.accentHighlightColor,
+        iconColor: theme.accentHighlightColor,
+        expandedCrossAxisAlignment: CrossAxisAlignment.start,
+        children: moreChildren(),
+      ),
+      const ListTile(
+          title: SizedBox(
+        height: 20,
+      ))
+    ]);
+  }
+
+  List<Widget> moreChildren() {
+    return <Widget>[
+      SizedBox(
+        child: DecoratedBox(
+          decoration: BoxDecoration(color: theme.accentColor, borderRadius: BorderRadius.circular(5)),
+          child: Center(
+            child: Text(recipeEntry.category, style: const TextStyle(fontSize: 15)),
+          ),
+        ),
+        width: 100,
+        height: 30,
+      ),
+      const ListTile(
+        title: Text("Tags:"),
+      ),
+      SizedBox(
+        child: DecoratedBox(
+          decoration: BoxDecoration(color: theme.accentColor, borderRadius: BorderRadius.circular(5)),
+          child: Center(
+            child: Text(recipeEntry.tags),
+          ),
+        ),
+        width: 50,
+        height: 25,
+      ),
+      ListTile(
+        title: Text(
+            "Last Updated: ${DateFormat.yMMMMd('en_US').format(DateTime.fromMicrosecondsSinceEpoch(recipeEntry.updatedAt * 1000))}"),
+      ),
+      ListTile(
+        title: Text(
+            "Created: ${DateFormat.yMMMMd('en_US').format(DateTime.fromMicrosecondsSinceEpoch(recipeEntry.createdAt * 1000))}"),
+      ),
+      ListTile(
+        title: Text("Times Made: ${recipeEntry.timesMade}"),
+      ),
+    ];
   }
 
   /*

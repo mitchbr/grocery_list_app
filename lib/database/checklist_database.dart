@@ -22,7 +22,7 @@ class ChecklistDatabase {
     Database db = await loadSqlStartup();
 
     List<Map> entries = await db.rawQuery('SELECT * FROM $dbName');
-    db.close();
+
     return entries;
   }
 
@@ -32,7 +32,6 @@ class ChecklistDatabase {
     await db.transaction((txn) async {
       await txn.rawDelete('DELETE FROM $dbName WHERE item = ?', [title]);
     });
-    db.close();
   }
 
   Future<void> addItem(item) async {
@@ -41,7 +40,5 @@ class ChecklistDatabase {
     await db.transaction((txn) async {
       await txn.rawInsert('INSERT INTO $dbName(item) VALUES(?)', [item]);
     });
-
-    db.close();
   }
 }

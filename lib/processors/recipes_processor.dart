@@ -12,15 +12,14 @@ class RecipesProcessor {
 
     return entries.map((record) {
       return RecipeEntry(
-        recipe: record['recipe'],
-        ingredients: json.decode(record['ingredients']),
-        instructions: record['instructions'],
-        category: "Entree",
-        tags: "temp",
-        updatedAt: DateTime.now().millisecondsSinceEpoch,
-        createdAt: DateTime.now().millisecondsSinceEpoch, // TODO: UPDATE
-        timesMade: 0,
-      );
+          recipe: record['recipe'],
+          ingredients: json.decode(record['ingredients']),
+          instructions: record['instructions'],
+          category: "Entree",
+          tags: "temp",
+          updatedAt: record['updatedAt'],
+          createdAt: record['createdAt'],
+          timesMade: record['timesMade']);
     }).toList();
   }
 
