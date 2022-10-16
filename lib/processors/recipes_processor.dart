@@ -15,8 +15,8 @@ class RecipesProcessor {
           recipe: record['recipe'],
           ingredients: json.decode(record['ingredients']),
           instructions: record['instructions'],
-          category: "Entree",
-          tags: "temp",
+          category: record["category"],
+          tags: record["tags"],
           updatedAt: record['updatedAt'],
           createdAt: record['createdAt'],
           timesMade: record['timesMade']);

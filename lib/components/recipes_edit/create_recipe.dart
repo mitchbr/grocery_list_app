@@ -26,7 +26,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
       recipe: '',
       ingredients: [],
       instructions: '',
-      category: "Entree",
+      category: "",
       tags: "tag",
       updatedAt: DateTime.now().millisecondsSinceEpoch,
       createdAt: DateTime.now().millisecondsSinceEpoch,
@@ -34,11 +34,19 @@ class _CreateRecipeState extends State<CreateRecipe> {
   final TextEditingController _entryController = TextEditingController();
   final TextEditingController _recipeNameControl = TextEditingController();
   final TextEditingController _instructionsControl = TextEditingController();
+  late List<String> categories;
   var savedRecipe = false;
   var savedInstructions = false;
 
   final recipesProcessor = RecipesProcessor();
   final theme = CustomTheme();
+
+  @override
+  void initState() {
+    categories = ["Entree", "Cocktail"];
+    entryData.category = categories[0];
+    super.initState();
+  }
 
   /*
    *
@@ -81,6 +89,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     )),
                     showInstructions(),
+                    categoryDropdown(),
                     saveButton(context)
                   ]);
                 } else {
@@ -308,5 +317,27 @@ class _CreateRecipeState extends State<CreateRecipe> {
         });
       }
     }
+  }
+
+  /*
+   *
+   * Category Widgets
+   * 
+   */
+  Widget categoryDropdown() {
+    return DropdownButton(
+      value: entryData.category,
+      items: categories.map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      onChanged: (String? value) {
+        setState(() {
+          entryData.category = value!;
+        });
+      },
+    );
   }
 }
