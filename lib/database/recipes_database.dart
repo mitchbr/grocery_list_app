@@ -61,11 +61,11 @@ class RecipesDatabase {
     );
   }
 
-  Future<void> deleteItem(title) async {
+  Future<void> deleteItem(id) async {
     Database db = await _loadSqlStartup();
 
     await db.transaction((txn) async {
-      await txn.rawDelete('DELETE FROM recipes_list WHERE recipe = ?', [title]);
+      await txn.rawDelete('DELETE FROM recipes_list WHERE id = ?', [id]);
     });
   }
 }

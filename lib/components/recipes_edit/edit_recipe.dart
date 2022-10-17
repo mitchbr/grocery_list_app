@@ -114,7 +114,7 @@ class _EditRecipeState extends State<EditRecipe> {
             if (currState.validate() && savedRecipe && savedInstructions) {
               currState.save();
               // TODO: Throws index error (when increasing number of ingredients)
-              await recipesProcessor.updateRecipe(widget.entryData, oldTitle);
+              await recipesProcessor.updateRecipe(widget.entryData);
 
               Navigator.of(context).pop();
               Navigator.of(context).pop();

@@ -26,6 +26,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
   final instructionsKey = GlobalKey<FormState>();
 
   var entryData = RecipeEntry(
+      id: 0,
       recipe: '',
       ingredients: [],
       instructions: '',

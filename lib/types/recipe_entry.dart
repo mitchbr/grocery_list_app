@@ -1,4 +1,5 @@
 class RecipeEntry {
+  late int id;
   late String recipe;
   late List<dynamic> ingredients;
   late String instructions;
@@ -9,7 +10,8 @@ class RecipeEntry {
   late int timesMade;
 
   RecipeEntry(
-      {required this.recipe,
+      {required this.id,
+      required this.recipe,
       required this.ingredients,
       required this.instructions,
       required this.category,

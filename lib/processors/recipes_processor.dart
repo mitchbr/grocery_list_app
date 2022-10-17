@@ -17,6 +17,7 @@ class RecipesProcessor {
 
     return entries.map((record) {
       return RecipeEntry(
+          id: record["id"],
           recipe: record['recipe'],
           ingredients: json.decode(record['ingredients']),
           instructions: record['instructions'],
@@ -52,10 +53,10 @@ class RecipesProcessor {
     await database.deleteItem(title);
   }
 
-  Future<void> updateRecipe(RecipeEntry recipe, String oldTitle) async {
+  Future<void> updateRecipe(RecipeEntry recipe) async {
     recipe.updatedAt = DateTime.now().millisecondsSinceEpoch;
     // TODO: use update query
-    await database.deleteItem(oldTitle);
+    await database.deleteItem(recipe.id);
     await database.addItem(recipe);
   }
 
