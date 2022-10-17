@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:groceries/custom_theme.dart';
 
 import 'package:groceries/processors/recipes_processor.dart';
@@ -43,9 +46,19 @@ class _CreateRecipeState extends State<CreateRecipe> {
 
   @override
   void initState() {
-    categories = ["Entree", "Cocktail"];
-    entryData.category = categories[0];
+    categories = [];
+    getCategories().then((value) {
+      entryData.category = categories[0];
+    });
     super.initState();
+  }
+
+  Future<void> getCategories() async {
+    var categoriesJson = await rootBundle.loadString('assets/recipe_categories.json');
+    categories = jsonDecode(categoriesJson)["categories"].cast<String>();
+    setState(() {
+      categories.remove("None");
+    });
   }
 
   /*
@@ -325,19 +338,25 @@ class _CreateRecipeState extends State<CreateRecipe> {
    * 
    */
   Widget categoryDropdown() {
-    return DropdownButton(
-      value: entryData.category,
-      items: categories.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-      onChanged: (String? value) {
-        setState(() {
-          entryData.category = value!;
-        });
-      },
+    return ListTile(
+      title: const Text(
+        'Category',
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      ),
+      subtitle: DropdownButton(
+        value: entryData.category,
+        items: categories.map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
+        onChanged: (String? value) {
+          setState(() {
+            entryData.category = value!;
+          });
+        },
+      ),
     );
   }
 }
