@@ -7,7 +7,8 @@ import 'package:groceries/components/view_recipes/recipe_details.dart';
 import 'package:groceries/custom_theme.dart';
 
 class RecipeEntries extends StatefulWidget {
-  const RecipeEntries({Key? key}) : super(key: key);
+  final RecipesProcessor recipesProcessor;
+  const RecipeEntries({Key? key, required this.recipesProcessor}) : super(key: key);
 
   @override
   _RecipeEntriesState createState() => _RecipeEntriesState();
@@ -18,8 +19,14 @@ class _RecipeEntriesState extends State<RecipeEntries> {
   var checklistEntries;
   var sqlCreate;
 
-  final recipesProcessor = RecipesProcessor();
+  late RecipesProcessor recipesProcessor;
   final theme = CustomTheme();
+
+  @override
+  void initState() {
+    recipesProcessor = widget.recipesProcessor;
+    super.initState();
+  }
 
   /*
    *

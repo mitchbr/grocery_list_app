@@ -3,9 +3,11 @@ import 'package:groceries/components/checklist/checklist_view.dart';
 import 'package:groceries/components/recipes_edit/new_recipe_options.dart';
 import 'package:groceries/components/view_recipes/recipes_view.dart';
 import 'package:groceries/custom_theme.dart';
+import 'package:groceries/processors/recipes_processor.dart';
 
 class Groceries extends StatefulWidget {
-  const Groceries({Key? key}) : super(key: key);
+  final RecipesProcessor recipesProcessor;
+  const Groceries({Key? key, required this.recipesProcessor}) : super(key: key);
 
   @override
   _GroceriesState createState() => _GroceriesState();
@@ -14,8 +16,20 @@ class Groceries extends StatefulWidget {
 class _GroceriesState extends State<Groceries> {
   _GroceriesState();
 
-  final List<Widget> _views = [const ChecklistEntries(), const RecipeEntries(), const NewRecipeOptions()];
+  List<Widget> _views = [];
   var selectedIndex = 0;
+
+  @override
+  void initState() {
+    _views = [
+      const ChecklistEntries(),
+      RecipeEntries(
+        recipesProcessor: widget.recipesProcessor,
+      ),
+      const NewRecipeOptions()
+    ];
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

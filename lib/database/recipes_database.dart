@@ -21,7 +21,7 @@ class RecipesDatabase {
     return db;
   }
 
-  Future<List<Map>> loadItems({sort}) async {
+  Future<List<Map>> loadItems({sort, category}) async {
     Database db = await _loadSqlStartup();
 
     const sortOptions = {
@@ -34,8 +34,9 @@ class RecipesDatabase {
     };
 
     sort = sortOptions.containsKey(sort) ? sort : "updatedAtNewest";
+    final String categoryQuery = (category != "None") ? "WHERE category = '$category'" : "";
 
-    List<Map> entries = await db.rawQuery('SELECT * FROM recipes_list ${sortOptions[sort]}');
+    List<Map> entries = await db.rawQuery("SELECT * FROM recipes_list  $categoryQuery ${sortOptions[sort]}");
     return entries;
   }
 

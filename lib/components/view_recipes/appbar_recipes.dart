@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:groceries/components/view_recipes/filters_page.dart';
 import 'package:groceries/custom_theme.dart';
 
 import 'package:groceries/processors/recipes_processor.dart';
 
-class RecipesAppBar extends StatelessWidget implements PreferredSizeWidget {
+class RecipesAppBar extends StatefulWidget implements PreferredSizeWidget {
   final double height;
   final RecipesProcessor recipesProcessor;
 
-  RecipesAppBar({Key? key, required this.height, required this.recipesProcessor}) : super(key: key);
+  const RecipesAppBar({Key? key, required this.height, required this.recipesProcessor}) : super(key: key);
 
+  @override
+  State<RecipesAppBar> createState() => _RecipesAppBarState();
+
+  @override
+  Size get preferredSize => Size.fromHeight(height);
+}
+
+class _RecipesAppBarState extends State<RecipesAppBar> {
   final sortOptions = ["Newest Updated", "Oldest Updated", "Newest", "Oldest", "Most Times Made", "Least Times Made"];
+
   final theme = CustomTheme();
 
   @override
@@ -21,8 +31,8 @@ class RecipesAppBar extends StatelessWidget implements PreferredSizeWidget {
           const SizedBox(width: 15),
           Text("Recipes", style: TextStyle(fontSize: 20.0, color: theme.textColor)),
           const Spacer(),
+          Padding(child: filterDropDown(context), padding: const EdgeInsets.all(2)),
           Padding(child: sortDropDown(context), padding: const EdgeInsets.all(2)),
-          // Padding(child: filterDropDown(), padding: const EdgeInsets.all(2))
         ],
         mainAxisAlignment: MainAxisAlignment.start,
       ),
@@ -34,7 +44,7 @@ class RecipesAppBar extends StatelessWidget implements PreferredSizeWidget {
       onPressed: () => {
         showDialog(
           context: context,
-          builder: (BuildContext context) => buildPopupDialog(context),
+          builder: (BuildContext context) => sortPopupDialog(context),
         )
       },
       label: const Text("Sort"),
@@ -42,15 +52,15 @@ class RecipesAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-  Widget filterDropDown() {
+  Widget filterDropDown(BuildContext context) {
     return TextButton.icon(
-      onPressed: () => {},
+      onPressed: () => pushFilterPage(context),
       label: const Text("Filter"),
       icon: const Icon(Icons.filter_list),
     );
   }
 
-  Widget buildPopupDialog(BuildContext context) {
+  Widget sortPopupDialog(BuildContext context) {
     return AlertDialog(
       title: const Text('Sort Recipes'),
       content: Column(
@@ -64,7 +74,7 @@ class RecipesAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget sortTile(title, context) {
     return TextButton(
       onPressed: () {
-        recipesProcessor.setSort(title);
+        widget.recipesProcessor.setSort(title);
         Navigator.of(context).pop();
       },
       child: Text(title),
@@ -72,6 +82,12 @@ class RecipesAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-  @override
-  Size get preferredSize => Size.fromHeight(height);
+  void pushFilterPage(BuildContext context) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => FiltersPage(
+                  recipesProcessor: widget.recipesProcessor,
+                ))).then((data) => setState(() => {}));
+  }
 }
