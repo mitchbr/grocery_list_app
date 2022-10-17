@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:groceries/custom_theme.dart';
 
 import 'package:groceries/processors/recipes_processor.dart';
@@ -28,6 +31,7 @@ class _EditRecipeState extends State<EditRecipe> {
   var savedRecipe = true;
   var savedInstructions = true;
   var oldTitle;
+  late List<String> categories;
 
   final recipesProcessor = RecipesProcessor();
   final theme = CustomTheme();
@@ -37,7 +41,17 @@ class _EditRecipeState extends State<EditRecipe> {
     _recipeNameControl.text = widget.entryData.recipe;
     _instructionsControl.text = widget.entryData.instructions;
     oldTitle = widget.entryData.recipe;
+    categories = [];
+    getCategories().then((value) {});
     super.initState();
+  }
+
+  Future<void> getCategories() async {
+    var categoriesJson = await rootBundle.loadString('assets/recipe_categories.json');
+    categories = jsonDecode(categoriesJson)["categories"].cast<String>();
+    setState(() {
+      categories.remove("None");
+    });
   }
 
   /*
@@ -81,6 +95,7 @@ class _EditRecipeState extends State<EditRecipe> {
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     )),
                     showInstructions(),
+                    categoryDropdown(),
                     saveButton(context)
                   ]);
                 } else {
@@ -307,5 +322,33 @@ class _EditRecipeState extends State<EditRecipe> {
         });
       }
     }
+  }
+
+  /*
+   *
+   * Category Widgets
+   * 
+   */
+  Widget categoryDropdown() {
+    return ListTile(
+      title: const Text(
+        'Category',
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      ),
+      subtitle: DropdownButton(
+        value: widget.entryData.category,
+        items: categories.map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
+        onChanged: (String? value) {
+          setState(() {
+            widget.entryData.category = value!;
+          });
+        },
+      ),
+    );
   }
 }
