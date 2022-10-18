@@ -66,7 +66,6 @@ class _RecipeDetailsState extends State<RecipeDetails> {
   void pushEditEntry(BuildContext context) {
     Navigator.push(context, MaterialPageRoute(builder: (context) => EditRecipeV2(entryData: recipeEntry))).then((data) {
       setState(() => {});
-      Navigator.of(context).pop();
     });
   }
 
@@ -130,10 +129,9 @@ class _RecipeDetailsState extends State<RecipeDetails> {
         expandedCrossAxisAlignment: CrossAxisAlignment.start,
         children: moreChildren(),
       ),
-      const ListTile(
-          title: SizedBox(
-        height: 20,
-      ))
+      const SizedBox(
+        height: 75,
+      ),
     ]);
   }
 

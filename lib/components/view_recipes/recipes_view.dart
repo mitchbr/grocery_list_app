@@ -50,7 +50,7 @@ class _RecipeEntriesState extends State<RecipeEntries> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: RecipesAppBar(height: 56, recipesProcessor: recipesProcessor),
+      appBar: RecipesAppBar(height: 56 + MediaQuery.of(context).padding.top, recipesProcessor: recipesProcessor),
       body: bodyBuilder(context),
     );
   }

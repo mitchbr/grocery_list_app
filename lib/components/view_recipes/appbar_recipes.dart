@@ -4,23 +4,17 @@ import 'package:groceries/custom_theme.dart';
 
 import 'package:groceries/processors/recipes_processor.dart';
 
-class RecipesAppBar extends StatefulWidget implements PreferredSizeWidget {
+class RecipesAppBar extends StatelessWidget implements PreferredSizeWidget {
   final double height;
   final RecipesProcessor recipesProcessor;
 
-  const RecipesAppBar({Key? key, required this.height, required this.recipesProcessor}) : super(key: key);
+  final sortOptions = ["Newest Updated", "Oldest Updated", "Newest", "Oldest", "Most Times Made", "Least Times Made"];
+  final theme = CustomTheme();
 
-  @override
-  State<RecipesAppBar> createState() => _RecipesAppBarState();
+  RecipesAppBar({Key? key, required this.height, required this.recipesProcessor}) : super(key: key);
 
   @override
   Size get preferredSize => Size.fromHeight(height);
-}
-
-class _RecipesAppBarState extends State<RecipesAppBar> {
-  final sortOptions = ["Newest Updated", "Oldest Updated", "Newest", "Oldest", "Most Times Made", "Least Times Made"];
-
-  final theme = CustomTheme();
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +68,7 @@ class _RecipesAppBarState extends State<RecipesAppBar> {
   Widget sortTile(title, context) {
     return TextButton(
       onPressed: () {
-        widget.recipesProcessor.setSort(title);
+        recipesProcessor.setSort(title);
         Navigator.of(context).pop();
       },
       child: Text(title),
@@ -87,7 +81,7 @@ class _RecipesAppBarState extends State<RecipesAppBar> {
         context,
         MaterialPageRoute(
             builder: (context) => FiltersPage(
-                  recipesProcessor: widget.recipesProcessor,
-                ))).then((data) => setState(() => {}));
+                  recipesProcessor: recipesProcessor,
+                ))).then((data) => {});
   }
 }

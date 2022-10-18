@@ -37,15 +37,16 @@ class _RecipeFormState extends State<RecipeForm> {
 
   @override
   void initState() {
-    if (widget.entryData.id != 0) {
-      _recipeNameControl.text = widget.entryData.recipe;
-      _instructionsControl.text = widget.entryData.instructions;
-      savedRecipe = true;
-      savedInstructions = true;
-    }
     categories = [];
     getCategories().then((value) {
-      widget.entryData.category = categories[0];
+      if (widget.entryData.id != 0) {
+        _recipeNameControl.text = widget.entryData.recipe;
+        _instructionsControl.text = widget.entryData.instructions;
+        savedRecipe = true;
+        savedInstructions = true;
+      } else {
+        widget.entryData.category = categories[0];
+      }
     });
     super.initState();
   }
@@ -333,6 +334,9 @@ class _RecipeFormState extends State<RecipeForm> {
             if (currState.validate() && savedRecipe && savedInstructions) {
               currState.save();
               widget.processorFunction(widget.entryData);
+              if (widget.entryData.id != 0) {
+                Navigator.of(context).pop();
+              }
               Navigator.of(context).pop();
             }
           }
