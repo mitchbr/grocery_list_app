@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:groceries/processors/recipes_processor.dart';
 import 'package:groceries/types/recipe_entry.dart';
 import 'package:groceries/custom_theme.dart';
 
@@ -27,7 +26,7 @@ class _RecipeFormState extends State<RecipeForm> {
   final ingredientKey = GlobalKey<FormState>();
   final instructionsKey = GlobalKey<FormState>();
 
-  final TextEditingController _entryController = TextEditingController();
+  final TextEditingController _ingredientController = TextEditingController();
   final TextEditingController _recipeNameControl = TextEditingController();
   final TextEditingController _instructionsControl = TextEditingController();
   late List<String> categories;
@@ -38,6 +37,12 @@ class _RecipeFormState extends State<RecipeForm> {
 
   @override
   void initState() {
+    if (widget.entryData.id != 0) {
+      _recipeNameControl.text = widget.entryData.recipe;
+      _instructionsControl.text = widget.entryData.instructions;
+      savedRecipe = true;
+      savedInstructions = true;
+    }
     categories = [];
     getCategories().then((value) {
       widget.entryData.category = categories[0];
@@ -179,7 +184,7 @@ class _RecipeFormState extends State<RecipeForm> {
         currState.save();
 
         setState(() {
-          _entryController.clear();
+          _ingredientController.clear();
         });
       }
     }
@@ -187,7 +192,7 @@ class _RecipeFormState extends State<RecipeForm> {
 
   Widget ingredientTextField() {
     return TextFormField(
-      controller: _entryController,
+      controller: _ingredientController,
       cursorColor: theme.accentHighlightColor,
       decoration: theme.textFormDecoration('New Ingredient'),
       textCapitalization: TextCapitalization.words,
@@ -327,7 +332,6 @@ class _RecipeFormState extends State<RecipeForm> {
           if (currState != null) {
             if (currState.validate() && savedRecipe && savedInstructions) {
               currState.save();
-              print("Calling function");
               widget.processorFunction(widget.entryData);
               Navigator.of(context).pop();
             }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:groceries/components/recipes_edit/edit_recipe.dart';
+import 'package:groceries/components/recipes_edit/edit_recipe_v2.dart';
 import 'package:groceries/processors/checklist_processor.dart';
 import 'package:groceries/processors/recipes_processor.dart';
 import 'package:groceries/types/recipe_entry.dart';
@@ -64,8 +64,10 @@ class _RecipeDetailsState extends State<RecipeDetails> {
   }
 
   void pushEditEntry(BuildContext context) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => EditRecipe(entryData: recipeEntry)))
-        .then((data) => setState(() => {}));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => EditRecipeV2(entryData: recipeEntry))).then((data) {
+      setState(() => {});
+      Navigator.of(context).pop();
+    });
   }
 
   /*
