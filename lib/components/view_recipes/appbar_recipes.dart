@@ -18,18 +18,27 @@ class RecipesAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(color: theme.secondaryColor),
-      child: Row(
-        children: [
-          const SizedBox(width: 15),
-          Text("Recipes", style: TextStyle(fontSize: 20.0, color: theme.textColor)),
-          const Spacer(),
-          Padding(child: filterDropDown(context), padding: const EdgeInsets.all(2)),
-          Padding(child: sortDropDown(context), padding: const EdgeInsets.all(2)),
-        ],
-        mainAxisAlignment: MainAxisAlignment.start,
-      ),
+    return Column(
+      children: [
+        SizedBox(
+          height: MediaQuery.of(context).viewPadding.top,
+        ),
+        Flexible(
+          child: DecoratedBox(
+            decoration: BoxDecoration(color: theme.secondaryColor),
+            child: Row(
+              children: [
+                const SizedBox(width: 15),
+                Text("Recipes", style: TextStyle(fontSize: 20.0, color: theme.textColor)),
+                const Spacer(),
+                Padding(child: filterDropDown(context), padding: const EdgeInsets.all(2)),
+                Padding(child: sortDropDown(context), padding: const EdgeInsets.all(2)),
+              ],
+              mainAxisAlignment: MainAxisAlignment.start,
+            ),
+          ),
+        ),
+      ],
     );
   }
 

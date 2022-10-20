@@ -60,11 +60,11 @@ class RecipesProcessor {
     await database.addItem(recipe);
   }
 
-  Future<void> incrementTimesMade(RecipeEntry recipe, String oldTitle) async {
+  Future<void> incrementTimesMade(RecipeEntry recipe) async {
     recipe.timesMade += 1;
     recipe.updatedAt = DateTime.now().millisecondsSinceEpoch;
     // TODO: Use update query
-    await database.deleteItem(oldTitle);
+    await database.deleteItem(recipe.id);
     await database.addItem(recipe);
   }
 }

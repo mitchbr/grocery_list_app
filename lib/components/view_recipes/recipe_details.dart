@@ -187,10 +187,10 @@ class _RecipeDetailsState extends State<RecipeDetails> {
         onPressed: () async {
           for (int i = 0; i < recipeEntry.ingredients.length; i++) {
             if (checkedValues[i]) {
-              await recipesProcessor.incrementTimesMade(recipeEntry, recipeEntry.recipe);
               await checklistProcessor.addEntry(recipeEntry.ingredients[i]);
             }
           }
+          await recipesProcessor.incrementTimesMade(recipeEntry);
 
           Navigator.of(context).pop();
         },
