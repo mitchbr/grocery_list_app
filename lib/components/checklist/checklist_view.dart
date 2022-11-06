@@ -266,6 +266,9 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
       content: TextField(
         controller: _checklistFromTextController,
         decoration: theme.textFormDecoration('Enter Items'),
+        keyboardType: TextInputType.multiline,
+        minLines: 4,
+        maxLines: 100,
       ),
       actions: <Widget>[
         TextButton(
