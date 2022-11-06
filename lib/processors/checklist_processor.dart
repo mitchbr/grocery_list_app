@@ -32,4 +32,13 @@ class ChecklistProcessor {
 
     return entriesString;
   }
+
+  Future<void> addTextToList(text) async {
+    List<String> textList = text.split("\n");
+    for (var item in textList) {
+      if (item != "Checklist") {
+        await addEntry(item.replaceAll("- ", ""));
+      }
+    }
+  }
 }

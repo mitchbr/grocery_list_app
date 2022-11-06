@@ -22,6 +22,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
   final formKey = GlobalKey<FormState>();
   var entryData = GroceryEntry(item: '');
   final TextEditingController _entryController = TextEditingController();
+  final TextEditingController _checklistFromTextController = TextEditingController();
   late List<bool> checkedValues;
 
   @override
@@ -61,7 +62,17 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
               var checklistString = await processor.shareByText();
               showDialog(
                 context: context,
-                builder: (BuildContext context) => buildPopupDialog(checklistString),
+                builder: (BuildContext context) => fromTextPopupDialog(),
+              );
+            },
+            icon: const Icon(Icons.file_download_outlined),
+          ),
+          IconButton(
+            onPressed: () async {
+              var checklistString = await processor.shareByText();
+              showDialog(
+                context: context,
+                builder: (BuildContext context) => toTextPopupDialog(checklistString),
               );
             },
             icon: const Icon(Icons.share),
@@ -186,6 +197,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
             return null;
           }
         }
+        return null;
       },
     );
   }
@@ -232,7 +244,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
    * Share checklist text
    * 
    */
-  Widget buildPopupDialog(checklist) {
+  Widget toTextPopupDialog(checklist) {
     return AlertDialog(
       title: const Text('Share Checklist'),
       content: Text(checklist),
@@ -243,6 +255,27 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
             await Clipboard.setData(data);
           },
           child: const Icon(Icons.copy),
+        ),
+      ],
+    );
+  }
+
+  Widget fromTextPopupDialog() {
+    return AlertDialog(
+      title: const Text('Import Items'),
+      content: TextField(
+        controller: _checklistFromTextController,
+        decoration: theme.textFormDecoration('Enter Items'),
+      ),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () async {
+            await processor.addTextToList(_checklistFromTextController.text);
+            loadEntries();
+            Navigator.of(context).pop();
+            _checklistFromTextController.clear();
+          },
+          child: const Icon(Icons.file_download_outlined),
         ),
       ],
     );
