@@ -1,1 +1,8 @@
-CREATE TABLE IF NOT EXISTS grocery_checklist(id INTEGER PRIMARY KEY AUTOINCREMENT, item TEXT NOT NULL);
+DROP TABLE IF EXISTS grocery_checklist;
+CREATE TABLE IF NOT EXISTS grocery_checklist(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    list_index INTEGER NOT NULL,
+    title TEXT NOT NULL, 
+    checked INTEGER NOT NULL, 
+    source TEXT NOT NULL
+);

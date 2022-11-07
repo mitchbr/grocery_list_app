@@ -20,10 +20,9 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
   final theme = CustomTheme();
 
   final formKey = GlobalKey<FormState>();
-  var entryData = GroceryEntry(item: '');
+  var entryData = GroceryEntry(id: 0, listIndex: -1, title: '', checked: 0, source: 'Checklist');
   final TextEditingController _entryController = TextEditingController();
   final TextEditingController _checklistFromTextController = TextEditingController();
-  late List<bool> checkedValues;
 
   @override
   void initState() {
@@ -41,7 +40,6 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
       var entries = await processor.loadEntries();
       setState(() {
         checklistEntries = entries;
-        checkedValues = List.filled(checklistEntries.length, false, growable: true);
       });
     }
   }
@@ -80,7 +78,10 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
         ],
       ),
       body: bodyBuilder(context),
-      floatingActionButton: undoButton(),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [undoButton(), clearCheckedButton()],
+      ),
     );
   }
 
@@ -106,7 +107,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
    */
   Widget entriesList(BuildContext context) {
     return ReorderableListView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
         itemCount: checklistEntries.length + 1,
         itemBuilder: (context, index) {
           if (index == checklistEntries.length) {
@@ -123,11 +124,13 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
         },
         onReorder: (int oldIndex, int newIndex) {
           setState(() {
+            // TODO: Move logic to processor
             if (oldIndex < newIndex) {
               newIndex -= 1;
             }
             final item = checklistEntries.removeAt(oldIndex);
             checklistEntries.insert(newIndex, item);
+            processor.updateIndexes(checklistEntries);
           });
         });
   }
@@ -136,10 +139,10 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
     return ListTile(
       key: Key('$index'),
       leading: const Icon(Icons.reorder_rounded),
-      trailing: checkedValues[index] == true
+      trailing: checklistEntries[index].checked == 1
           ? IconButton(
               onPressed: () async {
-                prevDeleted = await processor.deleteEntry(checklistEntries[index].item);
+                prevDeleted = await processor.deleteEntry(checklistEntries[index].title);
                 setState(() {
                   loadEntries();
                 });
@@ -149,12 +152,19 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
       title: Transform.translate(
         offset: const Offset(-40, 0),
         child: CheckboxListTile(
-          title: Text(checklistEntries[index].item),
-          value: checkedValues[index],
-          onChanged: (newValue) {
-            setState(() {
-              checkedValues[index] = newValue!;
-            });
+          title: Text(checklistEntries[index].title),
+          value: checklistEntries[index].checked == 0 ? false : true,
+          onChanged: (newValue) async {
+            checklistEntries[index].checked = newValue! ? 1 : 0;
+            await processor.updateChecked(checklistEntries[index].id, checklistEntries[index].checked);
+
+            // TODO: Move reorder to processor
+            final item = checklistEntries.removeAt(index);
+            int newIndex = newValue ? checklistEntries.length : 0;
+            checklistEntries.insert(newIndex, item);
+            processor.updateIndexes(checklistEntries);
+
+            setState(() {});
           },
           activeColor: theme.accentHighlightColor,
           controlAffinity: ListTileControlAffinity.leading,
@@ -185,7 +195,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
       textCapitalization: TextCapitalization.sentences,
       onSaved: (value) {
         if (value != null) {
-          entryData.item = value;
+          entryData.title = value;
         }
       },
       validator: (value) {
@@ -207,7 +217,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
     if (currState != null) {
       if (currState.validate()) {
         currState.save();
-        processor.addEntry(entryData.item);
+        processor.addEntry(entryData.title, "checklist");
 
         setState(() {
           loadEntries();
@@ -220,7 +230,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
 
   /*
    *
-   * Undo
+   * FloatinActionButtons
    * 
    */
   Widget undoButton() {
@@ -228,7 +238,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
         visible: (prevDeleted != null),
         child: ElevatedButton.icon(
             onPressed: (() => setState(() {
-                  processor.addEntry(prevDeleted);
+                  processor.addEntry(prevDeleted, "undo");
                   prevDeleted = null;
                   loadEntries();
                 })),
@@ -237,6 +247,25 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all(theme.accentHighlightColor),
             )));
+  }
+
+  Widget clearCheckedButton() {
+    return Visibility(
+      visible: processor.getNumChecked() > 0,
+      child: ElevatedButton.icon(
+          onPressed: () async {
+            await processor.deleteChecked();
+            prevDeleted = null;
+            setState(() {
+              loadEntries();
+            });
+          },
+          icon: const Icon(Icons.close),
+          label: const Text("Clear Checked"),
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(theme.accentHighlightColor),
+          )),
+    );
   }
 
   /*
