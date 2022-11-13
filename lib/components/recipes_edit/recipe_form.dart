@@ -143,6 +143,7 @@ class _RecipeFormState extends State<RecipeForm> {
                   return null;
                 }
               }
+              return null;
             },
           ),
           trailing: IconButton(
@@ -211,6 +212,7 @@ class _RecipeFormState extends State<RecipeForm> {
             return null;
           }
         }
+        return null;
       },
     );
   }
@@ -278,6 +280,7 @@ class _RecipeFormState extends State<RecipeForm> {
                   return null;
                 }
               }
+              return null;
             },
           ),
           trailing: IconButton(onPressed: (() => saveInstructions()), icon: const Icon(Icons.check)),
