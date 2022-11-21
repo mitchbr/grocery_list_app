@@ -180,6 +180,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
                   return null;
                 }
               }
+              return null;
             },
           ),
           trailing: IconButton(
@@ -248,6 +249,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
             return null;
           }
         }
+        return null;
       },
     );
   }
@@ -315,6 +317,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
                   return null;
                 }
               }
+              return null;
             },
           ),
           trailing: IconButton(onPressed: (() => saveInstructions()), icon: const Icon(Icons.check)),

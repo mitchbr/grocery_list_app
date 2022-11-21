@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:groceries/processors/checklist_processor.dart';
 import 'package:groceries/types/grocery_entry.dart';
 import 'package:groceries/custom_theme.dart';
+import 'package:groceries/components/additional_pages/page_drawer.dart';
 
 class ChecklistEntries extends StatefulWidget {
   const ChecklistEntries({Key? key}) : super(key: key);
@@ -54,8 +55,10 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Checklist"),
-        actions: <Widget>[
-          IconButton(
+      ),
+      endDrawer: PageDrawer(
+        children: <Widget>[
+          TextButton.icon(
             onPressed: () async {
               var checklistString = await processor.shareByText();
               showDialog(
@@ -64,8 +67,9 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
               );
             },
             icon: const Icon(Icons.file_download_outlined),
+            label: const Text('Import'),
           ),
-          IconButton(
+          TextButton.icon(
             onPressed: () async {
               var checklistString = await processor.shareByText();
               showDialog(
@@ -74,6 +78,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
               );
             },
             icon: const Icon(Icons.share),
+            label: const Text('Share'),
           ),
         ],
       ),

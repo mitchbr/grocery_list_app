@@ -60,10 +60,6 @@ class _GroceriesState extends State<Groceries> {
             icon: Icon(Icons.list),
             label: 'Recipes',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add),
-            label: 'New',
-          ),
         ],
         currentIndex: selectedIndex,
         onTap: _onItemTapped,
