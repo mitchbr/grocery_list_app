@@ -1,10 +1,12 @@
 import 'package:groceries/types/grocery_entry.dart';
 import 'package:groceries/database/checklist_database.dart';
 import 'package:groceries/database/checklist_firestore_database.dart';
+import 'dart:math';
 
 class ChecklistProcessor {
   ChecklistDatabase database = ChecklistDatabase();
   ChecklistFirestoreDatabase firestoreDatabase = ChecklistFirestoreDatabase();
+
   int listLength = 0;
   int numChecked = 0;
 
@@ -37,6 +39,16 @@ class ChecklistProcessor {
 
   Future<void> addEntry(title, source) async {
     await database.addItem(listLength, title, source);
+    Random random = Random();
+    final newEntry = {
+      'list_index': listLength,
+      'title': title,
+      'checked': 0,
+      'source': source,
+      'author': 'mitch',
+      'id': random.nextInt(10000)
+    };
+    await firestoreDatabase.addItem(newEntry);
     listLength += 1;
   }
 

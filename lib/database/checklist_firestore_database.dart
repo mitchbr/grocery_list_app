@@ -11,4 +11,9 @@ class ChecklistFirestoreDatabase {
 
     return entries;
   }
+
+  Future<void> addItem(item) async {
+    var checklistCollection = _fireStore.collection('checklist');
+    checklistCollection.add(item);
+  }
 }
