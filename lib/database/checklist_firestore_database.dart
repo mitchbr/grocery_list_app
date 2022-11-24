@@ -9,7 +9,6 @@ class ChecklistFirestoreDatabase {
     var querySnapshot = await _fireStore.collection('checklist').where('author', isEqualTo: author).get();
     var entries = querySnapshot.docs.map((e) => {'uuid': e.id, ...e.data()}).toList();
 
-    print(entries.last['uuid']);
     return entries;
   }
 
@@ -36,7 +35,7 @@ class ChecklistFirestoreDatabase {
     if (checked != -1) {
       updateData['checked'] = checked;
     } else if (listIndex != -1) {
-      updateData['listIndex'] = listIndex;
+      updateData['list_index'] = listIndex;
     } else {
       return;
     }
