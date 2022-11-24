@@ -147,7 +147,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
       trailing: checklistEntries[index].checked == 1
           ? IconButton(
               onPressed: () async {
-                prevDeleted = await processor.deleteEntry(checklistEntries[index].title);
+                prevDeleted = await processor.deleteEntry(checklistEntries[index].title, checklistEntries[index].uuid);
                 setState(() {
                   loadEntries();
                 });
@@ -161,7 +161,8 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
           value: checklistEntries[index].checked == 0 ? false : true,
           onChanged: (newValue) async {
             checklistEntries[index].checked = newValue! ? 1 : 0;
-            await processor.updateChecked(checklistEntries[index].id, checklistEntries[index].checked);
+            await processor.updateChecked(
+                checklistEntries[index].id, checklistEntries[index].uuid, checklistEntries[index].checked);
 
             // TODO: Move reorder to processor
             final item = checklistEntries.removeAt(index);
@@ -259,7 +260,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
       visible: processor.getNumChecked() > 0,
       child: ElevatedButton.icon(
           onPressed: () async {
-            await processor.deleteChecked();
+            await processor.deleteChecked(checklistEntries);
             prevDeleted = null;
             setState(() {
               loadEntries();
