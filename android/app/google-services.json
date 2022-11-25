@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "32112406340",
+    "project_id": "grocerylistapp-bf738",
+    "storage_bucket": "grocerylistapp-bf738.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:32112406340:android:66c74ce193645afdf87111",
+        "android_client_info": {
+          "package_name": "edu.oregonstate.brownmit.groceries"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "32112406340-lb9ibn2vnucgebb7i4cmfmgnf1q1oiig.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7WlowOEe7kHZA7s3pQ5wbGeclD8ddNmw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "32112406340-lb9ibn2vnucgebb7i4cmfmgnf1q1oiig.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

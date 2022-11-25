@@ -1,21 +1,25 @@
 import 'package:groceries/types/grocery_entry.dart';
 import 'package:groceries/database/checklist_database.dart';
+import 'package:groceries/database/checklist_firestore_database.dart';
 
 class ChecklistProcessor {
   ChecklistDatabase database = ChecklistDatabase();
+  ChecklistFirestoreDatabase firestoreDatabase = ChecklistFirestoreDatabase();
   int listLength = 0;
   int numChecked = 0;
 
   Future<List<GroceryEntry>> loadEntries() async {
-    List<Map> entries = await database.loadItems();
-    final entriesList = entries.map((record) {
+    List<Map> entries = await firestoreDatabase.getItems('mitch');
+    // List<Map> entries = await database.loadItems();
+    List<GroceryEntry> entriesList = entries.map((record) {
       return GroceryEntry(
-        id: record['id'],
-        listIndex: record['list_index'],
-        title: record['title'],
-        checked: record['checked'],
-        source: record['source'],
-      );
+          id: record['id'],
+          uuid: record['uuid'],
+          listIndex: record['list_index'],
+          title: record['title'],
+          checked: record['checked'],
+          source: record['source'],
+          author: record['author']);
     }).toList();
     listLength = entriesList.length;
     for (var entry in entriesList) {
