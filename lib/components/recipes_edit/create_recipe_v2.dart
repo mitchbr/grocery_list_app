@@ -14,7 +14,7 @@ class _CreateRecipeV2State extends State<CreateRecipeV2> {
   final recipesProcessor = RecipesProcessor();
 
   var entryData = RecipeEntry(
-      id: 0,
+      id: 'init',
       recipe: '',
       ingredients: [],
       instructions: '',
@@ -22,7 +22,8 @@ class _CreateRecipeV2State extends State<CreateRecipeV2> {
       tags: "tag",
       updatedAt: DateTime.now().millisecondsSinceEpoch,
       createdAt: DateTime.now().millisecondsSinceEpoch,
-      timesMade: 0);
+      timesMade: 0,
+      author: '');
 
   @override
   Widget build(BuildContext context) {

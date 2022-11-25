@@ -26,7 +26,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
   final instructionsKey = GlobalKey<FormState>();
 
   var entryData = RecipeEntry(
-      id: 0,
+      id: 'init',
       recipe: '',
       ingredients: [],
       instructions: '',
@@ -34,7 +34,8 @@ class _CreateRecipeState extends State<CreateRecipe> {
       tags: "tag",
       updatedAt: DateTime.now().millisecondsSinceEpoch,
       createdAt: DateTime.now().millisecondsSinceEpoch,
-      timesMade: 0);
+      timesMade: 0,
+      author: "");
   final TextEditingController _entryController = TextEditingController();
   final TextEditingController _recipeNameControl = TextEditingController();
   final TextEditingController _instructionsControl = TextEditingController();

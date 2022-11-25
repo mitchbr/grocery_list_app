@@ -13,7 +13,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final profileKey = GlobalKey<FormState>();
   final TextEditingController _profileController = TextEditingController();
-  bool savedUsername = false;
+  late bool savedUsername;
   late String username;
 
   final theme = CustomTheme();
@@ -21,8 +21,17 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   void initState() {
-    username = '';
-    processor.getUsername().then((value) => setState(() => username = value!));
+    username = 'no_username_set';
+    processor.getUsername().then((value) {
+      if (value != null) {
+        savedUsername = true;
+        _profileController.text = value;
+        setState(() => username = value);
+      } else {
+        savedUsername = false;
+        setState(() => username = 'no_username_set');
+      }
+    });
     super.initState();
   }
 
@@ -37,10 +46,10 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget profileField() {
-    if (username != null) {
-      return profileTile();
-    } else {
+    if (savedUsername == false) {
       return profileTextField();
+    } else {
+      return profileTile();
     }
   }
 
@@ -69,6 +78,7 @@ class _ProfilePageState extends State<ProfilePage> {
             onSaved: (value) {
               if (value != null) {
                 processor.setUsername(value);
+                username = value;
               }
             },
             validator: (value) {

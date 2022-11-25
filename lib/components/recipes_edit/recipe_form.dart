@@ -39,7 +39,7 @@ class _RecipeFormState extends State<RecipeForm> {
   void initState() {
     categories = [];
     getCategories().then((value) {
-      if (widget.entryData.id != 0) {
+      if (widget.entryData.id != 'init') {
         _recipeNameControl.text = widget.entryData.recipe;
         _instructionsControl.text = widget.entryData.instructions;
         savedRecipe = true;
