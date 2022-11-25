@@ -1,10 +1,14 @@
 import 'dart:convert';
 
+import 'package:groceries/api/recipe_api.dart';
+import 'package:groceries/processors/profile_processor.dart';
 import 'package:groceries/types/recipe_entry.dart';
-import 'package:groceries/database/recipes_database.dart';
 
 class RecipesProcessor {
-  RecipesDatabase database = RecipesDatabase();
+  // RecipesDatabase database = RecipesDatabase();
+  RecipesApi recipesApi = RecipesApi();
+  ProfileProcessor profileProcessor = ProfileProcessor();
+
   String sort;
   String category;
 
@@ -13,7 +17,10 @@ class RecipesProcessor {
         sort = "updatedAtNewest";
 
   Future<List> loadRecipes() async {
-    List<Map> entries = await database.loadItems(sort: sort, category: category);
+    // List<Map> entries = await database.loadItems(sort: sort, category: category);
+    String username = await profileProcessor.getUsername() ?? '';
+    // TODO: Add sort and category
+    List<Map> entries = await recipesApi.getEntries(username);
 
     return entries.map((record) {
       return RecipeEntry(
@@ -25,7 +32,8 @@ class RecipesProcessor {
           tags: record["tags"],
           updatedAt: record['updatedAt'],
           createdAt: record['createdAt'],
-          timesMade: record['timesMade']);
+          timesMade: record['timesMade'],
+          author: record['author']);
     }).toList();
   }
 
@@ -46,25 +54,33 @@ class RecipesProcessor {
   }
 
   Future<void> addRecipe(recipe) async {
-    await database.addItem(recipe);
+    recipe['author'] = await profileProcessor.getUsername() ?? '';
+
+    // await database.addItem(recipe);
+    await recipesApi.addItem(recipe);
   }
 
-  Future<void> deleteRecipe(title) async {
-    await database.deleteItem(title);
+  Future<void> deleteRecipe(id) async {
+    // await database.deleteItem(id);
+    await recipesApi.deleteItem(id);
   }
 
   Future<void> updateRecipe(RecipeEntry recipe) async {
     recipe.updatedAt = DateTime.now().millisecondsSinceEpoch;
     // TODO: use update query
-    await database.deleteItem(recipe.id);
-    await database.addItem(recipe);
+    // await database.deleteItem(recipe.id);
+    // await database.addItem(recipe);
+    await recipesApi.deleteItem(recipe.id);
+    await recipesApi.addItem(recipe);
   }
 
   Future<void> incrementTimesMade(RecipeEntry recipe) async {
     recipe.timesMade += 1;
     recipe.updatedAt = DateTime.now().millisecondsSinceEpoch;
     // TODO: Use update query
-    await database.deleteItem(recipe.id);
-    await database.addItem(recipe);
+    // await database.deleteItem(recipe.id);
+    // await database.addItem(recipe);
+    await recipesApi.deleteItem(recipe.id);
+    await recipesApi.addItem(recipe);
   }
 }

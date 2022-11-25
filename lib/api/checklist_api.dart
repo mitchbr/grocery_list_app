@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 CollectionReference checklist = FirebaseFirestore.instance.collection('checklist');
 
-class ChecklistFirestoreDatabase {
+class ChecklistApi {
   final _fireStore = FirebaseFirestore.instance;
 
   Future<List<Map>> getItems(author) async {
