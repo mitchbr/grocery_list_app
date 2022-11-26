@@ -17,10 +17,9 @@ class RecipesProcessor {
         sort = "updatedAtNewest";
 
   Future<List> loadRecipes() async {
-    // List<Map> entries = await database.loadItems(sort: sort, category: category);
     String username = await profileProcessor.getUsername() ?? '';
     // TODO: Add sort and category
-    List<Map> entries = await recipesApi.getEntries(username);
+    List<Map> entries = await recipesApi.getEntries(username, sort: sort, category: category);
 
     return entries.map((record) {
       return RecipeEntry(
@@ -56,31 +55,21 @@ class RecipesProcessor {
   Future<void> addRecipe(recipe) async {
     recipe['author'] = await profileProcessor.getUsername() ?? '';
 
-    // await database.addItem(recipe);
     await recipesApi.addItem(recipe);
   }
 
   Future<void> deleteRecipe(id) async {
-    // await database.deleteItem(id);
     await recipesApi.deleteItem(id);
   }
 
   Future<void> updateRecipe(RecipeEntry recipe) async {
     recipe.updatedAt = DateTime.now().millisecondsSinceEpoch;
-    // TODO: use update query
-    // await database.deleteItem(recipe.id);
-    // await database.addItem(recipe);
-    await recipesApi.deleteItem(recipe.id);
-    await recipesApi.addItem(recipe);
+    await recipesApi.updateItem(recipe);
   }
 
   Future<void> incrementTimesMade(RecipeEntry recipe) async {
     recipe.timesMade += 1;
     recipe.updatedAt = DateTime.now().millisecondsSinceEpoch;
-    // TODO: Use update query
-    // await database.deleteItem(recipe.id);
-    // await database.addItem(recipe);
-    await recipesApi.deleteItem(recipe.id);
-    await recipesApi.addItem(recipe);
+    recipesApi.updateItem(recipe);
   }
 }

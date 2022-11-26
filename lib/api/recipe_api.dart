@@ -6,7 +6,7 @@ CollectionReference recipes = FirebaseFirestore.instance.collection('recipes');
 class RecipesApi {
   final _fireStore = FirebaseFirestore.instance;
 
-  Future<List<Map>> getEntries(author) async {
+  Future<List<Map>> getEntries(author, {sort, category}) async {
     var querySnapshot = await _fireStore.collection('recipes').where('author', isEqualTo: author).get();
     var entries = querySnapshot.docs.map((e) => {'id': e.id, ...e.data()}).toList();
 
@@ -31,5 +31,19 @@ class RecipesApi {
     // TODO: Add error catching
     var checklistCollection = _fireStore.collection('recipes');
     await checklistCollection.doc(id).delete();
+  }
+
+  Future<void> updateItem(recipe) async {
+    var checklistCollection = _fireStore.collection('recipes');
+    await checklistCollection.doc(recipe.uuid).update({
+      'recipe': recipe.recipe,
+      'ingredients': recipe.ingredients,
+      'instructions': recipe.instructions,
+      'category': recipe.category,
+      'tags': recipe.tags,
+      'updatedAd': recipe.updatedAt,
+      'createdAt': recipe.createdAt,
+      'timesMade': recipe.timesMade,
+    });
   }
 }

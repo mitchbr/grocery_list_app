@@ -4,8 +4,7 @@ import 'package:groceries/api/checklist_api.dart';
 import 'dart:math';
 
 class ChecklistProcessor {
-  // ChecklistDatabase database = ChecklistDatabase();
-  ChecklistApi firestoreApi = ChecklistApi();
+  ChecklistApi checklistApi = ChecklistApi();
   ProfileProcessor profileProcessor = ProfileProcessor();
 
   int listLength = 0;
@@ -13,8 +12,7 @@ class ChecklistProcessor {
 
   Future<List<GroceryEntry>> loadEntries() async {
     String username = await profileProcessor.getUsername() ?? '';
-    List<Map> entries = await firestoreApi.getItems(username);
-    // List<Map> entries = await database.loadItems();
+    List<Map> entries = await checklistApi.getItems(username);
     List<GroceryEntry> entriesList = entries.map((record) {
       return GroceryEntry(
           id: record['id'],
@@ -34,14 +32,12 @@ class ChecklistProcessor {
   }
 
   Future<String> deleteEntry(title, uuid) async {
-    // await database.deleteItem(title);
-    await firestoreApi.deleteItem(uuid);
+    await checklistApi.deleteItem(uuid);
     listLength -= 1;
     return title;
   }
 
   Future<void> addEntry(title, source) async {
-    // await database.addItem(listLength, title, source);
     Random random = Random();
     var username = await profileProcessor.getUsername() ?? '';
     final newEntry = {
@@ -52,15 +48,13 @@ class ChecklistProcessor {
       'author': username,
       'id': random.nextInt(10000)
     };
-    await firestoreApi.addItem(newEntry);
+    await checklistApi.addItem(newEntry);
     listLength += 1;
   }
 
   Future<String> shareByText() async {
-    // TODO: Update this
-    // List<Map> entries = await database.loadItems();
     String username = await profileProcessor.getUsername() ?? '';
-    List<Map> entries = await firestoreApi.getItems(username);
+    List<Map> entries = await checklistApi.getItems(username);
     String entriesString = 'Checklist:\n';
     for (var entry in entries) {
       entriesString += "- ${entry['title']}\n";
@@ -70,10 +64,9 @@ class ChecklistProcessor {
   }
 
   Future<void> addTextToList(text) async {
-    // TODO: Update this
     for (var item in text.split("\n")) {
       if (item.startsWith("- ")) {
-        // await database.addItem(listLength, item.replaceAll("- ", ""), "sharing");
+        await addEntry(item.replaceAll("- ", ""), "sharing");
         listLength += 1;
       }
     }
@@ -81,23 +74,19 @@ class ChecklistProcessor {
 
   Future<void> updateChecked(id, uuid, checked) async {
     // TODO: Reorder based on check/uncheck
-    // TODO: Update this
-    // await database.updateItem(id, checked: checked);
-    await firestoreApi.updateItem(uuid, checked: checked);
+    await checklistApi.updateItem(uuid, checked: checked);
     numChecked += (checked == 1) ? 1 : -1;
   }
 
   Future<void> updateIndexes(entriesList) async {
     // TODO: Batch update
     for (int i = 0; i < entriesList.length; i++) {
-      // await database.updateItem(entriesList[i].id, listIndex: i);
-      await firestoreApi.updateItem(entriesList[i].uuid, listIndex: i);
+      await checklistApi.updateItem(entriesList[i].uuid, listIndex: i);
     }
   }
 
   Future<void> deleteChecked(entries) async {
-    // await database.deleteChecked();
-    await firestoreApi.deleteChecked(entries);
+    await checklistApi.deleteChecked(entries);
     numChecked = 0;
   }
 
