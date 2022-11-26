@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:groceries/components/additional_pages/page_drawer.dart';
 
 import 'package:groceries/components/recipes_edit/edit_recipe_v2.dart';
 import 'package:groceries/processors/checklist_processor.dart';
@@ -39,23 +40,33 @@ class _RecipeDetailsState extends State<RecipeDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      endDrawer: PageDrawer(children: <Widget>[
+        TextButton.icon(
+          onPressed: () {},
+          icon: const Icon(Icons.file_download_outlined),
+          label: const Text('Import'),
+        ),
+        TextButton.icon(
+          onPressed: () {},
+          icon: const Icon(Icons.share),
+          label: const Text('Share'),
+        ),
+        Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () => pushEditEntry(context),
+          ),
+        ),
+        Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.delete_rounded),
+            onPressed: () =>
+                showDialog<String>(context: context, builder: (BuildContext context) => verifyDeleteRecipe(context)),
+          ),
+        ),
+      ]),
       appBar: AppBar(
         title: Text(recipeEntry.recipe),
-        actions: [
-          Builder(
-            builder: (context) => IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: () => pushEditEntry(context),
-            ),
-          ),
-          Builder(
-            builder: (context) => IconButton(
-              icon: const Icon(Icons.delete_rounded),
-              onPressed: () =>
-                  showDialog<String>(context: context, builder: (BuildContext context) => verifyDeleteRecipe(context)),
-            ),
-          ),
-        ],
       ),
       body: entriesList(context),
       floatingActionButton: addToGroceryList(context),
