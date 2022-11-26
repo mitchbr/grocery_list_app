@@ -11,7 +11,7 @@ class ChecklistProcessor {
   int numChecked = 0;
 
   Future<List<GroceryEntry>> loadEntries() async {
-    String username = await profileProcessor.getUsername() ?? '';
+    String username = await profileProcessor.getUsername();
     List<Map> entries = await checklistApi.getItems(username);
     List<GroceryEntry> entriesList = entries.map((record) {
       return GroceryEntry(
@@ -39,7 +39,7 @@ class ChecklistProcessor {
 
   Future<void> addEntry(title, source) async {
     Random random = Random();
-    var username = await profileProcessor.getUsername() ?? '';
+    var username = await profileProcessor.getUsername();
     final newEntry = {
       'list_index': listLength,
       'title': title,
@@ -53,7 +53,7 @@ class ChecklistProcessor {
   }
 
   Future<String> shareByText() async {
-    String username = await profileProcessor.getUsername() ?? '';
+    String username = await profileProcessor.getUsername();
     List<Map> entries = await checklistApi.getItems(username);
     String entriesString = 'Checklist:\n';
     for (var entry in entries) {

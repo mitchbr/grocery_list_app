@@ -8,9 +8,11 @@ class ProfileProcessor {
     return prefs;
   }
 
-  Future<String?> getUsername() async {
+  Future<String> getUsername() async {
     var prefs = await _getPrefs();
-    return prefs.getString('username');
+    String username = prefs.getString('username') ?? '';
+
+    return username;
   }
 
   Future<void> setUsername(String username) async {

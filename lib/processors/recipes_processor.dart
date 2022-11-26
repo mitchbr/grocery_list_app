@@ -17,7 +17,7 @@ class RecipesProcessor {
         sort = "updatedAtNewest";
 
   Future<List> loadRecipes() async {
-    String username = await profileProcessor.getUsername() ?? '';
+    String username = await profileProcessor.getUsername();
     // TODO: Add sort and category
     List<Map> entries = await recipesApi.getEntries(username, sort: sort, category: category);
 
@@ -53,7 +53,7 @@ class RecipesProcessor {
   }
 
   Future<void> addRecipe(recipe) async {
-    recipe['author'] = await profileProcessor.getUsername() ?? '';
+    recipe['author'] = await profileProcessor.getUsername();
 
     await recipesApi.addItem(recipe);
   }
