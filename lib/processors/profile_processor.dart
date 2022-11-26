@@ -10,7 +10,7 @@ class ProfileProcessor {
 
   Future<String> getUsername() async {
     var prefs = await _getPrefs();
-    String username = prefs.getString('username') ?? '';
+    String username = prefs.getString('username') ?? 'no_username_set';
 
     return username;
   }

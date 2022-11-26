@@ -13,7 +13,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final profileKey = GlobalKey<FormState>();
   final TextEditingController _profileController = TextEditingController();
-  late bool savedUsername;
+  bool savedUsername = false;
   late String username;
 
   final theme = CustomTheme();
@@ -23,7 +23,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     username = 'no_username_set';
     processor.getUsername().then((value) {
-      if (value != null) {
+      if (value != 'no_username_set') {
         savedUsername = true;
         _profileController.text = value;
         setState(() => username = value);

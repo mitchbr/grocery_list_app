@@ -142,15 +142,16 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
 
   Widget groceryTile(int index) {
     return Dismissible(
-      key: Key('$index'),
+      key: Key('${checklistEntries[index].uuid}'),
       onDismissed: (direction) async {
         prevDeleted = await processor.deleteEntry(checklistEntries[index].title, checklistEntries[index].uuid);
-        setState(() {
-          loadEntries();
-        });
+        checklistEntries.removeAt(index);
+        loadEntries();
+
+        setState(() {});
       },
       child: ListTile(
-        key: Key('$index'),
+        key: Key('${checklistEntries[index].uuid}}'),
         // leading: checklistEntries[index].checked == 1
         //     ? IconButton(
         //         onPressed: () async {
