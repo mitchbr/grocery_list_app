@@ -141,39 +141,48 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
   }
 
   Widget groceryTile(int index) {
-    return ListTile(
+    return Dismissible(
       key: Key('$index'),
-      leading: const Icon(Icons.reorder_rounded),
-      trailing: checklistEntries[index].checked == 1
-          ? IconButton(
-              onPressed: () async {
-                prevDeleted = await processor.deleteEntry(checklistEntries[index].title, checklistEntries[index].uuid);
-                setState(() {
-                  loadEntries();
-                });
-              },
-              icon: const Icon(Icons.close))
-          : null,
-      title: Transform.translate(
-        offset: const Offset(-40, 0),
-        child: CheckboxListTile(
-          title: Text(checklistEntries[index].title),
-          value: checklistEntries[index].checked == 0 ? false : true,
-          onChanged: (newValue) async {
-            checklistEntries[index].checked = newValue! ? 1 : 0;
-            await processor.updateChecked(
-                checklistEntries[index].id, checklistEntries[index].uuid, checklistEntries[index].checked);
+      onDismissed: (direction) async {
+        prevDeleted = await processor.deleteEntry(checklistEntries[index].title, checklistEntries[index].uuid);
+        setState(() {
+          loadEntries();
+        });
+      },
+      child: ListTile(
+        key: Key('$index'),
+        // leading: checklistEntries[index].checked == 1
+        //     ? IconButton(
+        //         onPressed: () async {
+        //           prevDeleted =
+        //               await processor.deleteEntry(checklistEntries[index].title, checklistEntries[index].uuid);
+        //           setState(() {
+        //             loadEntries();
+        //           });
+        //         },
+        //         icon: const Icon(Icons.close))
+        //     : null,
+        title: Transform.translate(
+          offset: const Offset(-40, 0),
+          child: CheckboxListTile(
+            title: Text(checklistEntries[index].title),
+            value: checklistEntries[index].checked == 0 ? false : true,
+            onChanged: (newValue) async {
+              checklistEntries[index].checked = newValue! ? 1 : 0;
+              await processor.updateChecked(
+                  checklistEntries[index].id, checklistEntries[index].uuid, checklistEntries[index].checked);
 
-            // TODO: Move reorder to processor
-            final item = checklistEntries.removeAt(index);
-            int newIndex = newValue ? checklistEntries.length : 0;
-            checklistEntries.insert(newIndex, item);
-            processor.updateIndexes(checklistEntries);
+              // TODO: Move reorder to processor
+              final item = checklistEntries.removeAt(index);
+              int newIndex = newValue ? checklistEntries.length : 0;
+              checklistEntries.insert(newIndex, item);
+              processor.updateIndexes(checklistEntries);
 
-            setState(() {});
-          },
-          activeColor: theme.accentHighlightColor,
-          controlAffinity: ListTileControlAffinity.leading,
+              setState(() {});
+            },
+            activeColor: theme.accentHighlightColor,
+            controlAffinity: ListTileControlAffinity.leading,
+          ),
         ),
       ),
     );
