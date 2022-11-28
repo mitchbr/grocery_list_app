@@ -19,7 +19,7 @@ class RecipesProcessor {
     List<Map> entries = await recipesApi.getEntries(username);
 
     // Filter
-    entries.where((entry) => category != 'None' ? entry['category'] == category : true);
+    entries = entries.where((entry) => category != 'None' ? entry['category'] == category : true).toList();
 
     // Sort
 
