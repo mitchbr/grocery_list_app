@@ -229,6 +229,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
               setState(() {});
               Navigator.of(context).pop();
               Navigator.of(context).pop();
+              Navigator.of(context).pop();
             },
             child: const Text('Yes'),
           ),

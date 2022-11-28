@@ -337,7 +337,9 @@ class _RecipeFormState extends State<RecipeForm> {
             if (currState.validate() && savedRecipe && savedInstructions) {
               currState.save();
               widget.processorFunction(widget.entryData);
-              if (widget.entryData.id != 0) {
+              if (widget.entryData.id != 'init') {
+                // TODO: Change the way this pops out of editing recipes
+                Navigator.of(context).pop();
                 Navigator.of(context).pop();
               }
               Navigator.of(context).pop();

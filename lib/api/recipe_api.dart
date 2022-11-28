@@ -6,7 +6,7 @@ CollectionReference recipes = FirebaseFirestore.instance.collection('recipes');
 class RecipesApi {
   final _fireStore = FirebaseFirestore.instance;
 
-  Future<List<Map>> getEntries(author, {sort, category}) async {
+  Future<List<Map>> getEntries(author) async {
     var querySnapshot = await _fireStore.collection('recipes').where('author', isEqualTo: author).get();
     var entries = querySnapshot.docs.map((e) => {'id': e.id, ...e.data()}).toList();
 
@@ -21,9 +21,10 @@ class RecipesApi {
       'instructions': entry.instructions,
       'category': entry.category,
       'tags': entry.tags,
-      'updatedAd': entry.updatedAt,
+      'updatedAt': entry.updatedAt,
       'createdAt': entry.createdAt,
       'timesMade': entry.timesMade,
+      'author': entry.author
     });
   }
 
@@ -35,13 +36,13 @@ class RecipesApi {
 
   Future<void> updateItem(recipe) async {
     var checklistCollection = _fireStore.collection('recipes');
-    await checklistCollection.doc(recipe.uuid).update({
+    await checklistCollection.doc(recipe.id).update({
       'recipe': recipe.recipe,
       'ingredients': recipe.ingredients,
       'instructions': recipe.instructions,
       'category': recipe.category,
       'tags': recipe.tags,
-      'updatedAd': recipe.updatedAt,
+      'updatedAt': recipe.updatedAt,
       'createdAt': recipe.createdAt,
       'timesMade': recipe.timesMade,
     });

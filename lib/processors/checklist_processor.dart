@@ -82,7 +82,7 @@ class ChecklistProcessor {
   }
 
   Future<void> deleteChecked(entries) async {
-    await checklistApi.deleteChecked(entries.where((entry) => entry['checked'] == 1).toList());
+    await checklistApi.deleteChecked(entries.where((entry) => entry.checked == 1).toList());
     numChecked = 0;
   }
 

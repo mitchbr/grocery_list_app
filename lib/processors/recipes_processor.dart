@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:groceries/api/recipe_api.dart';
 import 'package:groceries/processors/profile_processor.dart';
 import 'package:groceries/types/recipe_entry.dart';
@@ -18,14 +16,18 @@ class RecipesProcessor {
 
   Future<List> loadRecipes() async {
     String username = await profileProcessor.getUsername();
-    // TODO: Add sort and category
-    List<Map> entries = await recipesApi.getEntries(username, sort: sort, category: category);
+    List<Map> entries = await recipesApi.getEntries(username);
+
+    // Filter
+    entries.where((entry) => category != 'None' ? entry['category'] == category : true);
+
+    // Sort
 
     return entries.map((record) {
       return RecipeEntry(
           id: record["id"],
           recipe: record['recipe'],
-          ingredients: json.decode(record['ingredients']),
+          ingredients: record['ingredients'],
           instructions: record['instructions'],
           category: record["category"],
           tags: record["tags"],
@@ -53,7 +55,7 @@ class RecipesProcessor {
   }
 
   Future<void> addRecipe(recipe) async {
-    recipe['author'] = await profileProcessor.getUsername();
+    recipe.author = await profileProcessor.getUsername();
 
     await recipesApi.addItem(recipe);
   }
