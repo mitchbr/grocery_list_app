@@ -1,7 +1,6 @@
 import 'package:groceries/processors/profile_processor.dart';
 import 'package:groceries/types/grocery_entry.dart';
 import 'package:groceries/api/checklist_api.dart';
-import 'dart:math';
 
 class ChecklistProcessor {
   ChecklistApi checklistApi = ChecklistApi();
@@ -16,7 +15,6 @@ class ChecklistProcessor {
     List<GroceryEntry> entriesList = entries.map((record) {
       return GroceryEntry(
           id: record['id'],
-          uuid: record['uuid'],
           listIndex: record['list_index'],
           title: record['title'],
           checked: record['checked'],
@@ -31,14 +29,13 @@ class ChecklistProcessor {
     return entriesList;
   }
 
-  Future<String> deleteEntry(title, uuid) async {
-    await checklistApi.deleteItem(uuid);
+  Future<String> deleteEntry(title, id) async {
+    await checklistApi.deleteItem(id);
     listLength -= 1;
     return title;
   }
 
   Future<void> addEntry(title, source) async {
-    Random random = Random();
     var username = await profileProcessor.getUsername();
     final newEntry = {
       'list_index': listLength,
@@ -46,7 +43,6 @@ class ChecklistProcessor {
       'checked': 0,
       'source': source,
       'author': username,
-      'id': random.nextInt(10000)
     };
     await checklistApi.addItem(newEntry);
     listLength += 1;
@@ -72,21 +68,21 @@ class ChecklistProcessor {
     }
   }
 
-  Future<void> updateChecked(id, uuid, checked) async {
+  Future<void> updateChecked(id, checked) async {
     // TODO: Reorder based on check/uncheck
-    await checklistApi.updateItem(uuid, checked: checked);
+    await checklistApi.updateItem(id, checked: checked);
     numChecked += (checked == 1) ? 1 : -1;
   }
 
   Future<void> updateIndexes(entriesList) async {
     // TODO: Batch update
     for (int i = 0; i < entriesList.length; i++) {
-      await checklistApi.updateItem(entriesList[i].uuid, listIndex: i);
+      await checklistApi.updateItem(entriesList[i].id, listIndex: i);
     }
   }
 
   Future<void> deleteChecked(entries) async {
-    await checklistApi.deleteChecked(entries);
+    await checklistApi.deleteChecked(entries.where((entry) => entry['checked'] == 1).toList());
     numChecked = 0;
   }
 

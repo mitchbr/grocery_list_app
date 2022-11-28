@@ -21,22 +21,19 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
   final theme = CustomTheme();
 
   final formKey = GlobalKey<FormState>();
-  var entryData = GroceryEntry(id: 0, listIndex: -1, title: '', checked: 0, source: 'Checklist');
+  var entryData = GroceryEntry(id: 'id', listIndex: -1, title: '', checked: 0, source: 'Checklist', author: 'default');
   final TextEditingController _entryController = TextEditingController();
   final TextEditingController _checklistFromTextController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    // TODO: Change to initChecklist method
     loadEntries();
   }
 
-  /*
-   *
-   * Load SQL data
-   *
-   */
   void loadEntries() async {
+    // TODO: Move to initChecklist method
     if (mounted) {
       var entries = await processor.loadEntries();
       setState(() {
@@ -45,11 +42,6 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
     }
   }
 
-  /*
-   *
-   * Page Entry Point
-   * 
-   */
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,7 +52,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
         children: <Widget>[
           TextButton.icon(
             onPressed: () async {
-              var checklistString = await processor.shareByText();
+              await processor.shareByText();
               showDialog(
                 context: context,
                 builder: (BuildContext context) => fromTextPopupDialog(),
@@ -91,6 +83,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
   }
 
   Widget bodyBuilder(BuildContext context) {
+    // TODO: Add reload functionality, especially for when load fails
     if (checklistEntries == null) {
       return circularIndicator(context);
     } else {
@@ -105,11 +98,6 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
     ));
   }
 
-  /*
-   *
-   * Entry List Widgets
-   * 
-   */
   Widget entriesList(BuildContext context) {
     return ReorderableListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
@@ -142,27 +130,16 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
 
   Widget groceryTile(int index) {
     return Dismissible(
-      key: Key('${checklistEntries[index].uuid}'),
+      key: Key('${checklistEntries[index].id}'),
       onDismissed: (direction) async {
-        prevDeleted = await processor.deleteEntry(checklistEntries[index].title, checklistEntries[index].uuid);
+        prevDeleted = await processor.deleteEntry(checklistEntries[index].title, checklistEntries[index].id);
         checklistEntries.removeAt(index);
         loadEntries();
 
         setState(() {});
       },
       child: ListTile(
-        key: Key('${checklistEntries[index].uuid}}'),
-        // leading: checklistEntries[index].checked == 1
-        //     ? IconButton(
-        //         onPressed: () async {
-        //           prevDeleted =
-        //               await processor.deleteEntry(checklistEntries[index].title, checklistEntries[index].uuid);
-        //           setState(() {
-        //             loadEntries();
-        //           });
-        //         },
-        //         icon: const Icon(Icons.close))
-        //     : null,
+        key: Key('${checklistEntries[index].id}}'),
         title: Transform.translate(
           offset: const Offset(-40, 0),
           child: CheckboxListTile(
@@ -170,8 +147,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
             value: checklistEntries[index].checked == 0 ? false : true,
             onChanged: (newValue) async {
               checklistEntries[index].checked = newValue! ? 1 : 0;
-              await processor.updateChecked(
-                  checklistEntries[index].id, checklistEntries[index].uuid, checklistEntries[index].checked);
+              await processor.updateChecked(checklistEntries[index].id, checklistEntries[index].checked);
 
               // TODO: Move reorder to processor
               final item = checklistEntries.removeAt(index);
@@ -189,11 +165,6 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
     );
   }
 
-  /*
-   *
-   * Add New Entries
-   * 
-   */
   Widget newEntryBox(BuildContext context) {
     return Form(
         key: formKey,
@@ -244,17 +215,13 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
     }
   }
 
-  /*
-   *
-   * FloatinActionButtons
-   * 
-   */
   Widget undoButton() {
     return Visibility(
         visible: (prevDeleted != null),
         child: ElevatedButton.icon(
             onPressed: (() => setState(() {
                   processor.addEntry(prevDeleted, "undo");
+                  // TODO: Move prevDeleted to processor
                   prevDeleted = null;
                   loadEntries();
                 })),
@@ -271,6 +238,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
       child: ElevatedButton.icon(
           onPressed: () async {
             await processor.deleteChecked(checklistEntries);
+            // TODO: Move prevDeleted to processor
             prevDeleted = null;
             setState(() {
               loadEntries();
@@ -284,11 +252,6 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
     );
   }
 
-  /*
-   *
-   * Share checklist text
-   * 
-   */
   Widget toTextPopupDialog(checklist) {
     return AlertDialog(
       title: const Text('Share Checklist'),

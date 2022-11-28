@@ -7,7 +7,7 @@ class ChecklistApi {
 
   Future<List<Map>> getItems(author) async {
     var querySnapshot = await _fireStore.collection('checklist').where('author', isEqualTo: author).get();
-    var entries = querySnapshot.docs.map((e) => {'uuid': e.id, ...e.data()}).toList();
+    var entries = querySnapshot.docs.map((e) => {'id': e.id, ...e.data()}).toList();
 
     return entries;
   }
@@ -17,20 +17,20 @@ class ChecklistApi {
     checklistCollection.add(item);
   }
 
-  Future<void> deleteItem(uuid) async {
+  Future<void> deleteItem(id) async {
     // TODO: Add error catching
     var checklistCollection = _fireStore.collection('checklist');
-    await checklistCollection.doc(uuid).delete();
+    await checklistCollection.doc(id).delete();
   }
 
   Future<void> deleteChecked(entries) async {
     var checklistCollection = _fireStore.collection('checklist');
     for (var entry in entries) {
-      await checklistCollection.doc(entry.uuid).delete();
+      await checklistCollection.doc(entry.id).delete();
     }
   }
 
-  Future<void> updateItem(uuid, {checked = -1, listIndex = -1}) async {
+  Future<void> updateItem(id, {checked = -1, listIndex = -1}) async {
     Map<String, Object?> updateData = {};
     if (checked != -1) {
       updateData['checked'] = checked;
@@ -41,6 +41,6 @@ class ChecklistApi {
     }
 
     var checklistCollection = _fireStore.collection('checklist');
-    await checklistCollection.doc(uuid).update(updateData);
+    await checklistCollection.doc(id).update(updateData);
   }
 }
