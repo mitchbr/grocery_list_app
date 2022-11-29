@@ -7,12 +7,20 @@ class RecipesProcessor {
   RecipesApi recipesApi = RecipesApi();
   ProfileProcessor profileProcessor = ProfileProcessor();
 
-  String sort;
+  Map sort;
   String category;
+  Map sortOptions = {
+    "Newest Updated": {"key": "updatedAt", "order": "asc"},
+    "Oldest Updated": {"key": "updatedAt", "order": "desc"},
+    "Newest": {"key": "createdAt", "order": "asc"},
+    "Oldest": {"key": "createdAt", "order": "desc"},
+    "Most Times Made": {"key": "timesMade", "order": "asc"},
+    "Least Times Made": {"key": "timesMade", "order": "desc"},
+  };
 
   RecipesProcessor()
       : category = "None",
-        sort = "updatedAtNewest";
+        sort = {"key": "updatedAt", "order": "asc"};
 
   Future<List> loadRecipes() async {
     String username = await profileProcessor.getUsername();
@@ -22,6 +30,11 @@ class RecipesProcessor {
     entries = entries.where((entry) => category != 'None' ? entry['category'] == category : true).toList();
 
     // Sort
+    if (sort["order"] == "asc") {
+      entries.sort((a, b) => b[sort["key"]].compareTo(a[sort["key"]]));
+    } else {
+      entries.sort((a, b) => a[sort["key"]].compareTo(b[sort["key"]]));
+    }
 
     return entries.map((record) {
       return RecipeEntry(
@@ -39,15 +52,7 @@ class RecipesProcessor {
   }
 
   void setSort(newSort) {
-    const sortOptions = {
-      "Newest Updated": "updatedAtNewest",
-      "Oldest Updated": "updatedAtOldest",
-      "Newest": "createdAtNewest",
-      "Oldest": "createdAtOldest",
-      "Most Times Made": "timesMadeMost",
-      "Least Times Made": "timesMadeLeast"
-    };
-    sort = (sortOptions.containsKey(newSort) ? sortOptions[newSort] : sortOptions["Newest Updated"])!;
+    sort = (sortOptions.containsKey(newSort) ? sortOptions[newSort]! : sortOptions["Newest Updated"])!;
   }
 
   void setCategory(newCategory) {
