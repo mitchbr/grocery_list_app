@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:groceries/components/additional_pages/page_drawer.dart';
 import 'package:groceries/components/view_recipes/recipes_filter_sort.dart';
+import 'package:groceries/processors/profile_processor.dart';
 
 import 'package:groceries/processors/recipes_processor.dart';
 import 'package:groceries/components/view_recipes/recipe_details.dart';
 import 'package:groceries/custom_theme.dart';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../recipes_edit/create_recipe_v2.dart';
 
@@ -18,30 +21,25 @@ class RecipeEntries extends StatefulWidget {
 
 class _RecipeEntriesState extends State<RecipeEntries> {
   var bodyWidget;
-  var checklistEntries;
+  var recipesList;
   var sqlCreate;
+  String username = 'initial_username';
+
+  final Stream<QuerySnapshot> _recipesStream = FirebaseFirestore.instance.collection('recipes').snapshots();
 
   late RecipesProcessor recipesProcessor;
+  ProfileProcessor profileProcessor = ProfileProcessor();
   final theme = CustomTheme();
 
   @override
   void initState() {
-    recipesProcessor = widget.recipesProcessor;
-    super.initState();
-  }
+    setState(() {
+      profileProcessor.getUsername().then((value) => username = value);
+    });
 
-  /*
-   *
-   * Load SQL Data
-   * 
-   */
-  void loadEntries() async {
-    var entries = await recipesProcessor.loadRecipes();
-    if (mounted) {
-      setState(() {
-        checklistEntries = entries;
-      });
-    }
+    recipesProcessor = widget.recipesProcessor;
+
+    super.initState();
   }
 
   /*
@@ -70,14 +68,24 @@ class _RecipeEntriesState extends State<RecipeEntries> {
    * 
    */
   Widget bodyBuilder(BuildContext context) {
-    loadEntries();
-    if (checklistEntries == null) {
-      return circularIndicator(context);
-    } else if (checklistEntries.length == 0) {
-      return emptyWidget(context);
-    } else {
-      return entriesList(context);
-    }
+    return StreamBuilder<QuerySnapshot>(
+      stream: _recipesStream,
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasError) {
+          return errorIndicator(context);
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting || username == 'initial_username') {
+          return circularIndicator(context);
+        }
+
+        recipesList = recipesProcessor.processEntries(snapshot.data!.docs
+            .where((element) => element['author'] == username)
+            .map((e) => {'id': e.id, ...e.data()! as Map})
+            .toList());
+        return entriesList(context);
+      },
+    );
   }
 
   Widget emptyWidget(BuildContext context) {
@@ -95,6 +103,10 @@ class _RecipeEntriesState extends State<RecipeEntries> {
     ));
   }
 
+  Widget errorIndicator(BuildContext context) {
+    return const Center(child: Text("Error loading checklist"));
+  }
+
   /*
    *
    * Recipes ListView
@@ -102,7 +114,7 @@ class _RecipeEntriesState extends State<RecipeEntries> {
    */
   Widget entriesList(BuildContext context) {
     return ListView.builder(
-      itemCount: checklistEntries.length,
+      itemCount: recipesList.length,
       itemBuilder: (context, index) {
         return groceryTile(index);
       },
@@ -111,8 +123,8 @@ class _RecipeEntriesState extends State<RecipeEntries> {
 
   Widget groceryTile(int index) {
     return ListTile(
-      title: Text('${checklistEntries[index].recipe}'),
-      onTap: () => pushRecipeDetails(context, checklistEntries[index]),
+      title: Text('${recipesList[index].recipe}'),
+      onTap: () => pushRecipeDetails(context, recipesList[index]),
     );
   }
 

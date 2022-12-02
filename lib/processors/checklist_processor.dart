@@ -9,6 +9,24 @@ class ChecklistProcessor {
   int listLength = 0;
   int numChecked = 0;
 
+  List<GroceryEntry> processEntries(List<Map> entries) {
+    List<GroceryEntry> entriesList = entries.map((record) {
+      return GroceryEntry(
+          id: record['id'],
+          listIndex: record['list_index'],
+          title: record['title'],
+          checked: record['checked'],
+          source: record['source'],
+          author: record['author']);
+    }).toList();
+    listLength = entriesList.length;
+    for (var entry in entriesList) {
+      numChecked += entry.checked;
+    }
+    entriesList.sort((a, b) => a.listIndex.compareTo(b.listIndex));
+    return entriesList;
+  }
+
   Future<List<GroceryEntry>> loadEntries() async {
     String username = await profileProcessor.getUsername();
     List<Map> entries = await checklistApi.getItems(username);

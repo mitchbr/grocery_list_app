@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:groceries/processors/checklist_processor.dart';
+import 'package:groceries/processors/profile_processor.dart';
 import 'package:groceries/types/grocery_entry.dart';
 import 'package:groceries/custom_theme.dart';
 import 'package:groceries/components/additional_pages/page_drawer.dart';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChecklistEntries extends StatefulWidget {
   const ChecklistEntries({Key? key}) : super(key: key);
@@ -16,8 +19,12 @@ class ChecklistEntries extends StatefulWidget {
 class _ChecklistEntriesState extends State<ChecklistEntries> {
   var checklistEntries;
   var prevDeleted;
+  String username = 'initial_username';
 
-  final processor = ChecklistProcessor();
+  final Stream<QuerySnapshot> _checklistStream = FirebaseFirestore.instance.collection('checklist').snapshots();
+
+  final checklistProcessor = ChecklistProcessor();
+  final profileProcessor = ProfileProcessor();
   final theme = CustomTheme();
 
   final formKey = GlobalKey<FormState>();
@@ -27,19 +34,11 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
 
   @override
   void initState() {
-    super.initState();
-    // TODO: Change to initChecklist method
-    loadEntries();
-  }
+    setState(() {
+      profileProcessor.getUsername().then((value) => username = value);
+    });
 
-  void loadEntries() async {
-    // TODO: Move to initChecklist method
-    if (mounted) {
-      var entries = await processor.loadEntries();
-      setState(() {
-        checklistEntries = entries;
-      });
-    }
+    super.initState();
   }
 
   @override
@@ -52,7 +51,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
         children: <Widget>[
           TextButton.icon(
             onPressed: () async {
-              await processor.shareByText();
+              await checklistProcessor.shareByText();
               showDialog(
                 context: context,
                 builder: (BuildContext context) => fromTextPopupDialog(),
@@ -63,7 +62,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
           ),
           TextButton.icon(
             onPressed: () async {
-              var checklistString = await processor.shareByText();
+              var checklistString = await checklistProcessor.shareByText();
               showDialog(
                 context: context,
                 builder: (BuildContext context) => toTextPopupDialog(checklistString),
@@ -83,12 +82,23 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
   }
 
   Widget bodyBuilder(BuildContext context) {
-    // TODO: Add reload functionality, especially for when load fails
-    if (checklistEntries == null) {
-      return circularIndicator(context);
-    } else {
-      return entriesList(context);
-    }
+    return StreamBuilder<QuerySnapshot>(
+        stream: _checklistStream,
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return errorIndicator(context);
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting || username == 'initial_username') {
+            return circularIndicator(context);
+          }
+
+          checklistEntries = checklistProcessor.processEntries(snapshot.data!.docs
+              .where((element) => element['author'] == username)
+              .map((e) => {'id': e.id, ...e.data()! as Map})
+              .toList());
+          return entriesList(context);
+        });
   }
 
   Widget circularIndicator(BuildContext context) {
@@ -96,6 +106,10 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
         child: CircularProgressIndicator(
       color: theme.accentHighlightColor,
     ));
+  }
+
+  Widget errorIndicator(BuildContext context) {
+    return const Center(child: Text("Error loading checklist"));
   }
 
   Widget entriesList(BuildContext context) {
@@ -117,13 +131,13 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
         },
         onReorder: (int oldIndex, int newIndex) {
           setState(() {
-            // TODO: Move logic to processor
+            // TODO: Move logic to checklistProcessor
             if (oldIndex < newIndex) {
               newIndex -= 1;
             }
             final item = checklistEntries.removeAt(oldIndex);
             checklistEntries.insert(newIndex, item);
-            processor.updateIndexes(checklistEntries);
+            checklistProcessor.updateIndexes(checklistEntries);
           });
         });
   }
@@ -132,9 +146,8 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
     return Dismissible(
       key: Key('${checklistEntries[index].id}'),
       onDismissed: (direction) async {
-        prevDeleted = await processor.deleteEntry(checklistEntries[index].title, checklistEntries[index].id);
+        prevDeleted = await checklistProcessor.deleteEntry(checklistEntries[index].title, checklistEntries[index].id);
         checklistEntries.removeAt(index);
-        loadEntries();
 
         setState(() {});
       },
@@ -147,13 +160,13 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
             value: checklistEntries[index].checked == 0 ? false : true,
             onChanged: (newValue) async {
               checklistEntries[index].checked = newValue! ? 1 : 0;
-              await processor.updateChecked(checklistEntries[index].id, checklistEntries[index].checked);
+              await checklistProcessor.updateChecked(checklistEntries[index].id, checklistEntries[index].checked);
 
-              // TODO: Move reorder to processor
+              // TODO: Move reorder to checklistProcessor
               final item = checklistEntries.removeAt(index);
               int newIndex = newValue ? checklistEntries.length : 0;
               checklistEntries.insert(newIndex, item);
-              processor.updateIndexes(checklistEntries);
+              checklistProcessor.updateIndexes(checklistEntries);
 
               setState(() {});
             },
@@ -204,10 +217,9 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
     if (currState != null) {
       if (currState.validate()) {
         currState.save();
-        processor.addEntry(entryData.title, "checklist");
+        checklistProcessor.addEntry(entryData.title, "checklist");
 
         setState(() {
-          loadEntries();
           _entryController.clear();
           prevDeleted = null;
         });
@@ -220,10 +232,9 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
         visible: (prevDeleted != null),
         child: ElevatedButton.icon(
             onPressed: (() => setState(() {
-                  processor.addEntry(prevDeleted, "undo");
-                  // TODO: Move prevDeleted to processor
+                  checklistProcessor.addEntry(prevDeleted, "undo");
+                  // TODO: Move prevDeleted to checklistProcessor
                   prevDeleted = null;
-                  loadEntries();
                 })),
             icon: const Icon(Icons.undo),
             label: const Text('Undo'),
@@ -234,15 +245,13 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
 
   Widget clearCheckedButton() {
     return Visibility(
-      visible: processor.getNumChecked() > 0,
+      visible: checklistProcessor.getNumChecked() > 0,
       child: ElevatedButton.icon(
           onPressed: () async {
-            await processor.deleteChecked(checklistEntries);
-            // TODO: Move prevDeleted to processor
+            await checklistProcessor.deleteChecked(checklistEntries);
+            // TODO: Move prevDeleted to checklistProcessor
             prevDeleted = null;
-            setState(() {
-              loadEntries();
-            });
+            setState(() {});
           },
           icon: const Icon(Icons.close),
           label: const Text("Clear Checked"),
@@ -281,8 +290,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
       actions: <Widget>[
         TextButton(
           onPressed: () async {
-            await processor.addTextToList(_checklistFromTextController.text);
-            loadEntries();
+            await checklistProcessor.addTextToList(_checklistFromTextController.text);
             Navigator.of(context).pop();
             _checklistFromTextController.clear();
           },

@@ -3,7 +3,6 @@ import 'package:groceries/processors/profile_processor.dart';
 import 'package:groceries/types/recipe_entry.dart';
 
 class RecipesProcessor {
-  // RecipesDatabase database = RecipesDatabase();
   RecipesApi recipesApi = RecipesApi();
   ProfileProcessor profileProcessor = ProfileProcessor();
 
@@ -21,6 +20,32 @@ class RecipesProcessor {
   RecipesProcessor()
       : category = "None",
         sort = {"key": "updatedAt", "order": "asc"};
+
+  List<RecipeEntry> processEntries(List<Map> entries) {
+    // Filter
+    entries = entries.where((entry) => category != 'None' ? entry['category'] == category : true).toList();
+
+    // Sort
+    if (sort["order"] == "asc") {
+      entries.sort((a, b) => b[sort["key"]].compareTo(a[sort["key"]]));
+    } else {
+      entries.sort((a, b) => a[sort["key"]].compareTo(b[sort["key"]]));
+    }
+
+    return entries.map((record) {
+      return RecipeEntry(
+          id: record["id"],
+          recipe: record['recipe'],
+          ingredients: record['ingredients'],
+          instructions: record['instructions'],
+          category: record["category"],
+          tags: record["tags"],
+          updatedAt: record['updatedAt'],
+          createdAt: record['createdAt'],
+          timesMade: record['timesMade'],
+          author: record['author']);
+    }).toList();
+  }
 
   Future<List> loadRecipes() async {
     String username = await profileProcessor.getUsername();
