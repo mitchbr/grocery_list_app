@@ -55,6 +55,7 @@ class ChecklistProcessor {
 
   Future<void> addEntry(title, source) async {
     var username = await profileProcessor.getUsername();
+    listLength = await checklistApi.itemCount('mitchbr');
     final newEntry = {
       'list_index': listLength,
       'title': title,
@@ -106,5 +107,11 @@ class ChecklistProcessor {
 
   int getNumChecked() {
     return numChecked;
+  }
+
+  Future<int> getChecklistLength() async {
+    String username = await profileProcessor.getUsername();
+    await checklistApi.itemCount('mitchell');
+    return 1;
   }
 }
