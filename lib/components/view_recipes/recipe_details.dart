@@ -41,28 +41,31 @@ class _RecipeDetailsState extends State<RecipeDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       endDrawer: PageDrawer(children: <Widget>[
-        TextButton.icon(
-          onPressed: () {},
-          icon: const Icon(Icons.file_download_outlined),
-          label: const Text('Import'),
+        ExpansionTile(
+          title: const Text(
+            'More',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          textColor: theme.accentHighlightColor,
+          iconColor: theme.accentHighlightColor,
+          expandedCrossAxisAlignment: CrossAxisAlignment.start,
+          children: moreChildren(),
         ),
         TextButton.icon(
           onPressed: () {},
           icon: const Icon(Icons.share),
           label: const Text('Share'),
         ),
-        Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () => pushEditEntry(context),
-          ),
+        TextButton.icon(
+          onPressed: () => pushEditEntry(context),
+          icon: const Icon(Icons.edit),
+          label: const Text('Edit'),
         ),
-        Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.delete_rounded),
-            onPressed: () =>
-                showDialog<String>(context: context, builder: (BuildContext context) => verifyDeleteRecipe(context)),
-          ),
+        TextButton.icon(
+          onPressed: () =>
+              showDialog<String>(context: context, builder: (BuildContext context) => verifyDeleteRecipe(context)),
+          icon: const Icon(Icons.delete_rounded),
+          label: const Text('Delete'),
         ),
       ]),
       appBar: AppBar(
@@ -130,16 +133,6 @@ class _RecipeDetailsState extends State<RecipeDetails> {
         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       )),
       ListTile(title: Text(recipeEntry.instructions)),
-      ExpansionTile(
-        title: const Text(
-          'More',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        textColor: theme.accentHighlightColor,
-        iconColor: theme.accentHighlightColor,
-        expandedCrossAxisAlignment: CrossAxisAlignment.start,
-        children: moreChildren(),
-      ),
       const SizedBox(
         height: 75,
       ),

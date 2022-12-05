@@ -57,6 +57,11 @@ class _RecipeEntriesState extends State<RecipeEntries> {
       body: bodyBuilder(context),
       endDrawer: PageDrawer(children: <Widget>[
         TextButton.icon(
+          onPressed: () {},
+          icon: const Icon(Icons.file_download_outlined),
+          label: const Text('Import'),
+        ),
+        TextButton.icon(
             onPressed: () => pushCreateRecipe(context), icon: const Icon(Icons.add), label: const Text('New Recipe')),
       ]),
     );
