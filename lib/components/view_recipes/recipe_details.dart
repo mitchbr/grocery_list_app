@@ -29,7 +29,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
   @override
   void initState() {
     super.initState();
-    checkedValues = List.filled(recipeEntry.ingredients.length, true, growable: false);
+    checkedValues = List.filled(recipeEntry.ingredients.length, false, growable: false);
   }
 
   /*
@@ -90,21 +90,24 @@ class _RecipeDetailsState extends State<RecipeDetails> {
    */
   Widget entriesList(BuildContext context) {
     return ListView.builder(
-        itemCount: recipeEntry.ingredients.length + 1,
+        itemCount: recipeEntry.ingredients.length + 2,
         itemBuilder: (context, index) {
-          if (index == recipeEntry.ingredients.length) {
+          if (index == recipeEntry.ingredients.length + 1) {
             return metaDataDisplay();
           } else if (index == 0) {
-            return Column(children: [
-              const ListTile(
+            return Column(children: const [
+              ListTile(
                   title: Text(
                 'Ingredients',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               )),
-              itemTile(index)
             ]);
           } else {
-            return itemTile(index);
+            if (recipeEntry.ingredients[index - 1].length >= 4 &&
+                recipeEntry.ingredients[index - 1].substring(0, 4) == '--- ') {
+              return titleItemTile(index - 1);
+            }
+            return itemTile(index - 1);
           }
         });
   }
@@ -123,6 +126,15 @@ class _RecipeDetailsState extends State<RecipeDetails> {
         controlAffinity: ListTileControlAffinity.leading,
       );
     });
+  }
+
+  Widget titleItemTile(int index) {
+    return ListTile(
+      title: Text(
+        recipeEntry.ingredients[index].substring(4),
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+      ),
+    );
   }
 
   Widget metaDataDisplay() {

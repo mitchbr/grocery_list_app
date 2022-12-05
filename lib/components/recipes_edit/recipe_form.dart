@@ -90,6 +90,10 @@ class _RecipeFormState extends State<RecipeForm> {
                     saveButton(context)
                   ]);
                 } else {
+                  if (widget.entryData.ingredients[index - 1].length >= 4 &&
+                      widget.entryData.ingredients[index - 1].substring(0, 4) == '--- ') {
+                    return ingredientSectionTile(index - 1);
+                  }
                   return ingredientTile(index - 1);
                 }
               }),
@@ -220,6 +224,16 @@ class _RecipeFormState extends State<RecipeForm> {
   Widget ingredientTile(int index) {
     return ListTile(
       title: Text('${widget.entryData.ingredients[index]}'),
+      trailing: IconButton(onPressed: (() => removeIngredient(index)), icon: const Icon(Icons.close)),
+    );
+  }
+
+  Widget ingredientSectionTile(int index) {
+    return ListTile(
+      title: Text(
+        '${widget.entryData.ingredients[index].substring(4)}',
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+      ),
       trailing: IconButton(onPressed: (() => removeIngredient(index)), icon: const Icon(Icons.close)),
     );
   }
