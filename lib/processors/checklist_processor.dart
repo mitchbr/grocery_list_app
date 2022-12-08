@@ -9,92 +9,69 @@ class ChecklistProcessor {
   int listLength = 0;
   int numChecked = 0;
 
+  GroceryEntry processEntry(entry) {
+    return GroceryEntry(title: entry['title'], checked: entry['checked']);
+  }
+
+  int calculateNumChecked(List<GroceryEntry> entries) {
+    for (var entry in entries) {
+      numChecked += entry.checked;
+    }
+
+    return numChecked;
+  }
+
   List<GroceryEntry> processEntries(List entries) {
     List<GroceryEntry> entriesList = entries.map((record) {
-      return GroceryEntry(title: record['title'], checked: record['checked']);
+      return processEntry(record);
     }).toList();
     listLength = entriesList.length;
-    for (var entry in entriesList) {
-      numChecked += entry.checked;
-    }
+
+    calculateNumChecked(entriesList);
 
     return entriesList;
   }
 
-  Future<List<GroceryEntry>> loadEntries() async {
+  Future<void> updateChecklist(List<GroceryEntry> checklist) async {
+    calculateNumChecked(checklist);
     String username = await profileProcessor.getUsername();
-    List<Map> entries = await checklistApi.getItems(username);
-    List<GroceryEntry> entriesList = entries.map((record) {
-      return GroceryEntry(title: record['title'], checked: record['checked']);
-    }).toList();
-    listLength = entriesList.length;
-    for (var entry in entriesList) {
-      numChecked += entry.checked;
-    }
-    return entriesList;
+
+    List<Map> firestoreChecklist = checklist.map((entry) => {'title': entry.title, 'checked': entry.checked}).toList();
+    await checklistApi.updateChecklist(firestoreChecklist, username);
   }
 
-  Future<String> deleteEntry(title, id) async {
-    await checklistApi.deleteItem(id);
-    listLength -= 1;
-    return title;
-  }
-
-  Future<void> addEntry(title, source) async {
-    var username = await profileProcessor.getUsername();
-    final newEntry = {
-      'title': title,
-      'checked': 0,
-    };
-    await checklistApi.addItem(newEntry);
-    listLength += 1;
-  }
-
-  Future<String> shareByText() async {
-    String username = await profileProcessor.getUsername();
-    List<Map> entries = await checklistApi.getItems(username);
+  String shareByText(List<GroceryEntry> entries) {
     String entriesString = 'Checklist:\n';
     for (var entry in entries) {
-      entriesString += "- ${entry['title']}\n";
+      entriesString += "- ${entry.title}\n";
     }
 
     return entriesString;
   }
 
-  Future<void> addTextToList(text) async {
+  List<GroceryEntry> addTextToList(String text, List<GroceryEntry> entries) {
     for (var item in text.split("\n")) {
       if (item.startsWith("- ")) {
-        await addEntry(item.replaceAll("- ", ""), "sharing");
+        GroceryEntry entry = processEntry({'title': item.replaceAll("- ", ""), 'checked': 0});
+        entries.add(entry);
         listLength += 1;
       }
     }
+
+    return entries;
   }
 
-  Future<void> updateChecked(id, checked) async {
-    // TODO: Reorder based on check/uncheck
-    await checklistApi.updateItem(id, checked: checked);
-    numChecked += (checked == 1) ? 1 : -1;
-  }
-
-  Future<void> updateIndexes(entriesList) async {
-    // TODO: Batch update
-    for (int i = 0; i < entriesList.length; i++) {
-      await checklistApi.updateItem(entriesList[i].id, listIndex: i);
+  List<GroceryEntry> deleteChecked(List<GroceryEntry> entries) {
+    List<GroceryEntry> refreshedEntries = [];
+    for (var entry in entries) {
+      if (entry.checked != 1) {
+        refreshedEntries.add(entry);
+      }
     }
-  }
-
-  Future<void> deleteChecked(entries) async {
-    await checklistApi.deleteChecked(entries.where((entry) => entry.checked == 1).toList());
-    numChecked = 0;
+    return refreshedEntries;
   }
 
   int getNumChecked() {
     return numChecked;
-  }
-
-  Future<int> getChecklistLength() async {
-    String username = await profileProcessor.getUsername();
-    await checklistApi.itemCount('mitchell');
-    return 1;
   }
 }

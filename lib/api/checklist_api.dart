@@ -12,6 +12,11 @@ class ChecklistApi {
     return entries;
   }
 
+  Future<void> updateChecklist(checklist, author) async {
+    var checklistCollection = FirebaseFirestore.instance.collection('authors');
+    checklistCollection.doc(author).update({'checklist': checklist});
+  }
+
   Future<void> addItem(item) async {
     var checklistCollection = _fireStoreChecklist;
     checklistCollection.add(item);

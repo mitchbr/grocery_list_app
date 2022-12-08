@@ -51,7 +51,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
         children: <Widget>[
           TextButton.icon(
             onPressed: () async {
-              await checklistProcessor.shareByText();
+              checklistProcessor.shareByText(checklistEntries);
               showDialog(
                 context: context,
                 builder: (BuildContext context) => fromTextPopupDialog(),
@@ -62,7 +62,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
           ),
           TextButton.icon(
             onPressed: () async {
-              var checklistString = await checklistProcessor.shareByText();
+              var checklistString = checklistProcessor.shareByText(checklistEntries);
               showDialog(
                 context: context,
                 builder: (BuildContext context) => toTextPopupDialog(checklistString),
@@ -127,16 +127,14 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
             return groceryTile(index);
           }
         },
-        onReorder: (int oldIndex, int newIndex) {
-          setState(() {
-            // TODO: Move logic to checklistProcessor
-            if (oldIndex < newIndex) {
-              newIndex -= 1;
-            }
-            final item = checklistEntries.removeAt(oldIndex);
-            checklistEntries.insert(newIndex, item);
-            checklistProcessor.updateIndexes(checklistEntries);
-          });
+        onReorder: (int oldIndex, int newIndex) async {
+          if (oldIndex < newIndex) {
+            newIndex -= 1;
+          }
+          final item = checklistEntries.removeAt(oldIndex);
+          checklistEntries.insert(newIndex, item);
+          await checklistProcessor.updateChecklist(checklistEntries);
+          setState(() {});
         });
   }
 
@@ -144,8 +142,9 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
     return Dismissible(
       key: Key('${checklistEntries[index]}+${checklistEntries[index].title}'),
       onDismissed: (direction) async {
-        prevDeleted = await checklistProcessor.deleteEntry(checklistEntries[index].title, checklistEntries[index].id);
+        prevDeleted = checklistEntries[index];
         checklistEntries.removeAt(index);
+        await checklistProcessor.updateChecklist(checklistEntries);
 
         setState(() {});
       },
@@ -156,14 +155,15 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
             title: Text(checklistEntries[index].title),
             value: checklistEntries[index].checked == 0 ? false : true,
             onChanged: (newValue) async {
+              // Swap checked value
               checklistEntries[index].checked = newValue! ? 1 : 0;
-              await checklistProcessor.updateChecked(checklistEntries[index].id, checklistEntries[index].checked);
 
-              // TODO: Move reorder to checklistProcessor
+              // Move item to bottom/top for check/uncheck action respectively
               final item = checklistEntries.removeAt(index);
               int newIndex = newValue ? checklistEntries.length : 0;
               checklistEntries.insert(newIndex, item);
-              checklistProcessor.updateIndexes(checklistEntries);
+
+              await checklistProcessor.updateChecklist(checklistEntries);
 
               setState(() {});
             },
@@ -214,7 +214,9 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
     if (currState != null) {
       if (currState.validate()) {
         currState.save();
-        checklistProcessor.addEntry(entryData.title, "checklist");
+        GroceryEntry newEntry = checklistProcessor.processEntry({'title': entryData.title, 'checked': 0});
+        checklistEntries.add(newEntry);
+        await checklistProcessor.updateChecklist(checklistEntries);
 
         setState(() {
           _entryController.clear();
@@ -228,11 +230,12 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
     return Visibility(
         visible: (prevDeleted != null),
         child: ElevatedButton.icon(
-            onPressed: (() => setState(() {
-                  checklistProcessor.addEntry(prevDeleted, "undo");
-                  // TODO: Move prevDeleted to checklistProcessor
-                  prevDeleted = null;
-                })),
+            onPressed: (() async {
+              checklistEntries.add(prevDeleted);
+              await checklistProcessor.updateChecklist(checklistEntries);
+              prevDeleted = null;
+              setState(() {});
+            }),
             icon: const Icon(Icons.undo),
             label: const Text('Undo'),
             style: ButtonStyle(
@@ -245,8 +248,8 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
       visible: checklistProcessor.getNumChecked() > 0,
       child: ElevatedButton.icon(
           onPressed: () async {
-            await checklistProcessor.deleteChecked(checklistEntries);
-            // TODO: Move prevDeleted to checklistProcessor
+            checklistEntries = checklistProcessor.deleteChecked(checklistEntries);
+            await checklistProcessor.updateChecklist(checklistEntries);
             prevDeleted = null;
             setState(() {});
           },
@@ -287,7 +290,8 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
       actions: <Widget>[
         TextButton(
           onPressed: () async {
-            await checklistProcessor.addTextToList(_checklistFromTextController.text);
+            checklistEntries = checklistProcessor.addTextToList(_checklistFromTextController.text, checklistEntries);
+            await checklistProcessor.updateChecklist(checklistEntries);
             Navigator.of(context).pop();
             _checklistFromTextController.clear();
           },
