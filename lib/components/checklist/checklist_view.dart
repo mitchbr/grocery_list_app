@@ -21,14 +21,14 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
   var prevDeleted;
   String username = 'initial_username';
 
-  final Stream<QuerySnapshot> _checklistStream = FirebaseFirestore.instance.collection('checklist').snapshots();
+  final Stream<QuerySnapshot> _checklistStream = FirebaseFirestore.instance.collection('authors').snapshots();
 
   final checklistProcessor = ChecklistProcessor();
   final profileProcessor = ProfileProcessor();
   final theme = CustomTheme();
 
   final formKey = GlobalKey<FormState>();
-  var entryData = GroceryEntry(id: 'id', listIndex: -1, title: '', checked: 0, source: 'Checklist', author: 'default');
+  var entryData = GroceryEntry(title: '', checked: 0);
   final TextEditingController _entryController = TextEditingController();
   final TextEditingController _checklistFromTextController = TextEditingController();
 
@@ -93,10 +93,8 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
             return circularIndicator(context);
           }
 
-          checklistEntries = checklistProcessor.processEntries(snapshot.data!.docs
-              .where((element) => element['author'] == username)
-              .map((e) => {'id': e.id, ...e.data()! as Map})
-              .toList());
+          checklistEntries = checklistProcessor
+              .processEntries(snapshot.data!.docs.where((element) => element.id == username).toList()[0]['checklist']);
           return entriesList(context);
         });
   }
@@ -144,7 +142,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
 
   Widget groceryTile(int index) {
     return Dismissible(
-      key: Key('${checklistEntries[index].id}'),
+      key: Key('${checklistEntries[index]}+${checklistEntries[index].title}'),
       onDismissed: (direction) async {
         prevDeleted = await checklistProcessor.deleteEntry(checklistEntries[index].title, checklistEntries[index].id);
         checklistEntries.removeAt(index);
@@ -152,7 +150,6 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
         setState(() {});
       },
       child: ListTile(
-        key: Key('${checklistEntries[index].id}}'),
         title: Transform.translate(
           offset: const Offset(-40, 0),
           child: CheckboxListTile(

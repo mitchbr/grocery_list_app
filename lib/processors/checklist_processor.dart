@@ -9,21 +9,15 @@ class ChecklistProcessor {
   int listLength = 0;
   int numChecked = 0;
 
-  List<GroceryEntry> processEntries(List<Map> entries) {
+  List<GroceryEntry> processEntries(List entries) {
     List<GroceryEntry> entriesList = entries.map((record) {
-      return GroceryEntry(
-          id: record['id'],
-          listIndex: record['list_index'],
-          title: record['title'],
-          checked: record['checked'],
-          source: record['source'],
-          author: record['author']);
+      return GroceryEntry(title: record['title'], checked: record['checked']);
     }).toList();
     listLength = entriesList.length;
     for (var entry in entriesList) {
       numChecked += entry.checked;
     }
-    entriesList.sort((a, b) => a.listIndex.compareTo(b.listIndex));
+
     return entriesList;
   }
 
@@ -31,19 +25,12 @@ class ChecklistProcessor {
     String username = await profileProcessor.getUsername();
     List<Map> entries = await checklistApi.getItems(username);
     List<GroceryEntry> entriesList = entries.map((record) {
-      return GroceryEntry(
-          id: record['id'],
-          listIndex: record['list_index'],
-          title: record['title'],
-          checked: record['checked'],
-          source: record['source'],
-          author: record['author']);
+      return GroceryEntry(title: record['title'], checked: record['checked']);
     }).toList();
     listLength = entriesList.length;
     for (var entry in entriesList) {
       numChecked += entry.checked;
     }
-    entriesList.sort((a, b) => a.listIndex.compareTo(b.listIndex));
     return entriesList;
   }
 
@@ -55,13 +42,9 @@ class ChecklistProcessor {
 
   Future<void> addEntry(title, source) async {
     var username = await profileProcessor.getUsername();
-    listLength = await checklistApi.itemCount('mitchbr');
     final newEntry = {
-      'list_index': listLength,
       'title': title,
       'checked': 0,
-      'source': source,
-      'author': username,
     };
     await checklistApi.addItem(newEntry);
     listLength += 1;
