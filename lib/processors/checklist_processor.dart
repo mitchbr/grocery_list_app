@@ -49,6 +49,19 @@ class ChecklistProcessor {
     return entriesString;
   }
 
+  Future<void> updateChecklistFromUnknown(List<GroceryEntry> newEntries) async {
+    List<GroceryEntry> checklist = await getChecklist();
+    var updatedChecklist = [...checklist, ...newEntries];
+    // TODO: Make sure unchecked items get added above checked?
+    await updateChecklist(checklist);
+  }
+
+  Future<List<GroceryEntry>> getChecklist() async {
+    String username = await profileProcessor.getUsername();
+    List<GroceryEntry> entries = processEntries(await checklistApi.getItems(username));
+    return entries;
+  }
+
   List<GroceryEntry> addTextToList(String text, List<GroceryEntry> entries) {
     for (var item in text.split("\n")) {
       if (item.startsWith("- ")) {

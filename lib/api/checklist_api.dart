@@ -3,11 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 CollectionReference checklist = FirebaseFirestore.instance.collection('checklist');
 
 class ChecklistApi {
-  final _fireStoreChecklist = FirebaseFirestore.instance.collection('checklist');
+  final _fireStoreChecklist = FirebaseFirestore.instance.collection('authors');
 
   Future<List<Map>> getItems(author) async {
-    var querySnapshot = await _fireStoreChecklist.where('author', isEqualTo: author).get();
-    var entries = querySnapshot.docs.map((e) => {'id': e.id, ...e.data()}).toList();
+    var querySnapshot = await _fireStoreChecklist.doc(author).get();
+    var entries = querySnapshot.data()!['checklist'];
 
     return entries;
   }

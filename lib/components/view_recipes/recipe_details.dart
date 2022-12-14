@@ -4,6 +4,7 @@ import 'package:groceries/components/additional_pages/page_drawer.dart';
 import 'package:groceries/components/recipes_edit/edit_recipe_v2.dart';
 import 'package:groceries/processors/checklist_processor.dart';
 import 'package:groceries/processors/recipes_processor.dart';
+import 'package:groceries/types/grocery_entry.dart';
 import 'package:groceries/types/recipe_entry.dart';
 import 'package:groceries/custom_theme.dart';
 import 'package:intl/intl.dart';
@@ -202,10 +203,12 @@ class _RecipeDetailsState extends State<RecipeDetails> {
         child: const Text('Save to Grocery List'),
         onPressed: () async {
           for (int i = 0; i < recipeEntry.ingredients.length; i++) {
+            List<GroceryEntry> entries = [];
             if (checkedValues[i]) {
               // TODO: Add a method to add entries from an unknown state
-              // await checklistProcessor.addEntry(recipeEntry.ingredients[i], recipeEntry.recipe);
+              entries.add(checklistProcessor.processEntry({'title': recipeEntry.ingredients[i], 'checked': 0}));
             }
+            await checklistProcessor.updateChecklistFromUnknown(entries);
           }
           await recipesProcessor.incrementTimesMade(recipeEntry);
 
