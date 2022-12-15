@@ -202,14 +202,13 @@ class _RecipeDetailsState extends State<RecipeDetails> {
       child: TextButton(
         child: const Text('Save to Grocery List'),
         onPressed: () async {
+          List<GroceryEntry> entries = [];
           for (int i = 0; i < recipeEntry.ingredients.length; i++) {
-            List<GroceryEntry> entries = [];
             if (checkedValues[i]) {
-              // TODO: Add a method to add entries from an unknown state
               entries.add(checklistProcessor.processEntry({'title': recipeEntry.ingredients[i], 'checked': 0}));
             }
-            await checklistProcessor.updateChecklistFromUnknown(entries);
           }
+          await checklistProcessor.updateChecklistFromUnknown(entries);
           await recipesProcessor.incrementTimesMade(recipeEntry);
 
           Navigator.of(context).pop();

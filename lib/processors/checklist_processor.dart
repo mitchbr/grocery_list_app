@@ -52,13 +52,13 @@ class ChecklistProcessor {
   Future<void> updateChecklistFromUnknown(List<GroceryEntry> newEntries) async {
     List<GroceryEntry> checklist = await getChecklist();
     var updatedChecklist = [...checklist, ...newEntries];
-    // TODO: Make sure unchecked items get added above checked?
-    await updateChecklist(checklist);
+    await updateChecklist(updatedChecklist);
   }
 
   Future<List<GroceryEntry>> getChecklist() async {
     String username = await profileProcessor.getUsername();
-    List<GroceryEntry> entries = processEntries(await checklistApi.getItems(username));
+    var rawChecklist = await checklistApi.getItems(username);
+    List<GroceryEntry> entries = processEntries(rawChecklist);
     return entries;
   }
 

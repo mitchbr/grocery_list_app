@@ -5,7 +5,7 @@ CollectionReference checklist = FirebaseFirestore.instance.collection('checklist
 class ChecklistApi {
   final _fireStoreChecklist = FirebaseFirestore.instance.collection('authors');
 
-  Future<List<Map>> getItems(author) async {
+  Future<List<dynamic>> getItems(author) async {
     var querySnapshot = await _fireStoreChecklist.doc(author).get();
     var entries = querySnapshot.data()!['checklist'];
 
@@ -14,6 +14,7 @@ class ChecklistApi {
 
   Future<void> updateChecklist(checklist, author) async {
     var checklistCollection = FirebaseFirestore.instance.collection('authors');
+    print('updating checklist: $checklist, $author');
     checklistCollection.doc(author).update({'checklist': checklist});
   }
 
