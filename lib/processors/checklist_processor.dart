@@ -1,9 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:groceries/processors/profile_processor.dart';
 import 'package:groceries/types/grocery_entry.dart';
-import 'package:groceries/api/checklist_api.dart';
 
 class ChecklistProcessor {
-  ChecklistApi checklistApi = ChecklistApi();
   ProfileProcessor profileProcessor = ProfileProcessor();
 
   int listLength = 0;
@@ -19,6 +18,13 @@ class ChecklistProcessor {
     }
 
     return numChecked;
+  }
+
+  Future<List<dynamic>> getItems(author) async {
+    var querySnapshot = await FirebaseFirestore.instance.collection('authors').doc(author).get();
+    var entries = querySnapshot.data()!['checklist'];
+
+    return entries;
   }
 
   List<GroceryEntry> processEntries(List entries) {
@@ -37,7 +43,12 @@ class ChecklistProcessor {
     String username = await profileProcessor.getUsername();
 
     List<Map> firestoreChecklist = checklist.map((entry) => {'title': entry.title, 'checked': entry.checked}).toList();
-    await checklistApi.updateChecklist(firestoreChecklist, username);
+    await sendChecklistToDb(firestoreChecklist, username);
+  }
+
+  Future<void> sendChecklistToDb(checklist, author) async {
+    var checklistCollection = FirebaseFirestore.instance.collection('authors');
+    checklistCollection.doc(author).update({'checklist': checklist});
   }
 
   String shareByText(List<GroceryEntry> entries) {
@@ -57,7 +68,7 @@ class ChecklistProcessor {
 
   Future<List<GroceryEntry>> getChecklist() async {
     String username = await profileProcessor.getUsername();
-    var rawChecklist = await checklistApi.getItems(username);
+    var rawChecklist = await getItems(username);
     List<GroceryEntry> entries = processEntries(rawChecklist);
     return entries;
   }
