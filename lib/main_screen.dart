@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:groceries/components/checklist/checklist_view.dart';
-import 'package:groceries/components/recipes_edit/new_recipe_options.dart';
-import 'package:groceries/components/view_recipes/recipes_view.dart';
 import 'package:groceries/custom_theme.dart';
 import 'package:groceries/processors/recipes_processor.dart';
+import 'package:groceries/layouts/recipes_layout.dart';
 
 class Groceries extends StatefulWidget {
   final RecipesProcessor recipesProcessor;
@@ -24,10 +23,12 @@ class _GroceriesState extends State<Groceries> {
   void initState() {
     _views = [
       const ChecklistEntries(),
-      RecipeEntries(
+      RecipesLayout(
         recipesProcessor: widget.recipesProcessor,
       ),
-      const NewRecipeOptions()
+      // RecipeEntries(
+      //   recipesProcessor: widget.recipesProcessor,
+      // ),
     ];
     super.initState();
   }

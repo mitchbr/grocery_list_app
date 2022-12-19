@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:groceries/components/additional_pages/page_drawer.dart';
-import 'package:groceries/components/view_recipes/recipes_filter_sort.dart';
-import 'package:groceries/processors/profile_processor.dart';
 
+import 'package:groceries/processors/profile_processor.dart';
 import 'package:groceries/processors/recipes_processor.dart';
 import 'package:groceries/components/view_recipes/recipe_details.dart';
 import 'package:groceries/custom_theme.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-import '../recipes_edit/create_recipe_v2.dart';
 
 class RecipeEntries extends StatefulWidget {
   final RecipesProcessor recipesProcessor;
@@ -49,22 +45,7 @@ class _RecipeEntriesState extends State<RecipeEntries> {
    */
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-          title: FilterSortRecipes(
-        recipesProcessor: recipesProcessor,
-      )),
-      body: bodyBuilder(context),
-      endDrawer: PageDrawer(children: <Widget>[
-        TextButton.icon(
-          onPressed: () {},
-          icon: const Icon(Icons.file_download_outlined),
-          label: const Text('Import'),
-        ),
-        TextButton.icon(
-            onPressed: () => pushCreateRecipe(context), icon: const Icon(Icons.add), label: const Text('New Recipe')),
-      ]),
-    );
+    return bodyBuilder(context);
   }
 
   /*
@@ -141,12 +122,5 @@ class _RecipeEntriesState extends State<RecipeEntries> {
   void pushRecipeDetails(BuildContext context, recipeEntry) {
     Navigator.push(context, MaterialPageRoute(builder: (context) => RecipeDetails(recipeEntry: recipeEntry)))
         .then((data) => setState(() => {}));
-  }
-
-  pushCreateRecipe(BuildContext context) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const CreateRecipeV2())).then((data) {
-      setState(() => {});
-      Navigator.of(context).pop();
-    });
   }
 }
