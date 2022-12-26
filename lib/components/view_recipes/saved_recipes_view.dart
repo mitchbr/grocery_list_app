@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:groceries/processors/profile_processor.dart';
 import 'package:groceries/processors/recipes_processor.dart';
-import 'package:groceries/components/view_recipes/recipe_details.dart';
+import 'package:groceries/components/view_recipes/saved_recipe_details.dart';
 import 'package:groceries/custom_theme.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -101,7 +101,7 @@ class _RecipeEntriesState extends State<SavedRecipesView> {
   }
 
   void pushRecipeDetails(BuildContext context, recipeEntry) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => RecipeDetails(recipeEntry: recipeEntry)))
+    Navigator.push(context, MaterialPageRoute(builder: (context) => SavedRecipeDetails(recipeEntry: recipeEntry)))
         .then((data) => setState(() => {}));
   }
 }

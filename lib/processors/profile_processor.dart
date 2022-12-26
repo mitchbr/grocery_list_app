@@ -35,4 +35,13 @@ class ProfileProcessor {
     DocumentReference recipes = FirebaseFirestore.instance.collection('authors').doc(username);
     recipes.update({'recipes_following': recipesList});
   }
+
+  Future<void> removeFromLibrary(recipeId) async {
+    List recipesList = await fetchFollowedRecipes();
+    recipesList.remove(recipeId);
+
+    String username = await getUsername();
+    DocumentReference recipes = FirebaseFirestore.instance.collection('authors').doc(username);
+    recipes.update({'recipes_following': recipesList});
+  }
 }
