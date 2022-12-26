@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 import 'package:groceries/components/additional_pages/page_drawer.dart';
 
 import 'package:groceries/components/recipes_edit/edit_recipe_v2.dart';
@@ -53,7 +55,12 @@ class _RecipeDetailsState extends State<RecipeDetails> {
           children: moreChildren(),
         ),
         TextButton.icon(
-          onPressed: () {},
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) => shareRecipeId(context),
+            );
+          },
           icon: const Icon(Icons.share),
           label: const Text('Share'),
         ),
@@ -191,11 +198,6 @@ class _RecipeDetailsState extends State<RecipeDetails> {
     ];
   }
 
-  /*
-   *
-   * Add to SQL
-   * 
-   */
   Widget addToGroceryList(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(10),
@@ -217,11 +219,22 @@ class _RecipeDetailsState extends State<RecipeDetails> {
     );
   }
 
-  /*
-   *
-   * Delete Recipe
-   * 
-   */
+  Widget shareRecipeId(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Share Recipe'),
+      content: Text(recipeEntry.id),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () async {
+            ClipboardData data = ClipboardData(text: recipeEntry.id);
+            await Clipboard.setData(data);
+          },
+          child: const Icon(Icons.copy),
+        ),
+      ],
+    );
+  }
+
   Widget verifyDeleteRecipe(BuildContext context) {
     return AlertDialog(
         title: const Text('Delete Recipe?'),

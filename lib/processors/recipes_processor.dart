@@ -33,18 +33,22 @@ class RecipesProcessor {
     }
 
     return entries.map((record) {
-      return RecipeEntry(
-          id: record["id"],
-          recipe: record['recipe'],
-          ingredients: record['ingredients'],
-          instructions: record['instructions'],
-          category: record["category"],
-          tags: record["tags"],
-          updatedAt: record['updatedAt'],
-          createdAt: record['createdAt'],
-          timesMade: record['timesMade'],
-          author: record['author']);
+      return processEntry(record);
     }).toList();
+  }
+
+  RecipeEntry processEntry(entry) {
+    return RecipeEntry(
+        id: entry["id"],
+        recipe: entry['recipe'],
+        ingredients: entry['ingredients'],
+        instructions: entry['instructions'],
+        category: entry["category"],
+        tags: entry["tags"],
+        updatedAt: entry['updatedAt'],
+        createdAt: entry['createdAt'],
+        timesMade: entry['timesMade'],
+        author: entry['author']);
   }
 
   Future<List> loadRecipes() async {

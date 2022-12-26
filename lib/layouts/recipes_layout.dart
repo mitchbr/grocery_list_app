@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:groceries/components/view_recipes/recipes_view.dart';
+import 'package:groceries/components/view_recipes/saved_recipes_view.dart';
+import 'package:groceries/processors/profile_processor.dart';
 import 'package:groceries/processors/recipes_processor.dart';
 import 'package:groceries/components/view_recipes/recipes_filter_sort.dart';
 import 'package:groceries/components/additional_pages/page_drawer.dart';
@@ -16,6 +18,8 @@ class RecipesLayout extends StatefulWidget {
 }
 
 class _RecipesLayoutState extends State<RecipesLayout> {
+  final TextEditingController _recipeFromIdTextController = TextEditingController();
+  final ProfileProcessor profileProcessor = ProfileProcessor();
   final theme = CustomTheme();
 
   @override
@@ -42,7 +46,12 @@ class _RecipesLayoutState extends State<RecipesLayout> {
         ),
         endDrawer: PageDrawer(children: <Widget>[
           TextButton.icon(
-            onPressed: () {},
+            onPressed: () async {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) => fromTextPopupDialog(),
+              );
+            },
             icon: const Icon(Icons.file_download_outlined),
             label: const Text('Import'),
           ),
@@ -52,12 +61,35 @@ class _RecipesLayoutState extends State<RecipesLayout> {
         body: TabBarView(
           children: [
             RecipeEntries(recipesProcessor: widget.recipesProcessor),
-            const Center(
-              child: Text("It's rainy here"),
-            ),
+            SavedRecipesView(recipesProcessor: widget.recipesProcessor)
           ],
         ),
       ),
+    );
+  }
+
+  Widget fromTextPopupDialog() {
+    return AlertDialog(
+      title: const Text('Import Items'),
+      content: TextField(
+        controller: _recipeFromIdTextController,
+        decoration: theme.textFormDecoration('Enter Items'),
+        keyboardType: TextInputType.multiline,
+        minLines: 4,
+        maxLines: 100,
+      ),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () async {
+            await profileProcessor.addFollowedRecipe(_recipeFromIdTextController.text);
+            setState(() {
+              Navigator.of(context).pop();
+              _recipeFromIdTextController.clear();
+            });
+          },
+          child: const Icon(Icons.file_download_outlined),
+        ),
+      ],
     );
   }
 
