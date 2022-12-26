@@ -69,6 +69,11 @@ class _RecipeEntriesState extends State<RecipeEntries> {
             .where((element) => element['author'] == username)
             .map((e) => {'id': e.id, ...e.data()! as Map})
             .toList());
+
+        if (recipesList.isEmpty) {
+          return emptyWidget(context);
+        }
+
         return entriesList(context);
       },
     );

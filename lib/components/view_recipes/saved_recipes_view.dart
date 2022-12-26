@@ -50,8 +50,7 @@ class _RecipeEntriesState extends State<SavedRecipesView> {
           return errorIndicator(context);
         }
 
-        bool waiting = snapshot.connectionState == ConnectionState.waiting;
-        if (waiting || loadedFollowedRecipes == false) {
+        if (snapshot.connectionState == ConnectionState.waiting || loadedFollowedRecipes == false) {
           return circularIndicator(context);
         }
 
@@ -59,6 +58,10 @@ class _RecipeEntriesState extends State<SavedRecipesView> {
             .where((element) => followedRecipes.contains(element.id))
             .map((e) => {'id': e.id, ...e.data()! as Map})
             .toList());
+
+        if (recipesList.isEmpty) {
+          return emptyWidget(context);
+        }
 
         return entriesList(context);
       },

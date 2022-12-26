@@ -95,6 +95,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
 
           checklistEntries = checklistProcessor
               .processEntries(snapshot.data!.docs.where((element) => element.id == username).toList()[0]['checklist']);
+
           return entriesList(context);
         });
   }
