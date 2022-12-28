@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-import 'package:groceries/components/view_recipes/recipes_view.dart';
-import 'package:groceries/components/view_recipes/saved_recipes_view.dart';
+import 'package:groceries/views/saved_recipes_view.dart';
 import 'package:groceries/processors/profile_processor.dart';
 import 'package:groceries/processors/recipes_processor.dart';
 import 'package:groceries/components/view_recipes/recipes_filter_sort.dart';
 import 'package:groceries/components/additional_pages/page_drawer.dart';
 import 'package:groceries/components/recipes_edit/create_recipe_v2.dart';
 import 'package:groceries/custom_theme.dart';
+import 'package:groceries/views/personal_recipes_view.dart';
 
 class RecipesLayout extends StatefulWidget {
   final RecipesProcessor recipesProcessor;
@@ -58,11 +58,8 @@ class _RecipesLayoutState extends State<RecipesLayout> {
           TextButton.icon(
               onPressed: () => pushCreateRecipe(context), icon: const Icon(Icons.add), label: const Text('New Recipe')),
         ]),
-        body: TabBarView(
-          children: [
-            RecipeEntries(recipesProcessor: widget.recipesProcessor),
-            SavedRecipesView(recipesProcessor: widget.recipesProcessor)
-          ],
+        body: const TabBarView(
+          children: [PersonalRecipesView(), SavedRecipesView()],
         ),
       ),
     );

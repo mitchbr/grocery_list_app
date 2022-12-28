@@ -44,4 +44,28 @@ class ProfileProcessor {
     DocumentReference recipes = FirebaseFirestore.instance.collection('authors').doc(username);
     recipes.update({'recipes_following': recipesList});
   }
+
+  Future<List> fetchFollowedAuthors() async {
+    String username = await getUsername();
+    DocumentSnapshot recipes = await FirebaseFirestore.instance.collection('authors').doc(username).get();
+    return recipes.get('authors_following');
+  }
+
+  Future<void> addFollowedAuthor(authorId) async {
+    List recipesList = await fetchFollowedAuthors();
+    recipesList.add(authorId);
+
+    String username = await getUsername();
+    DocumentReference recipes = FirebaseFirestore.instance.collection('authors').doc(username);
+    recipes.update({'authors_following': recipesList});
+  }
+
+  Future<void> removeFollowedAuthor(authorId) async {
+    List recipesList = await fetchFollowedAuthors();
+    recipesList.remove(authorId);
+
+    String username = await getUsername();
+    DocumentReference recipes = FirebaseFirestore.instance.collection('authors').doc(username);
+    recipes.update({'authors_following': recipesList});
+  }
 }

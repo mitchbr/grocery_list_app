@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:groceries/components/checklist/checklist_view.dart';
 import 'package:groceries/custom_theme.dart';
+import 'package:groceries/layouts/authors_layout.dart';
 import 'package:groceries/processors/recipes_processor.dart';
 import 'package:groceries/layouts/recipes_layout.dart';
 
@@ -26,9 +27,7 @@ class _GroceriesState extends State<Groceries> {
       RecipesLayout(
         recipesProcessor: widget.recipesProcessor,
       ),
-      // RecipeEntries(
-      //   recipesProcessor: widget.recipesProcessor,
-      // ),
+      const AuthorsLayout()
     ];
     super.initState();
   }
@@ -59,8 +58,12 @@ class _GroceriesState extends State<Groceries> {
             label: 'Checklist',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.list),
+            icon: Icon(Icons.book),
             label: 'Recipes',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Authors',
           ),
         ],
         currentIndex: selectedIndex,

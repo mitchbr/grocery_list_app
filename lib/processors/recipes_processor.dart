@@ -21,7 +21,7 @@ class RecipesProcessor {
       : category = "None",
         sort = {"key": "updatedAt", "order": "asc"};
 
-  List<RecipeEntry> processEntries(List<Map> entries) {
+  List<RecipeEntry> processEntries(List entries) {
     // Filter
     entries = entries.where((entry) => category != 'None' ? entry['category'] == category : true).toList();
 
