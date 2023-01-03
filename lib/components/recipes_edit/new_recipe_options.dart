@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:groceries/components/recipes_edit/create_recipe.dart';
-
-import 'create_recipe_v2.dart';
-
 class NewRecipeOptions extends StatefulWidget {
   const NewRecipeOptions({Key? key}) : super(key: key);
 
@@ -37,7 +33,7 @@ class _NewRecipeOptionsState extends State<NewRecipeOptions> {
   }
 
   pushCreateRecipe(BuildContext context) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const CreateRecipeV2()))
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const CreateRecipe()))
         .then((data) => setState(() => {}));
   }
 }
