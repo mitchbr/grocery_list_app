@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:groceries/layouts/personal_recipe_details_layout.dart';
 import 'package:groceries/types/recipe_entry.dart';
 
 import 'package:groceries/widgets/firestore_list.dart';
 import 'package:groceries/processors/recipes_processor.dart';
-import 'package:groceries/components/view_recipes/recipe_details.dart';
 
 class PersonalRecipesView extends StatefulWidget {
   const PersonalRecipesView({Key? key}) : super(key: key);
@@ -31,7 +31,7 @@ class _PersonalRecipesViewState extends State<PersonalRecipesView> {
   }
 
   void pushRecipeDetails(BuildContext context, recipe) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => RecipeDetails(recipeEntry: recipe)))
+    Navigator.push(context, MaterialPageRoute(builder: (context) => PersonalRecipeDetailsLayout(recipeEntry: recipe)))
         .then((data) => setState(() => {}));
   }
 
