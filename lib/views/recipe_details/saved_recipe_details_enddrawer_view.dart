@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:groceries/widgets/page_drawer.dart';
-import 'package:groceries/components/recipes_edit/edit_recipe.dart';
+import 'package:groceries/views/edit_recipe_view.dart';
 import 'package:groceries/custom_theme.dart';
 import 'package:groceries/processors/profile_processor.dart';
 import 'package:groceries/processors/recipes_processor.dart';
@@ -94,7 +94,7 @@ class _SavedRecipeDetailsEndDrawerViewState extends State<SavedRecipeDetailsEndD
   }
 
   void pushEditEntry(BuildContext context) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => EditRecipe(entryData: widget.recipeEntry)))
+    Navigator.push(context, MaterialPageRoute(builder: (context) => EditRecipeView(entryData: widget.recipeEntry)))
         .then((data) {
       setState(() => {});
     });

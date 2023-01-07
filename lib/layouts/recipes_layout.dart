@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:groceries/views/saved_recipes_view.dart';
 import 'package:groceries/processors/profile_processor.dart';
 import 'package:groceries/processors/recipes_processor.dart';
-import 'package:groceries/components/view_recipes/recipes_filter_sort.dart';
+import 'package:groceries/views/filter_sort_view.dart';
 import 'package:groceries/widgets/page_drawer.dart';
-import 'package:groceries/components/recipes_edit/create_recipe.dart';
+import 'package:groceries/views/create_recipe_view.dart';
 import 'package:groceries/custom_theme.dart';
 import 'package:groceries/views/personal_recipes_view.dart';
 
@@ -29,7 +29,7 @@ class _RecipesLayoutState extends State<RecipesLayout> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: FilterSortRecipes(
+          title: FilterSortView(
             recipesProcessor: widget.recipesProcessor,
           ),
           bottom: TabBar(
@@ -91,7 +91,7 @@ class _RecipesLayoutState extends State<RecipesLayout> {
   }
 
   pushCreateRecipe(BuildContext context) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const CreateRecipe())).then((data) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const CreateRecipeView())).then((data) {
       setState(() => {});
       Navigator.of(context).pop();
     });

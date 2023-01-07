@@ -16,11 +16,6 @@ class RecipeForm extends StatefulWidget {
 }
 
 class _RecipeFormState extends State<RecipeForm> {
-  /*
-   *
-   * Variable Declaration
-   * 
-   */
   final formKey = GlobalKey<FormState>();
   final recipeKey = GlobalKey<FormState>();
   final ingredientKey = GlobalKey<FormState>();
@@ -103,11 +98,6 @@ class _RecipeFormState extends State<RecipeForm> {
         ));
   }
 
-  /*
-   *
-   * Recipe Name Widgets
-   * 
-   */
   Widget showRecipe() {
     if (savedRecipe) {
       return recipeTile();
@@ -172,11 +162,6 @@ class _RecipeFormState extends State<RecipeForm> {
     }
   }
 
-  /*
-   *
-   * Ingredient Widgets
-   * 
-   */
   Widget newEntryBox(BuildContext context) {
     return Form(
         key: ingredientKey,
@@ -247,12 +232,6 @@ class _RecipeFormState extends State<RecipeForm> {
     });
   }
 
-  /*
-   *
-   * Instructions Widgets
-   * 
-   */
-
   Widget showInstructions() {
     if (savedInstructions) {
       return instructionsTile();
@@ -316,11 +295,6 @@ class _RecipeFormState extends State<RecipeForm> {
     }
   }
 
-  /*
-   *
-   * Category Widgets
-   * 
-   */
   Widget categoryDropdown() {
     return ListTile(
       title: const Text(
@@ -355,7 +329,6 @@ class _RecipeFormState extends State<RecipeForm> {
               currState.save();
               widget.processorFunction(widget.entryData);
               if (widget.entryData.id != 'init') {
-                // TODO: Change the way this pops out of editing recipes
                 Navigator.of(context).pop();
                 Navigator.of(context).pop();
               }

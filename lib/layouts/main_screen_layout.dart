@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:groceries/components/checklist/checklist_view.dart';
+import 'package:groceries/views/checklist_view.dart';
 import 'package:groceries/layouts/authors_layout.dart';
 import 'package:groceries/processors/recipes_processor.dart';
 import 'package:groceries/layouts/recipes_layout.dart';

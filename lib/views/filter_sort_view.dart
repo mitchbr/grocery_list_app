@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:groceries/components/view_recipes/filters_page.dart';
+import 'package:groceries/widgets/filters_page.dart';
 import 'package:groceries/custom_theme.dart';
 import 'package:groceries/processors/recipes_processor.dart';
 
-class FilterSortRecipes extends StatelessWidget {
-  FilterSortRecipes({Key? key, required this.recipesProcessor}) : super(key: key);
+class FilterSortView extends StatelessWidget {
+  FilterSortView({Key? key, required this.recipesProcessor}) : super(key: key);
   final RecipesProcessor recipesProcessor;
 
   final sortOptions = ["Newest Updated", "Oldest Updated", "Newest", "Oldest", "Most Times Made", "Least Times Made"];

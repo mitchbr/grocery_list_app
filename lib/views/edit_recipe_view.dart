@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:groceries/components/recipes_edit/recipe_form.dart';
+import 'package:groceries/widgets/recipe_form.dart';
 import 'package:groceries/processors/recipes_processor.dart';
 import 'package:groceries/types/recipe_entry.dart';
 
-class EditRecipe extends StatefulWidget {
+class EditRecipeView extends StatefulWidget {
   final RecipeEntry entryData;
-  const EditRecipe({Key? key, required this.entryData}) : super(key: key);
+  const EditRecipeView({Key? key, required this.entryData}) : super(key: key);
 
   @override
-  State<EditRecipe> createState() => _EditRecipeState();
+  State<EditRecipeView> createState() => _EditRecipeViewState();
 }
 
-class _EditRecipeState extends State<EditRecipe> {
+class _EditRecipeViewState extends State<EditRecipeView> {
   final recipesProcessor = RecipesProcessor();
 
   @override
