@@ -32,6 +32,8 @@ class _GroceriesState extends State<Groceries> {
           } else {
             return MainScreenLayout(recipesProcessor: widget.recipesProcessor);
           }
+        } else if (snapshot.hasError) {
+          return bodyWidget(loadingError());
         } else {
           return bodyWidget(circularIndicator(context));
         }
@@ -87,6 +89,26 @@ class _GroceriesState extends State<Groceries> {
     return Center(
         child: CircularProgressIndicator(
       color: theme.accentHighlightColor,
+    ));
+  }
+
+  Widget loadingError() {
+    return Center(
+        child: Column(
+      children: [
+        const Text(
+          "There was an error loading data, please try again",
+          style: TextStyle(fontSize: 20),
+          textAlign: TextAlign.center,
+        ),
+        IconButton(
+            onPressed: (() async {
+              setState(() {
+                getUsername = ProfileProcessor().checkUserExists();
+              });
+            }),
+            icon: const Icon(Icons.refresh))
+      ],
     ));
   }
 
