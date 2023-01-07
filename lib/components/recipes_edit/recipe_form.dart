@@ -79,6 +79,9 @@ class _RecipeFormState extends State<RecipeForm> {
                   ]);
                 } else if (index == widget.entryData.ingredients.length + 1) {
                   return Column(children: [
+                    const ListTile(
+                        title: Text('Hint: Enter three dashes (---) to make a header item',
+                            style: TextStyle(color: Color(0xFFA4A4A4)))),
                     newEntryBox(context),
                     const ListTile(
                         title: Text(
@@ -90,8 +93,8 @@ class _RecipeFormState extends State<RecipeForm> {
                     saveButton(context)
                   ]);
                 } else {
-                  if (widget.entryData.ingredients[index - 1].length >= 4 &&
-                      widget.entryData.ingredients[index - 1].substring(0, 4) == '--- ') {
+                  if (widget.entryData.ingredients[index - 1].length >= 3 &&
+                      widget.entryData.ingredients[index - 1].substring(0, 3) == '---') {
                     return ingredientSectionTile(index - 1);
                   }
                   return ingredientTile(index - 1);
@@ -231,7 +234,7 @@ class _RecipeFormState extends State<RecipeForm> {
   Widget ingredientSectionTile(int index) {
     return ListTile(
       title: Text(
-        '${widget.entryData.ingredients[index].substring(4)}',
+        '${widget.entryData.ingredients[index].substring(3)}',
         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
       ),
       trailing: IconButton(onPressed: (() => removeIngredient(index)), icon: const Icon(Icons.close)),
