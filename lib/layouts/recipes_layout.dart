@@ -4,7 +4,7 @@ import 'package:groceries/views/saved_recipes_view.dart';
 import 'package:groceries/processors/profile_processor.dart';
 import 'package:groceries/processors/recipes_processor.dart';
 import 'package:groceries/components/view_recipes/recipes_filter_sort.dart';
-import 'package:groceries/components/additional_pages/page_drawer.dart';
+import 'package:groceries/widgets/page_drawer.dart';
 import 'package:groceries/components/recipes_edit/create_recipe.dart';
 import 'package:groceries/custom_theme.dart';
 import 'package:groceries/views/personal_recipes_view.dart';

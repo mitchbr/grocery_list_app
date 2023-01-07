@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:groceries/custom_theme.dart';
 import 'package:groceries/processors/profile_processor.dart';
 
-class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+class ProfileWidgets extends StatefulWidget {
+  const ProfileWidgets({Key? key}) : super(key: key);
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  State<ProfileWidgets> createState() => _ProfileWidgetsState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _ProfileWidgetsState extends State<ProfileWidgets> {
   final profileKey = GlobalKey<FormState>();
   final TextEditingController _profileController = TextEditingController();
   bool savedUsername = false;
@@ -37,15 +37,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Profile"),
-      ),
-      body: profileField(),
-    );
-  }
-
-  Widget profileField() {
     if (savedUsername == false) {
       return profileTextField();
     } else {

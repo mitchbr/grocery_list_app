@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-
-import 'package:groceries/components/checklist/checklist_view.dart';
 import 'package:groceries/custom_theme.dart';
-import 'package:groceries/layouts/authors_layout.dart';
+
+import 'package:groceries/layouts/main_screen_layout.dart';
+import 'package:groceries/processors/profile_processor.dart';
 import 'package:groceries/processors/recipes_processor.dart';
-import 'package:groceries/layouts/recipes_layout.dart';
+import 'package:groceries/widgets/profile_widgets.dart';
 
 class Groceries extends StatefulWidget {
   final RecipesProcessor recipesProcessor;
@@ -17,58 +17,91 @@ class Groceries extends StatefulWidget {
 class _GroceriesState extends State<Groceries> {
   _GroceriesState();
 
-  List<Widget> _views = [];
-  var selectedIndex = 0;
+  final theme = CustomTheme();
 
-  @override
-  void initState() {
-    _views = [
-      const ChecklistEntries(),
-      RecipesLayout(
-        recipesProcessor: widget.recipesProcessor,
-      ),
-      const AuthorsLayout()
-    ];
-    super.initState();
-  }
+  Future getUsername = ProfileProcessor().checkUserExists();
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Groceries',
-        theme: CustomTheme().customTheme(),
-        home: DefaultTabController(
-            length: _views.length, child: Builder(builder: (context) => groceriesScaffold(context))));
+    return FutureBuilder(
+      future: getUsername,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasData) {
+          if (snapshot.data == false) {
+            return bodyWidget(signIn());
+          } else {
+            return MainScreenLayout(recipesProcessor: widget.recipesProcessor);
+          }
+        } else {
+          return bodyWidget(circularIndicator(context));
+        }
+      },
+    );
   }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      selectedIndex = index;
-    });
-  }
-
-  Widget groceriesScaffold(BuildContext context) {
+  Widget bodyWidget(Widget child) {
     return Scaffold(
-      body: _views.elementAt(selectedIndex),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.check),
-            label: 'Checklist',
+      appBar: AppBar(title: const Text("Groceries")),
+      body: child,
+    );
+  }
+
+  Widget signIn() {
+    return Column(
+      children: [
+        const SizedBox(
+          height: 10,
+        ),
+        const Center(
+          child: Text(
+            "If you do not already have a profile, please reach out to Mitchell to have one made",
+            style: TextStyle(fontSize: 20),
+            textAlign: TextAlign.center,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.book),
-            label: 'Recipes',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Authors',
-          ),
-        ],
-        currentIndex: selectedIndex,
-        onTap: _onItemTapped,
-      ),
+        ),
+        const ProfileWidgets(),
+        const SizedBox(
+          height: 10,
+        ),
+        TextButton(
+          onPressed: (() async {
+            var userExists = await ProfileProcessor().checkUserExists();
+            if (userExists) {
+              setState(() {
+                getUsername = ProfileProcessor().checkUserExists();
+              });
+            } else {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) => showUserDoesNotExistDialog(),
+              );
+            }
+          }),
+          child: const Text("Sign In"),
+        )
+      ],
+    );
+  }
+
+  Widget circularIndicator(BuildContext context) {
+    return Center(
+        child: CircularProgressIndicator(
+      color: theme.accentHighlightColor,
+    ));
+  }
+
+  Widget showUserDoesNotExistDialog() {
+    return AlertDialog(
+      title: const Text('User does not exist'),
+      content: const Text("Please provide an existing username"),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () async {
+            Navigator.of(context).pop();
+          },
+          child: const Text("Ok"),
+        ),
+      ],
     );
   }
 }

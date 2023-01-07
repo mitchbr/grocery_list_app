@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:groceries/components/additional_pages/profile_page.dart';
+import 'package:groceries/layouts/profile_page_layout.dart';
 
 class PageDrawer extends StatelessWidget {
   final List<Widget> children;
@@ -20,7 +20,7 @@ class PageDrawer extends StatelessWidget {
       child: ListView(children: [
         TextButton.icon(
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePageLayout()));
             },
             icon: const Icon(Icons.person),
             label: const Text("Profile")),

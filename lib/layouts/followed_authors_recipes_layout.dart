@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:groceries/components/additional_pages/page_drawer.dart';
+import 'package:groceries/widgets/page_drawer.dart';
 import 'package:groceries/custom_theme.dart';
 import 'package:groceries/processors/profile_processor.dart';
 import 'package:groceries/views/followed_author_recipes_view.dart';

@@ -68,4 +68,10 @@ class ProfileProcessor {
     DocumentReference recipes = FirebaseFirestore.instance.collection('authors').doc(username);
     recipes.update({'authors_following': recipesList});
   }
+
+  Future<bool> checkUserExists() async {
+    String username = await getUsername();
+    DocumentSnapshot author = await FirebaseFirestore.instance.collection('authors').doc(username).get();
+    return author.exists;
+  }
 }

@@ -5,7 +5,7 @@ import 'package:groceries/processors/checklist_processor.dart';
 import 'package:groceries/processors/profile_processor.dart';
 import 'package:groceries/types/grocery_entry.dart';
 import 'package:groceries/custom_theme.dart';
-import 'package:groceries/components/additional_pages/page_drawer.dart';
+import 'package:groceries/widgets/page_drawer.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 

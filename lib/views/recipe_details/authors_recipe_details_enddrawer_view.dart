@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:groceries/components/additional_pages/page_drawer.dart';
+import 'package:groceries/widgets/page_drawer.dart';
 import 'package:groceries/components/recipes_edit/edit_recipe.dart';
 import 'package:groceries/custom_theme.dart';
 import 'package:groceries/processors/profile_processor.dart';
