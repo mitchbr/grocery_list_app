@@ -14,9 +14,7 @@ void main() async {
     MaterialApp(
       title: 'Groceries',
       theme: CustomTheme().customTheme(),
-      home: Groceries(
-        recipesProcessor: recipesProcessor,
-      ),
+      home: const Groceries(),
     ),
   );
 }

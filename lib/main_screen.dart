@@ -7,8 +7,7 @@ import 'package:groceries/processors/recipes_processor.dart';
 import 'package:groceries/widgets/profile_widgets.dart';
 
 class Groceries extends StatefulWidget {
-  final RecipesProcessor recipesProcessor;
-  const Groceries({Key? key, required this.recipesProcessor}) : super(key: key);
+  const Groceries({Key? key}) : super(key: key);
 
   @override
   _GroceriesState createState() => _GroceriesState();
@@ -30,7 +29,7 @@ class _GroceriesState extends State<Groceries> {
           if (snapshot.data == false) {
             return bodyWidget(signIn());
           } else {
-            return MainScreenLayout(recipesProcessor: widget.recipesProcessor);
+            return const MainScreenLayout();
           }
         } else if (snapshot.hasError) {
           return bodyWidget(loadingError());

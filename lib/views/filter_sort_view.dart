@@ -3,11 +3,17 @@ import 'package:groceries/widgets/filters_page.dart';
 import 'package:groceries/custom_theme.dart';
 import 'package:groceries/processors/recipes_processor.dart';
 
-class FilterSortView extends StatelessWidget {
-  FilterSortView({Key? key, required this.recipesProcessor}) : super(key: key);
+class FilterSortView extends StatefulWidget {
+  const FilterSortView({Key? key, required this.recipesProcessor}) : super(key: key);
   final RecipesProcessor recipesProcessor;
 
+  @override
+  State<FilterSortView> createState() => _FilterSortViewState();
+}
+
+class _FilterSortViewState extends State<FilterSortView> {
   final sortOptions = ["Newest Updated", "Oldest Updated", "Newest", "Oldest", "Most Times Made", "Least Times Made"];
+
   final theme = CustomTheme();
 
   @override
@@ -55,7 +61,10 @@ class FilterSortView extends StatelessWidget {
   Widget sortTile(title, context) {
     return TextButton(
       onPressed: () {
-        recipesProcessor.setSort(title);
+        setState(() {
+          widget.recipesProcessor.setSort(title);
+        });
+
         Navigator.of(context).pop();
       },
       child: Text(title),
@@ -68,7 +77,7 @@ class FilterSortView extends StatelessWidget {
         context,
         MaterialPageRoute(
             builder: (context) => FiltersPage(
-                  recipesProcessor: recipesProcessor,
+                  recipesProcessor: widget.recipesProcessor,
                 ))).then((data) => {});
   }
 }

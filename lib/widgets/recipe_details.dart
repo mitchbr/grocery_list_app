@@ -25,8 +25,8 @@ class RecipeDetails extends StatelessWidget {
               )),
             ]);
           } else {
-            if (recipeEntry.ingredients[index - 1].length >= 4 &&
-                recipeEntry.ingredients[index - 1].substring(0, 4) == '--- ') {
+            if (recipeEntry.ingredients[index - 1].length >= 3 &&
+                recipeEntry.ingredients[index - 1].substring(0, 3) == '---') {
               return titleItemTile(index - 1);
             }
             return itemTile(index - 1);
@@ -53,7 +53,7 @@ class RecipeDetails extends StatelessWidget {
   Widget titleItemTile(int index) {
     return ListTile(
       title: Text(
-        recipeEntry.ingredients[index].substring(4),
+        recipeEntry.ingredients[index].substring(3),
         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
       ),
     );

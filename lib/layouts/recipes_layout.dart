@@ -10,8 +10,7 @@ import 'package:groceries/custom_theme.dart';
 import 'package:groceries/views/personal_recipes_view.dart';
 
 class RecipesLayout extends StatefulWidget {
-  final RecipesProcessor recipesProcessor;
-  const RecipesLayout({Key? key, required this.recipesProcessor}) : super(key: key);
+  const RecipesLayout({Key? key}) : super(key: key);
 
   @override
   State<RecipesLayout> createState() => _RecipesLayoutState();
@@ -20,6 +19,7 @@ class RecipesLayout extends StatefulWidget {
 class _RecipesLayoutState extends State<RecipesLayout> {
   final TextEditingController _recipeFromIdTextController = TextEditingController();
   final ProfileProcessor profileProcessor = ProfileProcessor();
+  final RecipesProcessor recipesProcessor = RecipesProcessor();
   final theme = CustomTheme();
 
   @override
@@ -30,7 +30,7 @@ class _RecipesLayoutState extends State<RecipesLayout> {
       child: Scaffold(
         appBar: AppBar(
           title: FilterSortView(
-            recipesProcessor: widget.recipesProcessor,
+            recipesProcessor: recipesProcessor,
           ),
           bottom: TabBar(
             indicatorColor: theme.accentColor,
@@ -58,8 +58,11 @@ class _RecipesLayoutState extends State<RecipesLayout> {
           TextButton.icon(
               onPressed: () => pushCreateRecipe(context), icon: const Icon(Icons.add), label: const Text('New Recipe')),
         ]),
-        body: const TabBarView(
-          children: [PersonalRecipesView(), SavedRecipesView()],
+        body: TabBarView(
+          children: [
+            PersonalRecipesView(recipesProcessor: recipesProcessor),
+            SavedRecipesView(recipesProcessor: recipesProcessor)
+          ],
         ),
       ),
     );

@@ -7,14 +7,14 @@ import 'package:groceries/widgets/firestore_list.dart';
 import 'package:groceries/processors/recipes_processor.dart';
 
 class PersonalRecipesView extends StatefulWidget {
-  const PersonalRecipesView({Key? key}) : super(key: key);
+  final RecipesProcessor recipesProcessor;
+  const PersonalRecipesView({Key? key, required this.recipesProcessor}) : super(key: key);
 
   @override
   State<PersonalRecipesView> createState() => _PersonalRecipesViewState();
 }
 
 class _PersonalRecipesViewState extends State<PersonalRecipesView> {
-  final RecipesProcessor recipesProcessor = RecipesProcessor();
   final Stream<QuerySnapshot> _recipesStream = FirebaseFirestore.instance.collection('recipes').snapshots();
 
   @override
@@ -24,7 +24,7 @@ class _PersonalRecipesViewState extends State<PersonalRecipesView> {
   }
 
   List<RecipeEntry> dataProcessor(snapshot, username) {
-    return recipesProcessor.processEntries(snapshot.data!.docs
+    return widget.recipesProcessor.processEntries(snapshot.data!.docs
         .where((element) => element['author'] == username)
         .map((e) => {'id': e.id, ...e.data()! as Map})
         .toList());

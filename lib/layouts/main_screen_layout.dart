@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:groceries/views/checklist_view.dart';
 import 'package:groceries/layouts/authors_layout.dart';
-import 'package:groceries/processors/recipes_processor.dart';
 import 'package:groceries/layouts/recipes_layout.dart';
 
 class MainScreenLayout extends StatefulWidget {
-  final RecipesProcessor recipesProcessor;
-  const MainScreenLayout({Key? key, required this.recipesProcessor}) : super(key: key);
+  const MainScreenLayout({Key? key}) : super(key: key);
 
   @override
   State<MainScreenLayout> createState() => _MainScreenLayoutState();
@@ -19,13 +17,7 @@ class _MainScreenLayoutState extends State<MainScreenLayout> {
 
   @override
   void initState() {
-    _views = [
-      const ChecklistEntries(),
-      RecipesLayout(
-        recipesProcessor: widget.recipesProcessor,
-      ),
-      const AuthorsLayout()
-    ];
+    _views = [const ChecklistEntries(), const RecipesLayout(), const AuthorsLayout()];
     super.initState();
   }
 
