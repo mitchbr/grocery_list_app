@@ -27,11 +27,13 @@ class _RecipeFormState extends State<RecipeForm> {
   late List<String> categories;
   var savedRecipe = false;
   var savedInstructions = false;
+  late FocusNode ingredientFocusNode;
 
   final theme = CustomTheme();
 
   @override
   void initState() {
+    ingredientFocusNode = FocusNode();
     categories = [];
     getCategories().then((value) {
       if (widget.entryData.id != 'init') {
@@ -44,6 +46,13 @@ class _RecipeFormState extends State<RecipeForm> {
       }
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    ingredientFocusNode.dispose();
+
+    super.dispose();
   }
 
   Future<void> getCategories() async {
@@ -179,6 +188,7 @@ class _RecipeFormState extends State<RecipeForm> {
 
         setState(() {
           _ingredientController.clear();
+          ingredientFocusNode.requestFocus();
         });
       }
     }
@@ -190,6 +200,13 @@ class _RecipeFormState extends State<RecipeForm> {
       cursorColor: theme.accentHighlightColor,
       decoration: theme.textFormDecoration('New Ingredient'),
       textCapitalization: TextCapitalization.words,
+      autofocus: true,
+      focusNode: ingredientFocusNode,
+      onFieldSubmitted: (value) {
+        if (value != "") {
+          saveIngredient();
+        }
+      },
       onSaved: (value) {
         if (value != null) {
           widget.entryData.ingredients.add(value);

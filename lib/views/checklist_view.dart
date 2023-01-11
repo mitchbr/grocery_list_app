@@ -20,6 +20,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
   var checklistEntries;
   var prevDeleted;
   String username = 'initial_username';
+  late FocusNode newItemFocusNode;
 
   final Stream<QuerySnapshot> _checklistStream = FirebaseFirestore.instance.collection('authors').snapshots();
 
@@ -34,11 +35,19 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
 
   @override
   void initState() {
+    newItemFocusNode = FocusNode();
     setState(() {
       profileProcessor.getUsername().then((value) => username = value);
     });
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    newItemFocusNode.dispose();
+
+    super.dispose();
   }
 
   @override
@@ -191,6 +200,13 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
       cursorColor: theme.accentHighlightColor,
       decoration: theme.textFormDecoration('New Item'),
       textCapitalization: TextCapitalization.sentences,
+      autofocus: true,
+      focusNode: newItemFocusNode,
+      onFieldSubmitted: (value) {
+        if (value != "") {
+          saveEntryItem();
+        }
+      },
       onSaved: (value) {
         if (value != null) {
           entryData.title = value;
@@ -222,6 +238,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
         setState(() {
           _entryController.clear();
           prevDeleted = null;
+          newItemFocusNode.requestFocus();
         });
       }
     }
