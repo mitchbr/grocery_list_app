@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:uuid/uuid.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,6 +21,7 @@ class _RecipeFormState extends State<RecipeForm> {
   final recipeKey = GlobalKey<FormState>();
   final ingredientKey = GlobalKey<FormState>();
   final instructionsKey = GlobalKey<FormState>();
+  var uuid = const Uuid();
 
   final TextEditingController _ingredientController = TextEditingController();
   final TextEditingController _recipeNameControl = TextEditingController();
@@ -69,42 +71,59 @@ class _RecipeFormState extends State<RecipeForm> {
         key: formKey,
         child: Padding(
           padding: const EdgeInsets.all(20),
-          child: ListView.builder(
-              itemCount: widget.entryData.ingredients.length + 2,
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  return Column(children: [
-                    showRecipe(),
-                    const ListTile(
-                        title: Text(
-                      'Ingredients',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    )),
-                  ]);
-                } else if (index == widget.entryData.ingredients.length + 1) {
-                  return Column(children: [
-                    const ListTile(
-                        title: Text('Hint: Enter three dashes (---) to make a header item',
-                            style: TextStyle(color: Color(0xFFA4A4A4)))),
-                    newEntryBox(context),
-                    const ListTile(
-                        title: Text(
-                      'Instructions',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    )),
-                    showInstructions(),
-                    categoryDropdown(),
-                    saveButton(context)
-                  ]);
-                } else {
-                  if (widget.entryData.ingredients[index - 1].length >= 3 &&
-                      widget.entryData.ingredients[index - 1].substring(0, 3) == '---') {
-                    return ingredientSectionTile(index - 1);
-                  }
-                  return ingredientTile(index - 1);
-                }
-              }),
+          child: formColumn(context),
         ));
+  }
+
+  Widget formColumn(BuildContext context) {
+    return SingleChildScrollView(
+        physics: const ScrollPhysics(),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            showRecipe(),
+            const ListTile(
+                title: Text(
+              'Ingredients',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            )),
+            ingredientsListView(context),
+            const ListTile(
+                title: Text('Hint: Enter three dashes (---) to make a header item',
+                    style: TextStyle(color: Color(0xFFA4A4A4)))),
+            newEntryBox(context),
+            const ListTile(
+                title: Text(
+              'Instructions',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            )),
+            showInstructions(),
+            categoryDropdown(),
+            saveButton(context),
+          ],
+        ));
+  }
+
+  Widget ingredientsListView(BuildContext context) {
+    return ReorderableListView.builder(
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        itemBuilder: (context, index) {
+          if (widget.entryData.ingredients[index].length >= 3 &&
+              widget.entryData.ingredients[index].substring(0, 3) == '---') {
+            return ingredientSectionTile(index);
+          }
+          return ingredientTile(index);
+        },
+        itemCount: widget.entryData.ingredients.length,
+        onReorder: (int oldIndex, int newIndex) async {
+          if (oldIndex < newIndex) {
+            newIndex -= 1;
+          }
+          final item = widget.entryData.ingredients.removeAt(oldIndex);
+          widget.entryData.ingredients.insert(newIndex, item);
+          setState(() {});
+        });
   }
 
   Widget showRecipe() {
@@ -140,6 +159,7 @@ class _RecipeFormState extends State<RecipeForm> {
                 widget.entryData.recipe = value;
               }
             },
+            onFieldSubmitted: (value) => saveRecipeName(),
             validator: (value) {
               var val = value;
               if (val != null) {
@@ -227,26 +247,32 @@ class _RecipeFormState extends State<RecipeForm> {
   }
 
   Widget ingredientTile(int index) {
-    return ListTile(
-      title: Text('${widget.entryData.ingredients[index]}'),
-      trailing: IconButton(onPressed: (() => removeIngredient(index)), icon: const Icon(Icons.close)),
+    return Dismissible(
+      key: Key(uuid.v4()),
+      onDismissed: ((direction) {
+        widget.entryData.ingredients.removeAt(index);
+        setState(() {});
+      }),
+      child: ListTile(
+        title: Text('${widget.entryData.ingredients[index]}'),
+      ),
     );
   }
 
   Widget ingredientSectionTile(int index) {
-    return ListTile(
-      title: Text(
-        '${widget.entryData.ingredients[index].substring(3)}',
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+    return Dismissible(
+      key: Key(uuid.v4()),
+      onDismissed: ((direction) {
+        widget.entryData.ingredients.removeAt(index);
+        setState(() {});
+      }),
+      child: ListTile(
+        title: Text(
+          '${widget.entryData.ingredients[index].substring(3)}',
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
       ),
-      trailing: IconButton(onPressed: (() => removeIngredient(index)), icon: const Icon(Icons.close)),
     );
-  }
-
-  void removeIngredient(int index) {
-    setState(() {
-      widget.entryData.ingredients.removeAt(index);
-    });
   }
 
   Widget showInstructions() {
@@ -284,6 +310,7 @@ class _RecipeFormState extends State<RecipeForm> {
                 widget.entryData.instructions = value;
               }
             },
+            onFieldSubmitted: (value) => saveInstructions(),
             validator: (value) {
               var val = value;
               if (val != null) {
