@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:groceries/widgets/filters_page.dart';
-import 'package:groceries/custom_theme.dart';
 import 'package:groceries/processors/recipes_processor.dart';
+import 'package:groceries/widgets/filters_page.dart';
 
-class FilterSortView extends StatefulWidget {
-  const FilterSortView({Key? key, required this.recipesProcessor}) : super(key: key);
+class FilterSort extends StatelessWidget {
   final RecipesProcessor recipesProcessor;
+  final Function callback;
+  final bool sourceFilterEnabled;
+  FilterSort({
+    Key? key,
+    required this.recipesProcessor,
+    required this.callback,
+    this.sourceFilterEnabled = true,
+  }) : super(key: key);
 
-  @override
-  State<FilterSortView> createState() => _FilterSortViewState();
-}
-
-class _FilterSortViewState extends State<FilterSortView> {
   final sortOptions = ["Newest Updated", "Oldest Updated", "Newest", "Oldest", "Most Times Made", "Least Times Made"];
-
-  final theme = CustomTheme();
 
   @override
   Widget build(BuildContext context) {
@@ -61,9 +60,8 @@ class _FilterSortViewState extends State<FilterSortView> {
   Widget sortTile(title, context) {
     return TextButton(
       onPressed: () {
-        setState(() {
-          widget.recipesProcessor.setSort(title);
-        });
+        recipesProcessor.setSort(title);
+        callback();
 
         Navigator.of(context).pop();
       },
@@ -77,7 +75,8 @@ class _FilterSortViewState extends State<FilterSortView> {
         context,
         MaterialPageRoute(
             builder: (context) => FiltersPage(
-                  recipesProcessor: widget.recipesProcessor,
-                ))).then((data) => {});
+                  recipesProcessor: recipesProcessor,
+                  sourceFilterEnabled: sourceFilterEnabled,
+                ))).then((data) => {callback()});
   }
 }

@@ -218,7 +218,6 @@ class _RecipeFormState extends State<RecipeForm> {
       cursorColor: theme.accentHighlightColor,
       decoration: theme.textFormDecoration('New Ingredient'),
       textCapitalization: TextCapitalization.words,
-      autofocus: true,
       focusNode: ingredientFocusNode,
       onFieldSubmitted: (value) {
         if (value != "") {

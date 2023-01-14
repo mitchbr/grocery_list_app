@@ -8,14 +8,14 @@ import 'package:groceries/processors/recipes_processor.dart';
 
 class FollowedAuthorRecipesView extends StatefulWidget {
   final String userId;
-  const FollowedAuthorRecipesView({Key? key, required this.userId}) : super(key: key);
+  final RecipesProcessor recipesProcessor;
+  const FollowedAuthorRecipesView({Key? key, required this.userId, required this.recipesProcessor}) : super(key: key);
 
   @override
   State<FollowedAuthorRecipesView> createState() => _FollowedAuthorRecipesViewState();
 }
 
 class _FollowedAuthorRecipesViewState extends State<FollowedAuthorRecipesView> {
-  final RecipesProcessor recipesProcessor = RecipesProcessor();
   final Stream<QuerySnapshot> _recipesStream = FirebaseFirestore.instance.collection('recipes').snapshots();
 
   @override
@@ -24,7 +24,7 @@ class _FollowedAuthorRecipesViewState extends State<FollowedAuthorRecipesView> {
   }
 
   List<RecipeEntry> dataProcessor(snapshot, username) {
-    return recipesProcessor.processEntries(snapshot.data!.docs
+    return widget.recipesProcessor.processEntries(snapshot.data!.docs
         .where((element) => element['author'] == widget.userId)
         .map((e) => {'id': e.id, ...e.data()! as Map})
         .toList());

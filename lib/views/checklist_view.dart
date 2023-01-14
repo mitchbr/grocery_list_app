@@ -203,7 +203,6 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
       cursorColor: theme.accentHighlightColor,
       decoration: theme.textFormDecoration('New Item'),
       textCapitalization: TextCapitalization.sentences,
-      autofocus: true,
       focusNode: newItemFocusNode,
       onFieldSubmitted: (value) {
         if (value != "") {

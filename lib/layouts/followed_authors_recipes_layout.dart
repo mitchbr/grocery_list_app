@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:groceries/processors/recipes_processor.dart';
+import 'package:groceries/widgets/filter_sort.dart';
 import 'package:groceries/widgets/page_drawer.dart';
 import 'package:groceries/custom_theme.dart';
 import 'package:groceries/processors/profile_processor.dart';
@@ -14,14 +16,19 @@ class FollowedAuthorsRecipesLayout extends StatefulWidget {
 
 class _FollowedAuthorsRecipesLayoutState extends State<FollowedAuthorsRecipesLayout> {
   final ProfileProcessor profileProcessor = ProfileProcessor();
+  final RecipesProcessor recipesProcessor = RecipesProcessor();
   final theme = CustomTheme();
-
-  final TextEditingController _removeAuthorFollowTextController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Authors')),
+        appBar: AppBar(
+          title: FilterSort(
+            recipesProcessor: recipesProcessor,
+            callback: callback,
+            sourceFilterEnabled: false,
+          ),
+        ),
         endDrawer: PageDrawer(children: <Widget>[
           TextButton.icon(
               onPressed: () => showDialog(
@@ -31,7 +38,10 @@ class _FollowedAuthorsRecipesLayoutState extends State<FollowedAuthorsRecipesLay
               icon: const Icon(Icons.remove),
               label: const Text('Stop Following')),
         ]),
-        body: FollowedAuthorRecipesView(userId: widget.userId));
+        body: FollowedAuthorRecipesView(
+          userId: widget.userId,
+          recipesProcessor: recipesProcessor,
+        ));
   }
 
   Widget _removeAuthorFollowPopup(BuildContext context) {
@@ -54,5 +64,9 @@ class _FollowedAuthorsRecipesLayoutState extends State<FollowedAuthorsRecipesLay
             child: const Text('Yes'),
           ),
         ]);
+  }
+
+  void callback() {
+    setState(() {});
   }
 }

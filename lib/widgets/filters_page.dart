@@ -7,7 +7,12 @@ import 'package:groceries/processors/recipes_processor.dart';
 
 class FiltersPage extends StatefulWidget {
   final RecipesProcessor recipesProcessor;
-  const FiltersPage({Key? key, required this.recipesProcessor}) : super(key: key);
+  final bool sourceFilterEnabled;
+  const FiltersPage({
+    Key? key,
+    required this.recipesProcessor,
+    this.sourceFilterEnabled = true,
+  }) : super(key: key);
 
   @override
   State<FiltersPage> createState() => _FiltersPageState();
@@ -60,7 +65,11 @@ class _FiltersPageState extends State<FiltersPage> {
         mainAxisSize: MainAxisSize.min,
         children: [
           categoryDropDown(),
-          sourceDropDown(),
+          widget.sourceFilterEnabled
+              ? sourceDropDown()
+              : const SizedBox(
+                  height: 0,
+                ),
         ],
       ),
     );
