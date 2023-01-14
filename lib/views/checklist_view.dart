@@ -142,7 +142,6 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
     return ReorderableListView.builder(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
         itemCount: checklistEntries.length,
         itemBuilder: (context, index) {
           return groceryTile(index);
@@ -168,29 +167,24 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
 
         setState(() {});
       },
-      child: ListTile(
-        title: Transform.translate(
-          offset: const Offset(-40, 0),
-          child: CheckboxListTile(
-            title: Text(checklistEntries[index].title),
-            value: checklistEntries[index].checked == 0 ? false : true,
-            onChanged: (newValue) async {
-              // Swap checked value
-              checklistEntries[index].checked = newValue! ? 1 : 0;
+      child: CheckboxListTile(
+        title: Text(checklistEntries[index].title),
+        value: checklistEntries[index].checked == 0 ? false : true,
+        onChanged: (newValue) async {
+          // Swap checked value
+          checklistEntries[index].checked = newValue! ? 1 : 0;
 
-              // Move item to bottom/top for check/uncheck action respectively
-              final item = checklistEntries.removeAt(index);
-              int newIndex = newValue ? checklistEntries.length : 0;
-              checklistEntries.insert(newIndex, item);
+          // Move item to bottom/top for check/uncheck action respectively
+          final item = checklistEntries.removeAt(index);
+          int newIndex = newValue ? checklistEntries.length : 0;
+          checklistEntries.insert(newIndex, item);
 
-              await checklistProcessor.updateChecklist(checklistEntries);
+          await checklistProcessor.updateChecklist(checklistEntries);
 
-              setState(() {});
-            },
-            activeColor: theme.accentHighlightColor,
-            controlAffinity: ListTileControlAffinity.leading,
-          ),
-        ),
+          setState(() {});
+        },
+        activeColor: theme.accentHighlightColor,
+        controlAffinity: ListTileControlAffinity.leading,
       ),
     );
   }
