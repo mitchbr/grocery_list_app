@@ -16,8 +16,7 @@ class _AuthorsViewState extends State<AuthorsView> {
 
   @override
   Widget build(BuildContext context) {
-    return FirestoreList(
-        stream: _authorsStream, dataProcessor: dataProcessor, listTitle: listTitle, pushDetails: pushAuthorRecipes);
+    return FirestoreList(stream: _authorsStream, dataProcessor: dataProcessor, listTile: authorTile);
   }
 
   List<dynamic> dataProcessor(snapshot, username) {
@@ -29,7 +28,10 @@ class _AuthorsViewState extends State<AuthorsView> {
         .then((data) => setState(() => {}));
   }
 
-  Widget listTitle(item) {
-    return Text(item);
+  Widget authorTile(var item) {
+    return ListTile(
+      title: Text(item),
+      onTap: () => pushAuthorRecipes(context, item),
+    );
   }
 }

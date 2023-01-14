@@ -20,8 +20,7 @@ class _FollowedAuthorRecipesViewState extends State<FollowedAuthorRecipesView> {
 
   @override
   Widget build(BuildContext context) {
-    return FirestoreList(
-        stream: _recipesStream, dataProcessor: dataProcessor, listTitle: listTitle, pushDetails: pushRecipeDetails);
+    return FirestoreList(stream: _recipesStream, dataProcessor: dataProcessor, listTile: groceryTile);
   }
 
   List<RecipeEntry> dataProcessor(snapshot, username) {
@@ -36,7 +35,10 @@ class _FollowedAuthorRecipesViewState extends State<FollowedAuthorRecipesView> {
         .then((data) => setState(() => {}));
   }
 
-  Widget listTitle(item) {
-    return Text(item.recipe);
+  Widget groceryTile(var item) {
+    return ListTile(
+      title: Text(item.recipe),
+      onTap: () => pushRecipeDetails(context, item),
+    );
   }
 }

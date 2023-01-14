@@ -7,10 +7,8 @@ import 'package:groceries/custom_theme.dart';
 class FirestoreList extends StatefulWidget {
   Stream<QuerySnapshot> stream;
   final Function dataProcessor;
-  final Function listTitle;
-  final Function pushDetails;
-  FirestoreList(
-      {Key? key, required this.stream, required this.dataProcessor, required this.listTitle, required this.pushDetails})
+  final Function listTile;
+  FirestoreList({Key? key, required this.stream, required this.dataProcessor, required this.listTile})
       : super(key: key);
 
   @override
@@ -80,15 +78,8 @@ class _FirestoreListState extends State<FirestoreList> {
     return ListView.builder(
       itemCount: listData.length,
       itemBuilder: (context, index) {
-        return groceryTile(listData[index]);
+        return widget.listTile(listData[index]);
       },
-    );
-  }
-
-  Widget groceryTile(var item) {
-    return ListTile(
-      title: widget.listTitle(item),
-      onTap: () => widget.pushDetails(context, item),
     );
   }
 }

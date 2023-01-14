@@ -8,6 +8,8 @@ class RecipesProcessor {
   final _fireStore = FirebaseFirestore.instance;
   Map sort;
   String category;
+  String source;
+  String sourceUser = "";
   Map sortOptions = {
     "Newest Updated": {"key": "updatedAt", "order": "asc"},
     "Oldest Updated": {"key": "updatedAt", "order": "desc"},
@@ -19,11 +21,17 @@ class RecipesProcessor {
 
   RecipesProcessor()
       : category = "None",
+        source = "All",
         sort = {"key": "updatedAt", "order": "asc"};
 
   List<RecipeEntry> processEntries(List entries) {
     // Filter
-    entries = entries.where((entry) => category != 'None' ? entry['category'] == category : true).toList();
+    entries = entries
+        .where((entry) => category != 'None' ? entry['category'] == category : true)
+        .where((entry) => source != "All"
+            ? (source == "Personal" ? entry["author"] == sourceUser : entry["author"] != sourceUser)
+            : true)
+        .toList();
 
     // Sort
     if (sort["order"] == "asc") {
@@ -57,6 +65,11 @@ class RecipesProcessor {
 
   void setCategory(newCategory) {
     category = newCategory;
+  }
+
+  setSource(newSource, username) {
+    source = newSource;
+    sourceUser = username;
   }
 
   Future<void> addRecipe(recipe) async {
