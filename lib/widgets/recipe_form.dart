@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:uuid/uuid.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,7 +20,6 @@ class _RecipeFormState extends State<RecipeForm> {
   final recipeKey = GlobalKey<FormState>();
   final ingredientKey = GlobalKey<FormState>();
   final instructionsKey = GlobalKey<FormState>();
-  var uuid = const Uuid();
 
   final TextEditingController _ingredientController = TextEditingController();
   final TextEditingController _recipeNameControl = TextEditingController();
@@ -248,7 +246,7 @@ class _RecipeFormState extends State<RecipeForm> {
 
   Widget ingredientTile(int index) {
     return Dismissible(
-      key: Key(uuid.v4()),
+      key: Key('$index+${widget.entryData.ingredients[index]}'),
       onDismissed: ((direction) {
         widget.entryData.ingredients.removeAt(index);
         setState(() {});
@@ -261,7 +259,7 @@ class _RecipeFormState extends State<RecipeForm> {
 
   Widget ingredientSectionTile(int index) {
     return Dismissible(
-      key: Key(uuid.v4()),
+      key: Key('$index+${widget.entryData.ingredients[index]}'),
       onDismissed: ((direction) {
         widget.entryData.ingredients.removeAt(index);
         setState(() {});

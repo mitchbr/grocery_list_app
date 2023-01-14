@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:uuid/uuid.dart';
 
 import 'package:groceries/processors/checklist_processor.dart';
 import 'package:groceries/processors/profile_processor.dart';
@@ -22,7 +21,6 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
   var prevDeleted;
   String username = 'initial_username';
   late FocusNode newItemFocusNode;
-  var uuid = const Uuid();
 
   final Stream<QuerySnapshot> _checklistStream = FirebaseFirestore.instance.collection('authors').snapshots();
 
@@ -123,21 +121,29 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
   }
 
   Widget entriesList(BuildContext context) {
+    return SingleChildScrollView(
+        physics: const ScrollPhysics(),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            checklistItemsList(context),
+            newEntryBox(context),
+            const ListTile(
+                title: SizedBox(
+              height: 20,
+            )),
+          ],
+        ));
+  }
+
+  Widget checklistItemsList(BuildContext context) {
     return ReorderableListView.builder(
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
         padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-        itemCount: checklistEntries.length + 1,
+        itemCount: checklistEntries.length,
         itemBuilder: (context, index) {
-          if (index == checklistEntries.length) {
-            return Column(key: Key('$index'), children: [
-              newEntryBox(context),
-              const ListTile(
-                  title: SizedBox(
-                height: 20,
-              ))
-            ]);
-          } else {
-            return groceryTile(index);
-          }
+          return groceryTile(index);
         },
         onReorder: (int oldIndex, int newIndex) async {
           if (oldIndex < newIndex) {
@@ -152,7 +158,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
 
   Widget groceryTile(int index) {
     return Dismissible(
-      key: Key(uuid.v4()),
+      key: Key('$index+${checklistEntries[index].title}'),
       onDismissed: (direction) async {
         prevDeleted = checklistEntries[index];
         checklistEntries.removeAt(index);
