@@ -123,28 +123,21 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
   }
 
   Widget entriesList(BuildContext context) {
-    return SingleChildScrollView(
-        physics: const ScrollPhysics(),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            checklistItemsList(context),
-            newEntryBox(context),
-            const ListTile(
-                title: SizedBox(
-              height: 20,
-            )),
-          ],
-        ));
-  }
-
-  Widget checklistItemsList(BuildContext context) {
     return ReorderableListView.builder(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: checklistEntries.length,
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+        itemCount: checklistEntries.length + 1,
         itemBuilder: (context, index) {
-          return groceryTile(index);
+          if (index == checklistEntries.length) {
+            return Column(key: Key('$index'), children: [
+              newEntryBox(context),
+              const ListTile(
+                  title: SizedBox(
+                height: 20,
+              ))
+            ]);
+          } else {
+            return groceryTile(index);
+          }
         },
         onReorder: (int oldIndex, int newIndex) async {
           if (oldIndex < newIndex) {
