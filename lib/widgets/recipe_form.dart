@@ -25,8 +25,6 @@ class _RecipeFormState extends State<RecipeForm> {
   final TextEditingController _recipeNameControl = TextEditingController();
   final TextEditingController _instructionsControl = TextEditingController();
   late List<String> categories;
-  var savedRecipe = false;
-  var savedInstructions = false;
   late FocusNode ingredientFocusNode;
 
   final theme = CustomTheme();
@@ -39,8 +37,6 @@ class _RecipeFormState extends State<RecipeForm> {
       if (widget.entryData.id != 'init') {
         _recipeNameControl.text = widget.entryData.recipe;
         _instructionsControl.text = widget.entryData.instructions;
-        savedRecipe = true;
-        savedInstructions = true;
       } else {
         widget.entryData.category = categories[0];
       }
@@ -79,7 +75,7 @@ class _RecipeFormState extends State<RecipeForm> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            showRecipe(),
+            recipeTextField(),
             const ListTile(
                 title: Text(
               'Ingredients',
@@ -95,7 +91,7 @@ class _RecipeFormState extends State<RecipeForm> {
               'Instructions',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             )),
-            showInstructions(),
+            instructionsTextField(),
             categoryDropdown(),
             saveButton(context),
           ],
@@ -124,57 +120,35 @@ class _RecipeFormState extends State<RecipeForm> {
         });
   }
 
-  Widget showRecipe() {
-    if (savedRecipe) {
-      return recipeTile();
-    } else {
-      return recipeTextField();
-    }
-  }
-
-  Widget recipeTile() {
-    return ListTile(
-        title: Text(widget.entryData.recipe),
-        trailing: IconButton(
-          icon: const Icon(Icons.edit),
-          onPressed: () => setState(() {
-            savedRecipe = false;
-          }),
-        ));
-  }
-
   Widget recipeTextField() {
     return Form(
-        key: recipeKey,
-        child: ListTile(
-          title: TextFormField(
-            controller: _recipeNameControl,
-            cursorColor: theme.accentHighlightColor,
-            decoration: theme.textFormDecoration('Recipe Name'),
-            textCapitalization: TextCapitalization.words,
-            onSaved: (value) {
-              if (value != null) {
-                widget.entryData.recipe = value;
+      key: recipeKey,
+      child: ListTile(
+        title: TextFormField(
+          controller: _recipeNameControl,
+          cursorColor: theme.accentHighlightColor,
+          decoration: theme.textFormDecoration('Recipe Name'),
+          textCapitalization: TextCapitalization.words,
+          onSaved: (value) {
+            if (value != null) {
+              widget.entryData.recipe = value;
+            }
+          },
+          onFieldSubmitted: (value) => saveRecipeName(),
+          validator: (value) {
+            var val = value;
+            if (val != null) {
+              if (val.isEmpty) {
+                return 'Please enter a recipe title';
+              } else {
+                return null;
               }
-            },
-            onFieldSubmitted: (value) => saveRecipeName(),
-            validator: (value) {
-              var val = value;
-              if (val != null) {
-                if (val.isEmpty) {
-                  return 'Please enter a recipe title';
-                } else {
-                  return null;
-                }
-              }
-              return null;
-            },
-          ),
-          trailing: IconButton(
-            onPressed: (() => saveRecipeName()),
-            icon: const Icon(Icons.check),
-          ),
-        ));
+            }
+            return null;
+          },
+        ),
+      ),
+    );
   }
 
   void saveRecipeName() {
@@ -182,9 +156,7 @@ class _RecipeFormState extends State<RecipeForm> {
     if (currState != null) {
       if (currState.validate()) {
         currState.save();
-        setState(() {
-          savedRecipe = true;
-        });
+        setState(() {});
       }
     }
   }
@@ -272,56 +244,37 @@ class _RecipeFormState extends State<RecipeForm> {
     );
   }
 
-  Widget showInstructions() {
-    if (savedInstructions) {
-      return instructionsTile();
-    } else {
-      return instructionsTextField();
-    }
-  }
-
-  Widget instructionsTile() {
-    return ListTile(
-        title: Text(widget.entryData.instructions),
-        trailing: IconButton(
-          icon: const Icon(Icons.edit),
-          onPressed: () => setState(() {
-            savedInstructions = false;
-          }),
-        ));
-  }
-
   Widget instructionsTextField() {
     return Form(
-        key: instructionsKey,
-        child: ListTile(
-          title: TextFormField(
-            controller: _instructionsControl,
-            cursorColor: theme.accentHighlightColor,
-            decoration: theme.textFormDecoration('Instructions'),
-            textCapitalization: TextCapitalization.sentences,
-            keyboardType: TextInputType.multiline,
-            maxLines: null,
-            onSaved: (value) {
-              if (value != null) {
-                widget.entryData.instructions = value;
+      key: instructionsKey,
+      child: ListTile(
+        title: TextFormField(
+          controller: _instructionsControl,
+          cursorColor: theme.accentHighlightColor,
+          decoration: theme.textFormDecoration('Instructions'),
+          textCapitalization: TextCapitalization.sentences,
+          keyboardType: TextInputType.multiline,
+          maxLines: null,
+          onSaved: (value) {
+            if (value != null) {
+              widget.entryData.instructions = value;
+            }
+          },
+          onFieldSubmitted: (value) => saveInstructions(),
+          validator: (value) {
+            var val = value;
+            if (val != null) {
+              if (val.isEmpty) {
+                return 'Please enter instructions';
+              } else {
+                return null;
               }
-            },
-            onFieldSubmitted: (value) => saveInstructions(),
-            validator: (value) {
-              var val = value;
-              if (val != null) {
-                if (val.isEmpty) {
-                  return 'Please enter instructions';
-                } else {
-                  return null;
-                }
-              }
-              return null;
-            },
-          ),
-          trailing: IconButton(onPressed: (() => saveInstructions()), icon: const Icon(Icons.check)),
-        ));
+            }
+            return null;
+          },
+        ),
+      ),
+    );
   }
 
   void saveInstructions() {
@@ -329,9 +282,7 @@ class _RecipeFormState extends State<RecipeForm> {
     if (currState != null) {
       if (currState.validate()) {
         currState.save();
-        setState(() {
-          savedInstructions = true;
-        });
+        setState(() {});
       }
     }
   }
@@ -364,9 +315,11 @@ class _RecipeFormState extends State<RecipeForm> {
       padding: const EdgeInsets.all(10),
       child: TextButton(
         onPressed: () async {
+          saveRecipeName();
+          saveInstructions();
           var currState = formKey.currentState;
           if (currState != null) {
-            if (currState.validate() && savedRecipe && savedInstructions) {
+            if (currState.validate()) {
               currState.save();
               widget.processorFunction(widget.entryData);
               if (widget.entryData.id != 'init') {
