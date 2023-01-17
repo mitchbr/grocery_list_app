@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:groceries/processors/recipes_processor.dart';
-import 'package:groceries/widgets/filter_sort.dart';
 import 'package:groceries/widgets/page_drawer.dart';
 import 'package:groceries/custom_theme.dart';
 import 'package:groceries/processors/profile_processor.dart';
@@ -22,13 +21,7 @@ class _FollowedAuthorsRecipesLayoutState extends State<FollowedAuthorsRecipesLay
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: FilterSort(
-            recipesProcessor: recipesProcessor,
-            callback: callback,
-            sourceFilterEnabled: false,
-          ),
-        ),
+        appBar: AppBar(title: Text("${widget.userId}'s Recipes")),
         endDrawer: PageDrawer(children: <Widget>[
           TextButton.icon(
               onPressed: () => showDialog(
@@ -64,9 +57,5 @@ class _FollowedAuthorsRecipesLayoutState extends State<FollowedAuthorsRecipesLay
             child: const Text('Yes'),
           ),
         ]);
-  }
-
-  void callback() {
-    setState(() {});
   }
 }

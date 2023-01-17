@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:groceries/layouts/authors_recipe_details_layout.dart';
 import 'package:groceries/types/recipe_entry.dart';
+import 'package:groceries/widgets/filter_sort.dart';
 
 import 'package:groceries/widgets/firestore_list.dart';
 import 'package:groceries/processors/recipes_processor.dart';
@@ -20,7 +21,25 @@ class _FollowedAuthorRecipesViewState extends State<FollowedAuthorRecipesView> {
 
   @override
   Widget build(BuildContext context) {
-    return FirestoreList(stream: _recipesStream, dataProcessor: dataProcessor, listTile: groceryTile);
+    return SingleChildScrollView(
+      physics: const ScrollPhysics(),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FilterSort(
+            recipesProcessor: widget.recipesProcessor,
+            callback: callback,
+            sourceFilterEnabled: false,
+          ),
+          FirestoreList(
+            stream: _recipesStream,
+            dataProcessor: dataProcessor,
+            listTile: groceryTile,
+            scroll: false,
+          ),
+        ],
+      ),
+    );
   }
 
   List<RecipeEntry> dataProcessor(snapshot, username) {
@@ -40,5 +59,9 @@ class _FollowedAuthorRecipesViewState extends State<FollowedAuthorRecipesView> {
       title: Text(item.recipe),
       onTap: () => pushRecipeDetails(context, item),
     );
+  }
+
+  void callback() {
+    setState(() {});
   }
 }

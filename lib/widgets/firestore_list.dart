@@ -8,7 +8,9 @@ class FirestoreList extends StatefulWidget {
   Stream<QuerySnapshot> stream;
   final Function dataProcessor;
   final Function listTile;
-  FirestoreList({Key? key, required this.stream, required this.dataProcessor, required this.listTile})
+  bool scroll;
+  FirestoreList(
+      {Key? key, required this.stream, required this.dataProcessor, required this.listTile, this.scroll = true})
       : super(key: key);
 
   @override
@@ -76,6 +78,9 @@ class _FirestoreListState extends State<FirestoreList> {
 
   Widget entriesList(BuildContext context) {
     return ListView.builder(
+      // TODO: These need to be in only the followed_authors_recipe_view
+      shrinkWrap: !widget.scroll,
+      physics: (widget.scroll) ? null : const NeverScrollableScrollPhysics(),
       itemCount: listData.length,
       itemBuilder: (context, index) {
         return widget.listTile(listData[index]);
