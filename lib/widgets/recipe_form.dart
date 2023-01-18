@@ -81,9 +81,12 @@ class _RecipeFormState extends State<RecipeForm> {
               'Ingredients',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             )),
+            const ListTile(
+                title: Text('Hint: Swipe an ingredient to a side to delete it, or hold it down to reorder',
+                    style: TextStyle(color: Color(0xFFA4A4A4)))),
             ingredientsListView(context),
             const ListTile(
-                title: Text('Hint: Enter three dashes (---) to make a header item',
+                title: Text('Hint: Enter three dashes (---) at the front to make a header item',
                     style: TextStyle(color: Color(0xFFA4A4A4)))),
             newEntryBox(context),
             const ListTile(

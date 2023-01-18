@@ -126,6 +126,9 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            const ListTile(
+                title: Text('Hint: Swipe an ingredient to a side to delete it, or hold it down to reorder',
+                    style: TextStyle(color: Color(0xFFA4A4A4)))),
             checklistItemsList(context),
             newEntryBox(context),
             const ListTile(
