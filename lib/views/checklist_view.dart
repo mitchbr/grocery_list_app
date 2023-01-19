@@ -142,6 +142,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
   Widget checklistItemsList(BuildContext context) {
     return ReorderableListView.builder(
         scrollDirection: Axis.vertical,
+        physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
         itemCount: checklistEntries.length,

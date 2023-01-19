@@ -104,6 +104,7 @@ class _RecipeFormState extends State<RecipeForm> {
   Widget ingredientsListView(BuildContext context) {
     return ReorderableListView.builder(
         scrollDirection: Axis.vertical,
+        physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         itemBuilder: (context, index) {
           if (widget.entryData.ingredients[index].length >= 3 &&
