@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:groceries/custom_theme.dart';
 import 'package:groceries/processors/profile_processor.dart';
 import 'package:groceries/processors/recipes_processor.dart';
 
@@ -20,8 +21,12 @@ class FiltersPage extends StatefulWidget {
 
 class _FiltersPageState extends State<FiltersPage> {
   ProfileProcessor profileProcessor = ProfileProcessor();
+  CustomTheme theme = CustomTheme();
+
   List<Map> listItems = [];
   List<String> categories = [];
+  List<String> checkedTags = [];
+  List<String> tags = [];
   List<String> sources = ["All", "Personal", "Saved"];
   late String currentCategory;
   late String currentSource;
@@ -32,6 +37,8 @@ class _FiltersPageState extends State<FiltersPage> {
     profileProcessor.getUsername().then((value) => username = value);
     currentCategory = widget.recipesProcessor.category;
     currentSource = widget.recipesProcessor.source;
+    tags = widget.recipesProcessor.getAvailableTags();
+    checkedTags = widget.recipesProcessor.getActiveTags();
     getCategories().whenComplete(() => null);
     setupListItems();
     super.initState();
@@ -70,6 +77,7 @@ class _FiltersPageState extends State<FiltersPage> {
               : const SizedBox(
                   height: 0,
                 ),
+          tagsDropDown(),
         ],
       ),
     );
@@ -122,6 +130,39 @@ class _FiltersPageState extends State<FiltersPage> {
           ),
         )
       ],
+    );
+  }
+
+  Widget tagsDropDown() {
+    return ExpansionTile(
+      title: const Text(
+        'Tags',
+        style: TextStyle(fontSize: 20),
+      ),
+      textColor: theme.accentHighlightColor,
+      iconColor: theme.accentHighlightColor,
+      expandedCrossAxisAlignment: CrossAxisAlignment.start,
+      children: tagsOptions(),
+    );
+  }
+
+  List<Widget> tagsOptions() {
+    return tags.map((tag) {
+      var index = tags.indexOf(tag);
+      return tagCheckTile(index);
+    }).toList();
+  }
+
+  Widget tagCheckTile(index) {
+    return CheckboxListTile(
+      title: Text(tags[index]),
+      value: checkedTags.contains(tags[index]),
+      onChanged: (newValue) async {
+        checkedTags.contains(tags[index]) ? checkedTags.remove(tags[index]) : checkedTags.add(tags[index]);
+        setState(() {});
+      },
+      activeColor: theme.accentHighlightColor,
+      controlAffinity: ListTileControlAffinity.leading,
     );
   }
 }

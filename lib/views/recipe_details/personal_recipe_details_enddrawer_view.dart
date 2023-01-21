@@ -5,7 +5,6 @@ import 'package:groceries/views/edit_recipe_view.dart';
 import 'package:groceries/custom_theme.dart';
 import 'package:groceries/processors/recipes_processor.dart';
 import 'package:groceries/types/recipe_entry.dart';
-import 'package:intl/intl.dart';
 
 class PersonalRecipeDetailsEndDrawerView extends StatefulWidget {
   final RecipeEntry recipeEntry;
@@ -23,16 +22,6 @@ class _PersonalRecipeDetailsEndDrawerViewState extends State<PersonalRecipeDetai
   @override
   Widget build(BuildContext context) {
     return PageDrawer(children: <Widget>[
-      ExpansionTile(
-        title: const Text(
-          'More',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        textColor: theme.accentHighlightColor,
-        iconColor: theme.accentHighlightColor,
-        expandedCrossAxisAlignment: CrossAxisAlignment.start,
-        children: moreChildren(),
-      ),
       TextButton.icon(
         onPressed: () {
           showDialog(
@@ -55,45 +44,6 @@ class _PersonalRecipeDetailsEndDrawerViewState extends State<PersonalRecipeDetai
         label: const Text('Delete'),
       ),
     ]);
-  }
-
-  List<Widget> moreChildren() {
-    return <Widget>[
-      SizedBox(
-        child: DecoratedBox(
-          decoration: BoxDecoration(color: theme.accentColor, borderRadius: BorderRadius.circular(5)),
-          child: Center(
-            child: Text(widget.recipeEntry.category, style: const TextStyle(fontSize: 15)),
-          ),
-        ),
-        width: 100,
-        height: 30,
-      ),
-      const ListTile(
-        title: Text("Tags:"),
-      ),
-      SizedBox(
-        child: DecoratedBox(
-          decoration: BoxDecoration(color: theme.accentColor, borderRadius: BorderRadius.circular(5)),
-          child: Center(
-            child: Text(widget.recipeEntry.tags),
-          ),
-        ),
-        width: 50,
-        height: 25,
-      ),
-      ListTile(
-        title: Text(
-            "Last Updated: ${DateFormat.yMMMMd('en_US').format(DateTime.fromMicrosecondsSinceEpoch(widget.recipeEntry.updatedAt * 1000))}"),
-      ),
-      ListTile(
-        title: Text(
-            "Created: ${DateFormat.yMMMMd('en_US').format(DateTime.fromMicrosecondsSinceEpoch(widget.recipeEntry.createdAt * 1000))}"),
-      ),
-      ListTile(
-        title: Text("Times Made: ${widget.recipeEntry.timesMade}"),
-      ),
-    ];
   }
 
   void pushEditEntry(BuildContext context) {

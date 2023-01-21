@@ -73,7 +73,7 @@ class _SavedRecipeDetailsEndDrawerViewState extends State<SavedRecipeDetailsEndD
         child: DecoratedBox(
           decoration: BoxDecoration(color: theme.accentColor, borderRadius: BorderRadius.circular(5)),
           child: Center(
-            child: Text(widget.recipeEntry.tags),
+            child: Text(widget.recipeEntry.tags[0]),
           ),
         ),
         width: 50,

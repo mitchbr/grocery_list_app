@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:groceries/custom_theme.dart';
 import 'package:groceries/types/recipe_entry.dart';
+import 'package:intl/intl.dart';
 
 class RecipeDetails extends StatelessWidget {
   List<bool> checkedValues;
@@ -15,7 +16,7 @@ class RecipeDetails extends StatelessWidget {
         itemCount: recipeEntry.ingredients.length + 2,
         itemBuilder: (context, index) {
           if (index == recipeEntry.ingredients.length + 1) {
-            return metaDataDisplay();
+            return metaDataDisplay(context);
           } else if (index == 0) {
             return Column(children: const [
               ListTile(
@@ -59,7 +60,7 @@ class RecipeDetails extends StatelessWidget {
     );
   }
 
-  Widget metaDataDisplay() {
+  Widget metaDataDisplay(BuildContext context) {
     return Column(children: [
       const ListTile(
           title: Text(
@@ -67,9 +68,78 @@ class RecipeDetails extends StatelessWidget {
         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       )),
       ListTile(title: Text(recipeEntry.instructions)),
+      ExpansionTile(
+        title: const Text(
+          'More',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        textColor: theme.accentHighlightColor,
+        iconColor: theme.accentHighlightColor,
+        expandedCrossAxisAlignment: CrossAxisAlignment.start,
+        children: moreChildren(context),
+      ),
       const SizedBox(
         height: 75,
       ),
     ]);
+  }
+
+  List<Widget> moreChildren(BuildContext context) {
+    return <Widget>[
+      SizedBox(
+        child: DecoratedBox(
+          decoration: BoxDecoration(color: theme.accentColor, borderRadius: BorderRadius.circular(5)),
+          child: Center(
+            child: Text(recipeEntry.category, style: const TextStyle(fontSize: 15)),
+          ),
+        ),
+        width: 100,
+        height: 30,
+      ),
+      const ListTile(
+        title: Text("Tags:"),
+      ),
+      tagsListView(context),
+      ListTile(
+        title: Text(
+            "Last Updated: ${DateFormat.yMMMMd('en_US').format(DateTime.fromMicrosecondsSinceEpoch(recipeEntry.updatedAt * 1000))}"),
+      ),
+      ListTile(
+        title: Text(
+            "Created: ${DateFormat.yMMMMd('en_US').format(DateTime.fromMicrosecondsSinceEpoch(recipeEntry.createdAt * 1000))}"),
+      ),
+      ListTile(
+        title: Text("Times Made: ${recipeEntry.timesMade}"),
+      ),
+    ];
+  }
+
+  Widget tagsListView(BuildContext context) {
+    return ListView.builder(
+      scrollDirection: Axis.vertical,
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: recipeEntry.tags.length,
+      itemBuilder: (context, index) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              child: DecoratedBox(
+                decoration: BoxDecoration(color: theme.accentColor, borderRadius: BorderRadius.circular(5)),
+                child: Center(
+                  child: Text(recipeEntry.tags[index]),
+                ),
+              ),
+              width: recipeEntry.tags[0].length * 8.5,
+              height: 25,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+          ],
+        );
+      },
+    );
   }
 }

@@ -5,7 +5,7 @@ class RecipeEntry {
   late List<dynamic> ingredients;
   late String instructions;
   late String category;
-  late String tags;
+  late List tags;
   late int updatedAt;
   late int createdAt;
   late int timesMade;

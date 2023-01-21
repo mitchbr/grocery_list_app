@@ -19,7 +19,7 @@ class _CreateRecipeViewState extends State<CreateRecipeView> {
       ingredients: [],
       instructions: '',
       category: "",
-      tags: "tag",
+      tags: [],
       updatedAt: DateTime.now().millisecondsSinceEpoch,
       createdAt: DateTime.now().millisecondsSinceEpoch,
       timesMade: 0,

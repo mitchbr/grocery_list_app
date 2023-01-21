@@ -20,18 +20,22 @@ class _RecipeFormState extends State<RecipeForm> {
   final recipeKey = GlobalKey<FormState>();
   final ingredientKey = GlobalKey<FormState>();
   final instructionsKey = GlobalKey<FormState>();
+  final tagKey = GlobalKey<FormState>();
 
   final TextEditingController _ingredientController = TextEditingController();
+  final TextEditingController _tagController = TextEditingController();
   final TextEditingController _recipeNameControl = TextEditingController();
   final TextEditingController _instructionsControl = TextEditingController();
   late List<String> categories;
   late FocusNode ingredientFocusNode;
+  late FocusNode tagFocusNode;
 
   final theme = CustomTheme();
 
   @override
   void initState() {
     ingredientFocusNode = FocusNode();
+    tagFocusNode = FocusNode();
     categories = [];
     getCategories().then((value) {
       if (widget.entryData.id != 'init') {
@@ -47,6 +51,7 @@ class _RecipeFormState extends State<RecipeForm> {
   @override
   void dispose() {
     ingredientFocusNode.dispose();
+    tagFocusNode.dispose();
 
     super.dispose();
   }
@@ -88,7 +93,7 @@ class _RecipeFormState extends State<RecipeForm> {
             const ListTile(
                 title: Text('Hint: Enter three dashes (---) at the front to make a header item',
                     style: TextStyle(color: Color(0xFFA4A4A4)))),
-            newEntryBox(context),
+            newIngredientTile(context),
             const ListTile(
                 title: Text(
               'Instructions',
@@ -96,6 +101,16 @@ class _RecipeFormState extends State<RecipeForm> {
             )),
             instructionsTextField(),
             categoryDropdown(),
+            const ListTile(
+                title: Text(
+              'Tags',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            )),
+            const ListTile(
+                title: Text('Hint: Examples include vegan, gluten free, weeknight',
+                    style: TextStyle(color: Color(0xFFA4A4A4)))),
+            tagsListView(context),
+            newTagTile(),
             saveButton(context),
           ],
         ));
@@ -165,7 +180,7 @@ class _RecipeFormState extends State<RecipeForm> {
     }
   }
 
-  Widget newEntryBox(BuildContext context) {
+  Widget newIngredientTile(BuildContext context) {
     return Form(
         key: ingredientKey,
         child: ListTile(
@@ -312,6 +327,92 @@ class _RecipeFormState extends State<RecipeForm> {
         },
       ),
     );
+  }
+
+  Widget tagsListView(BuildContext context) {
+    return ReorderableListView.builder(
+        scrollDirection: Axis.vertical,
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemBuilder: (context, index) {
+          return tagTile(index);
+        },
+        itemCount: widget.entryData.tags.length,
+        onReorder: (int oldIndex, int newIndex) async {
+          if (oldIndex < newIndex) {
+            newIndex -= 1;
+          }
+          final item = widget.entryData.tags.removeAt(oldIndex);
+          widget.entryData.tags.insert(newIndex, item);
+          setState(() {});
+        });
+  }
+
+  Widget tagTile(int index) {
+    return Dismissible(
+      key: Key('$index+${widget.entryData.tags[index]}'),
+      onDismissed: ((direction) {
+        widget.entryData.tags.removeAt(index);
+        setState(() {});
+      }),
+      child: ListTile(
+        title: Text(widget.entryData.tags[index]),
+      ),
+    );
+  }
+
+  Widget newTagTile() {
+    return Form(
+        key: tagKey,
+        child: ListTile(
+          title: tagTextField(),
+          trailing: IconButton(onPressed: (() => saveTag()), icon: const Icon(Icons.add)),
+        ));
+  }
+
+  Widget tagTextField() {
+    return TextFormField(
+      controller: _tagController,
+      cursorColor: theme.accentHighlightColor,
+      decoration: theme.textFormDecoration('New Tag'),
+      textCapitalization: TextCapitalization.words,
+      focusNode: tagFocusNode,
+      onFieldSubmitted: (value) {
+        if (value != "") {
+          saveTag();
+        }
+      },
+      onSaved: (value) {
+        if (value != null) {
+          widget.entryData.tags.add(value);
+        }
+      },
+      validator: (value) {
+        var val = value;
+        if (val != null) {
+          if (val.isEmpty) {
+            return 'Please enter a value';
+          } else {
+            return null;
+          }
+        }
+        return null;
+      },
+    );
+  }
+
+  void saveTag() {
+    var currState = tagKey.currentState;
+    if (currState != null) {
+      if (currState.validate()) {
+        currState.save();
+
+        setState(() {
+          _tagController.clear();
+          tagFocusNode.requestFocus();
+        });
+      }
+    }
   }
 
   Widget saveButton(BuildContext context) {

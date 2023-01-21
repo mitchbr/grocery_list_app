@@ -6,6 +6,8 @@ class RecipesProcessor {
   ProfileProcessor profileProcessor = ProfileProcessor();
 
   final _fireStore = FirebaseFirestore.instance;
+  final List<String> _availableTags;
+  List<String> _tagFilters;
   Map sort;
   String category;
   String source;
@@ -22,6 +24,8 @@ class RecipesProcessor {
   RecipesProcessor()
       : category = "None",
         source = "All",
+        _tagFilters = [],
+        _availableTags = [],
         sort = {"key": "updatedAt", "order": "asc"};
 
   List<RecipeEntry> processEntries(List entries) {
@@ -31,6 +35,7 @@ class RecipesProcessor {
         .where((entry) => source != "All"
             ? (source == "Personal" ? entry["author"] == sourceUser : entry["author"] != sourceUser)
             : true)
+        .where((entry) => _tagFilters.every((tag) => entry["tags"].contains(tag)))
         .toList();
 
     // Sort
@@ -46,6 +51,10 @@ class RecipesProcessor {
   }
 
   RecipeEntry processEntry(entry) {
+    for (String tag in entry['tags']) {
+      !_availableTags.contains(tag.toLowerCase()) ? _availableTags.add(tag.toLowerCase()) : null;
+    }
+
     return RecipeEntry(
         id: entry["id"],
         recipe: entry['recipe'],
@@ -70,6 +79,18 @@ class RecipesProcessor {
   setSource(newSource, username) {
     source = newSource;
     sourceUser = username;
+  }
+
+  getAvailableTags() {
+    return _availableTags;
+  }
+
+  getActiveTags() {
+    return _tagFilters;
+  }
+
+  setTagFilter(newTags) {
+    _tagFilters = newTags;
   }
 
   Future<void> addRecipe(recipe) async {
