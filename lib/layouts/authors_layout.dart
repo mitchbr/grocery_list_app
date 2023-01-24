@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:groceries/widgets/page_drawer.dart';
 import 'package:groceries/custom_theme.dart';
+import 'package:groceries/layouts/profile_page_layout.dart';
 import 'package:groceries/processors/profile_processor.dart';
 import 'package:groceries/views/authors_view.dart';
 
@@ -21,16 +21,24 @@ class _AuthorsLayoutState extends State<AuthorsLayout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Authors')),
-        endDrawer: PageDrawer(children: <Widget>[
-          TextButton.icon(
+        appBar: AppBar(
+          title: const Text('Authors'),
+          actions: [
+            IconButton(
               onPressed: () => showDialog(
-                    context: context,
-                    builder: (BuildContext context) => _addAuthorFollowPopup(),
-                  ),
+                context: context,
+                builder: (BuildContext context) => _addAuthorFollowPopup(),
+              ),
               icon: const Icon(Icons.add),
-              label: const Text('Follow User')),
-        ]),
+            ),
+            IconButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePageLayout()));
+              },
+              icon: const Icon(Icons.person),
+            ),
+          ],
+        ),
         body: const AuthorsView());
   }
 

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:groceries/custom_theme.dart';
 import 'package:groceries/processors/checklist_processor.dart';
+import 'package:groceries/processors/profile_processor.dart';
 import 'package:groceries/processors/recipes_processor.dart';
 import 'package:groceries/types/grocery_entry.dart';
 import 'package:groceries/types/recipe_entry.dart';
-import 'package:groceries/views/recipe_details/authors_recipe_details_enddrawer_view.dart';
+import 'package:groceries/widgets/bordered_icon_button.dart';
 import 'package:groceries/widgets/recipe_details.dart';
 
 class AuthorsRecipeDetailsLayout extends StatefulWidget {
@@ -18,6 +19,7 @@ class AuthorsRecipeDetailsLayout extends StatefulWidget {
 class _AuthorsRecipeDetailsLayoutState extends State<AuthorsRecipeDetailsLayout> {
   final checklistProcessor = ChecklistProcessor();
   final recipesProcessor = RecipesProcessor();
+  final profileProcessor = ProfileProcessor();
 
   final theme = CustomTheme();
 
@@ -32,15 +34,19 @@ class _AuthorsRecipeDetailsLayoutState extends State<AuthorsRecipeDetailsLayout>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      endDrawer: AuthorsRecipeDetailsEndDrawerView(
-        recipeEntry: widget.recipeEntry,
-      ),
       appBar: AppBar(
         title: Text(widget.recipeEntry.recipe),
       ),
       body: RecipeDetails(
         checkedValues: checkedValues,
         recipeEntry: widget.recipeEntry,
+        actions: [
+          BorderedIconButton(
+            onPressed: () =>
+                showDialog<String>(context: context, builder: (BuildContext context) => verifySaveRecipe(context)),
+            icon: const Icon(Icons.save),
+          ),
+        ],
       ),
       floatingActionButton: addToGroceryList(context),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -66,5 +72,28 @@ class _AuthorsRecipeDetailsLayoutState extends State<AuthorsRecipeDetailsLayout>
         },
       ),
     );
+  }
+
+  Widget verifySaveRecipe(BuildContext context) {
+    return AlertDialog(
+        title: const Text('Add Recipe to Library?'),
+        content: const Text('The recipe will appear under the Saved tab'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('No'),
+          ),
+          TextButton(
+            onPressed: () {
+              profileProcessor.addFollowedRecipe(widget.recipeEntry.id);
+              setState(() {});
+              // Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+            },
+            child: const Text('Yes'),
+          ),
+        ]);
   }
 }

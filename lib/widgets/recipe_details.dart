@@ -6,7 +6,9 @@ import 'package:intl/intl.dart';
 class RecipeDetails extends StatelessWidget {
   List<bool> checkedValues;
   final RecipeEntry recipeEntry;
-  RecipeDetails({Key? key, required this.checkedValues, required this.recipeEntry}) : super(key: key);
+  List<Widget> actions;
+  RecipeDetails({Key? key, required this.checkedValues, required this.recipeEntry, required this.actions})
+      : super(key: key);
 
   final theme = CustomTheme();
 
@@ -18,8 +20,17 @@ class RecipeDetails extends StatelessWidget {
           if (index == recipeEntry.ingredients.length + 1) {
             return metaDataDisplay(context);
           } else if (index == 0) {
-            return Column(children: const [
-              ListTile(
+            return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Padding(
+                  padding: const EdgeInsets.only(
+                    left: 5,
+                    top: 5,
+                  ),
+                  child: Wrap(
+                    children: [...actions],
+                    spacing: 3,
+                  )),
+              const ListTile(
                   title: Text(
                 'Ingredients',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),

@@ -5,7 +5,6 @@ import 'package:groceries/processors/checklist_processor.dart';
 import 'package:groceries/processors/profile_processor.dart';
 import 'package:groceries/types/grocery_entry.dart';
 import 'package:groceries/custom_theme.dart';
-import 'package:groceries/widgets/page_drawer.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -55,10 +54,8 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Checklist"),
-      ),
-      endDrawer: PageDrawer(
-        children: <Widget>[
-          TextButton.icon(
+        actions: [
+          IconButton(
             onPressed: () async {
               checklistProcessor.shareByText(checklistEntries);
               showDialog(
@@ -67,9 +64,8 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
               );
             },
             icon: const Icon(Icons.file_download_outlined),
-            label: const Text('Import'),
           ),
-          TextButton.icon(
+          IconButton(
             onPressed: () async {
               var checklistString = checklistProcessor.shareByText(checklistEntries);
               showDialog(
@@ -78,7 +74,6 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
               );
             },
             icon: const Icon(Icons.share),
-            label: const Text('Share'),
           ),
         ],
       ),

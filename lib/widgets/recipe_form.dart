@@ -429,7 +429,6 @@ class _RecipeFormState extends State<RecipeForm> {
               widget.processorFunction(widget.entryData);
               if (widget.entryData.id != 'init') {
                 Navigator.of(context).pop();
-                Navigator.of(context).pop();
               }
               Navigator.of(context).pop();
             }

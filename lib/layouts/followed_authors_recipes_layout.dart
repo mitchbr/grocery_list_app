@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:groceries/processors/recipes_processor.dart';
-import 'package:groceries/widgets/page_drawer.dart';
 import 'package:groceries/custom_theme.dart';
 import 'package:groceries/processors/profile_processor.dart';
 import 'package:groceries/views/followed_author_recipes_view.dart';
@@ -21,16 +20,18 @@ class _FollowedAuthorsRecipesLayoutState extends State<FollowedAuthorsRecipesLay
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("${widget.userId}'s Recipes")),
-        endDrawer: PageDrawer(children: <Widget>[
-          TextButton.icon(
+        appBar: AppBar(
+          title: Text("${widget.userId}'s Recipes"),
+          actions: [
+            IconButton(
               onPressed: () => showDialog(
-                    context: context,
-                    builder: (BuildContext context) => _removeAuthorFollowPopup(context),
-                  ),
+                context: context,
+                builder: (BuildContext context) => _removeAuthorFollowPopup(context),
+              ),
               icon: const Icon(Icons.remove),
-              label: const Text('Stop Following')),
-        ]),
+            ),
+          ],
+        ),
         body: FollowedAuthorRecipesView(
           userId: widget.userId,
           recipesProcessor: recipesProcessor,
@@ -50,7 +51,6 @@ class _FollowedAuthorsRecipesLayoutState extends State<FollowedAuthorsRecipesLay
             onPressed: () {
               profileProcessor.removeFollowedAuthor(widget.userId);
               setState(() {});
-              Navigator.of(context).pop();
               Navigator.of(context).pop();
               Navigator.of(context).pop();
             },
