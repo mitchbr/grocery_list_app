@@ -35,7 +35,7 @@ class RecipesProcessor {
         .where((entry) => source != "All"
             ? (source == "Personal" ? entry["author"] == sourceUser : entry["author"] != sourceUser)
             : true)
-        .where((entry) => _tagFilters.every((tag) => entry["tags"].contains(tag)))
+        .where((entry) => _tagFilters.every((tag) => tagInTags(entry, tag)))
         .toList();
 
     // Sort
@@ -48,6 +48,12 @@ class RecipesProcessor {
     return entries.map((record) {
       return processEntry(record);
     }).toList();
+  }
+
+  bool tagInTags(entry, tag) {
+    var entryTags = entry["tags"].map((tag) => tag.toLowerCase()).toList();
+    bool inTags = entryTags.contains(tag);
+    return inTags;
   }
 
   RecipeEntry processEntry(entry) {
