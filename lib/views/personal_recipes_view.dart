@@ -4,6 +4,7 @@ import 'package:groceries/layouts/personal_recipe_details_layout.dart';
 import 'package:groceries/layouts/saved_recipe_details_layout.dart';
 import 'package:groceries/processors/profile_processor.dart';
 import 'package:groceries/types/recipe_entry.dart';
+import 'package:groceries/widgets/filter_sort.dart';
 
 import 'package:groceries/widgets/firestore_list.dart';
 import 'package:groceries/processors/recipes_processor.dart';
@@ -40,7 +41,24 @@ class _PersonalRecipesViewState extends State<PersonalRecipesView> {
 
   @override
   Widget build(BuildContext context) {
-    return FirestoreList(stream: _recipesStream, dataProcessor: dataProcessor, listTile: groceryTile);
+    return SingleChildScrollView(
+      physics: const ScrollPhysics(),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FilterSort(
+            recipesProcessor: widget.recipesProcessor,
+            callback: callback,
+          ),
+          FirestoreList(
+            stream: _recipesStream,
+            dataProcessor: dataProcessor,
+            listTile: groceryTile,
+            scroll: false,
+          ),
+        ],
+      ),
+    );
   }
 
   List<RecipeEntry> dataProcessor(snapshot, username) {
@@ -71,5 +89,9 @@ class _PersonalRecipesViewState extends State<PersonalRecipesView> {
       subtitle: item.author == username ? const Text("Personal") : Text("Author: ${item.author}"),
       onTap: () => pushRecipeDetails(context, item),
     );
+  }
+
+  void callback() {
+    setState(() {});
   }
 }

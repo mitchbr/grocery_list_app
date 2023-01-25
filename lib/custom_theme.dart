@@ -26,8 +26,8 @@ class CustomTheme {
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
+          foregroundColor: textColor,
           padding: const EdgeInsets.all(16.0),
-          primary: textColor,
           textStyle: const TextStyle(fontSize: 20),
           backgroundColor: accentColor,
         ),
@@ -44,6 +44,24 @@ class CustomTheme {
   InputDecoration textFormDecoration(label) {
     return InputDecoration(
       labelText: label,
+      floatingLabelStyle: TextStyle(color: accentHighlightColor),
+      focusedBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: accentHighlightColor),
+      ),
+    );
+  }
+
+  InputDecoration textFormIconDecoration(label, icon) {
+    return InputDecoration(
+      labelText: label,
+      prefixIcon: Align(
+        widthFactor: 1.0,
+        heightFactor: 1.0,
+        child: Icon(
+          icon,
+          color: accentColor,
+        ),
+      ),
       floatingLabelStyle: TextStyle(color: accentHighlightColor),
       focusedBorder: UnderlineInputBorder(
         borderSide: BorderSide(color: accentHighlightColor),

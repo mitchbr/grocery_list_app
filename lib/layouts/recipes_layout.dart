@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:groceries/processors/profile_processor.dart';
 import 'package:groceries/processors/recipes_processor.dart';
-import 'package:groceries/widgets/filter_sort.dart';
 import 'package:groceries/views/create_recipe_view.dart';
 import 'package:groceries/custom_theme.dart';
 import 'package:groceries/views/personal_recipes_view.dart';
@@ -16,6 +15,7 @@ class RecipesLayout extends StatefulWidget {
 
 class _RecipesLayoutState extends State<RecipesLayout> {
   final TextEditingController _recipeFromIdTextController = TextEditingController();
+  final TextEditingController _searchControl = TextEditingController();
   final ProfileProcessor profileProcessor = ProfileProcessor();
   final RecipesProcessor recipesProcessor = RecipesProcessor();
   final theme = CustomTheme();
@@ -26,10 +26,7 @@ class _RecipesLayoutState extends State<RecipesLayout> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: FilterSort(
-          recipesProcessor: recipesProcessor,
-          callback: callback,
-        ),
+        title: searchFormField(),
         actions: [
           IconButton(
             onPressed: () async {
@@ -72,6 +69,18 @@ class _RecipesLayoutState extends State<RecipesLayout> {
           child: const Icon(Icons.file_download_outlined),
         ),
       ],
+    );
+  }
+
+  Widget searchFormField() {
+    return TextFormField(
+      controller: _searchControl,
+      cursorColor: theme.accentHighlightColor,
+      decoration: theme.textFormIconDecoration('Search Recipes', Icons.search),
+      onChanged: (value) {
+        recipesProcessor.setSearch(value);
+        setState(() {});
+      },
     );
   }
 

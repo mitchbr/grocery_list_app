@@ -12,6 +12,7 @@ class RecipesProcessor {
   String category;
   String source;
   String sourceUser = "";
+  String _search = "";
   Map sortOptions = {
     "Newest Updated": {"key": "updatedAt", "order": "asc"},
     "Oldest Updated": {"key": "updatedAt", "order": "desc"},
@@ -31,11 +32,14 @@ class RecipesProcessor {
   List<RecipeEntry> processEntries(List entries) {
     // Filter
     entries = entries
-        .where((entry) => category != 'None' ? entry['category'] == category : true)
-        .where((entry) => source != "All"
-            ? (source == "Personal" ? entry["author"] == sourceUser : entry["author"] != sourceUser)
-            : true)
-        .where((entry) => _tagFilters.every((tag) => tagInTags(entry, tag)))
+        .where((entry) => category != 'None'
+            ? entry['category'] == category
+            : true && source != "All"
+                ? (source == "Personal" ? entry["author"] == sourceUser : entry["author"] != sourceUser)
+                : true && _tagFilters.every((tag) => tagInTags(entry, tag)) && _search != ""
+                    ? (entry['recipe'].toLowerCase().contains(_search.toLowerCase()) ||
+                        entry['author'].toLowerCase().contains(_search.toLowerCase()))
+                    : true)
         .toList();
 
     // Sort
@@ -85,6 +89,10 @@ class RecipesProcessor {
   setSource(newSource, username) {
     source = newSource;
     sourceUser = username;
+  }
+
+  void setSearch(enteredSearch) {
+    _search = enteredSearch;
   }
 
   getAvailableTags() {
