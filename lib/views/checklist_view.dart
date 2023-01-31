@@ -298,7 +298,7 @@ class _ChecklistEntriesState extends State<ChecklistEntries> {
 
   Widget fromTextPopupDialog() {
     return AlertDialog(
-      title: const Text('Import Items'),
+      title: const Text('Import Checklist Items'),
       content: TextField(
         controller: _checklistFromTextController,
         decoration: theme.textFormDecoration('Enter Items'),

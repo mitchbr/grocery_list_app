@@ -3,7 +3,6 @@ import 'package:groceries/custom_theme.dart';
 
 import 'package:groceries/layouts/main_screen_layout.dart';
 import 'package:groceries/processors/profile_processor.dart';
-import 'package:groceries/processors/recipes_processor.dart';
 import 'package:groceries/widgets/profile_widgets.dart';
 
 class Groceries extends StatefulWidget {
@@ -15,10 +14,9 @@ class Groceries extends StatefulWidget {
 
 class _GroceriesState extends State<Groceries> {
   _GroceriesState();
-
   final theme = CustomTheme();
-
-  Future getUsername = ProfileProcessor().checkUserExists();
+  bool signedIn = false;
+  Future<bool> getUsername = ProfileProcessor().checkUserExists();
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +24,8 @@ class _GroceriesState extends State<Groceries> {
       future: getUsername,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
-          if (snapshot.data == false) {
-            return bodyWidget(signIn());
+          if (!snapshot.data) {
+            return ProfileWidgets(callback: callback);
           } else {
             return const MainScreenLayout();
           }
@@ -44,43 +42,6 @@ class _GroceriesState extends State<Groceries> {
     return Scaffold(
       appBar: AppBar(title: const Text("Groceries")),
       body: child,
-    );
-  }
-
-  Widget signIn() {
-    return Column(
-      children: [
-        const SizedBox(
-          height: 10,
-        ),
-        const Center(
-          child: Text(
-            "If you do not already have a profile, please reach out to Mitchell to have one made",
-            style: TextStyle(fontSize: 20),
-            textAlign: TextAlign.center,
-          ),
-        ),
-        const ProfileWidgets(),
-        const SizedBox(
-          height: 10,
-        ),
-        TextButton(
-          onPressed: (() async {
-            var userExists = await ProfileProcessor().checkUserExists();
-            if (userExists) {
-              setState(() {
-                getUsername = ProfileProcessor().checkUserExists();
-              });
-            } else {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) => showUserDoesNotExistDialog(),
-              );
-            }
-          }),
-          child: const Text("Sign In"),
-        )
-      ],
     );
   }
 
@@ -111,18 +72,9 @@ class _GroceriesState extends State<Groceries> {
     ));
   }
 
-  Widget showUserDoesNotExistDialog() {
-    return AlertDialog(
-      title: const Text('User does not exist'),
-      content: const Text("Please provide an existing username"),
-      actions: <Widget>[
-        TextButton(
-          onPressed: () async {
-            Navigator.of(context).pop();
-          },
-          child: const Text("Ok"),
-        ),
-      ],
-    );
+  void callback(BuildContext context) {
+    setState(() {
+      signedIn = true;
+    });
   }
 }

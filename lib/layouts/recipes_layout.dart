@@ -49,13 +49,10 @@ class _RecipesLayoutState extends State<RecipesLayout> {
 
   Widget fromTextPopupDialog() {
     return AlertDialog(
-      title: const Text('Import Items'),
+      title: const Text('Save Recipe to Library'),
       content: TextField(
         controller: _recipeFromIdTextController,
-        decoration: theme.textFormDecoration('Enter Items'),
-        keyboardType: TextInputType.multiline,
-        minLines: 4,
-        maxLines: 100,
+        decoration: theme.textFormDecoration('Enter Recipe ID'),
       ),
       actions: <Widget>[
         TextButton(
@@ -88,9 +85,5 @@ class _RecipesLayoutState extends State<RecipesLayout> {
     Navigator.push(context, MaterialPageRoute(builder: (context) => const CreateRecipeView())).then((data) {
       setState(() => {});
     });
-  }
-
-  void callback() {
-    setState(() {});
   }
 }

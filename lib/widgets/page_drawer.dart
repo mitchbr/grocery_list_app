@@ -20,7 +20,7 @@ class PageDrawer extends StatelessWidget {
       child: ListView(children: [
         TextButton.icon(
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePageLayout()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePageLayout()));
             },
             icon: const Icon(Icons.person),
             label: const Text("Profile")),

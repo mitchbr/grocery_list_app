@@ -4,7 +4,11 @@ import 'package:groceries/custom_theme.dart';
 import 'package:groceries/processors/profile_processor.dart';
 
 class ProfileWidgets extends StatefulWidget {
-  const ProfileWidgets({Key? key}) : super(key: key);
+  final Function callback;
+  const ProfileWidgets({
+    Key? key,
+    required this.callback,
+  }) : super(key: key);
 
   @override
   State<ProfileWidgets> createState() => _ProfileWidgetsState();
@@ -13,23 +17,20 @@ class ProfileWidgets extends StatefulWidget {
 class _ProfileWidgetsState extends State<ProfileWidgets> {
   final profileKey = GlobalKey<FormState>();
   final TextEditingController _profileController = TextEditingController();
-  bool savedUsername = false;
   late String username;
 
   final theme = CustomTheme();
   final processor = ProfileProcessor();
+
+  Future getUsername = ProfileProcessor().checkUserExists();
 
   @override
   void initState() {
     username = 'no_username_set';
     processor.getUsername().then((value) {
       if (value != 'no_username_set') {
-        savedUsername = true;
         _profileController.text = value;
         setState(() => username = value);
-      } else {
-        savedUsername = false;
-        setState(() => username = 'no_username_set');
       }
     });
     super.initState();
@@ -37,22 +38,18 @@ class _ProfileWidgetsState extends State<ProfileWidgets> {
 
   @override
   Widget build(BuildContext context) {
-    if (savedUsername == false) {
-      return profileTextField();
-    } else {
-      return profileTile();
-    }
-  }
-
-  Widget profileTile() {
-    return ListTile(
-        title: Text(username),
-        trailing: IconButton(
-          icon: const Icon(Icons.edit),
-          onPressed: () => setState(() {
-            savedUsername = false;
-          }),
-        ));
+    return FutureBuilder(
+      future: getUsername,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasData) {
+          return bodyWidget(signIn());
+        } else if (snapshot.hasError) {
+          return bodyWidget(loadingError());
+        } else {
+          return bodyWidget(circularIndicator(context));
+        }
+      },
+    );
   }
 
   profileTextField() {
@@ -63,15 +60,6 @@ class _ProfileWidgetsState extends State<ProfileWidgets> {
             controller: _profileController,
             cursorColor: theme.accentHighlightColor,
             decoration: theme.textFormDecoration('Username'),
-            textCapitalization: TextCapitalization.sentences,
-            keyboardType: TextInputType.multiline,
-            maxLines: null,
-            onSaved: (value) {
-              if (value != null) {
-                processor.setUsername(value);
-                username = value;
-              }
-            },
             validator: (value) {
               var val = value;
               if (val != null) {
@@ -84,8 +72,96 @@ class _ProfileWidgetsState extends State<ProfileWidgets> {
               return null;
             },
           ),
-          trailing: IconButton(onPressed: (() => saveUsername()), icon: const Icon(Icons.check)),
         ));
+  }
+
+  Widget bodyWidget(Widget child) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Groceries")),
+      body: child,
+    );
+  }
+
+  Widget signIn() {
+    return Column(
+      children: [
+        const SizedBox(
+          height: 10,
+        ),
+        const Center(
+          child: Text(
+            "If you do not already have a profile, please reach out to Mitchell to have one made",
+            style: TextStyle(fontSize: 20),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        profileTextField(),
+        const SizedBox(
+          height: 10,
+        ),
+        TextButton(
+          onPressed: (() async {
+            await processor.setUsername(_profileController.text);
+            var userExists = await processor.checkUserExists();
+            if (userExists) {
+              saveUsername();
+              setState(() {
+                getUsername = processor.checkUserExists();
+                widget.callback(context);
+              });
+            } else {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) => showUserDoesNotExistDialog(),
+              );
+            }
+          }),
+          child: const Text("Sign In"),
+        )
+      ],
+    );
+  }
+
+  Widget circularIndicator(BuildContext context) {
+    return Center(
+        child: CircularProgressIndicator(
+      color: theme.accentHighlightColor,
+    ));
+  }
+
+  Widget loadingError() {
+    return Center(
+        child: Column(
+      children: [
+        const Text(
+          "There was an error loading data, please try again",
+          style: TextStyle(fontSize: 20),
+          textAlign: TextAlign.center,
+        ),
+        IconButton(
+            onPressed: (() async {
+              setState(() {
+                getUsername = processor.checkUserExists();
+              });
+            }),
+            icon: const Icon(Icons.refresh))
+      ],
+    ));
+  }
+
+  Widget showUserDoesNotExistDialog() {
+    return AlertDialog(
+      title: const Text('User does not exist'),
+      content: const Text("Please provide an existing username"),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () async {
+            Navigator.of(context).pop();
+          },
+          child: const Text("Ok"),
+        ),
+      ],
+    );
   }
 
   saveUsername() {
@@ -93,9 +169,8 @@ class _ProfileWidgetsState extends State<ProfileWidgets> {
     if (currState != null) {
       if (currState.validate()) {
         currState.save();
-        setState(() {
-          savedUsername = true;
-        });
+        processor.setUsername(_profileController.text);
+        setState(() {});
       }
     }
   }

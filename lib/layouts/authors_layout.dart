@@ -33,7 +33,7 @@ class _AuthorsLayoutState extends State<AuthorsLayout> {
             ),
             IconButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePageLayout()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePageLayout()));
               },
               icon: const Icon(Icons.person),
             ),
