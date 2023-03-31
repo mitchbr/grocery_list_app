@@ -114,7 +114,7 @@ class _SavedRecipeDetailsLayoutState extends State<SavedRecipeDetailsLayout> {
               profileProcessor.removeFromLibrary(widget.recipeEntry.id);
               setState(() {});
               Navigator.of(context).pop();
-              Navigator.of(context).pop();
+              // Navigator.of(context).pop();
               Navigator.of(context).pop();
             },
             child: const Text('Yes'),

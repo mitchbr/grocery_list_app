@@ -74,7 +74,7 @@ class _GroceriesState extends State<Groceries> {
 
   void callback(BuildContext context) {
     setState(() {
-      signedIn = true;
+      getUsername = ProfileProcessor().checkUserExists();
     });
   }
 }

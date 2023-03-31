@@ -13,6 +13,7 @@ class ChecklistProcessor {
   }
 
   int calculateNumChecked(List<GroceryEntry> entries) {
+    numChecked = 0;
     for (var entry in entries) {
       numChecked += entry.checked;
     }
