@@ -159,6 +159,7 @@ class _FiltersPageState extends State<FiltersPage> {
       value: checkedTags.contains(tags[index]),
       onChanged: (newValue) async {
         checkedTags.contains(tags[index]) ? checkedTags.remove(tags[index]) : checkedTags.add(tags[index]);
+        widget.recipesProcessor.setTagFilter(checkedTags);
         setState(() {});
       },
       activeColor: theme.accentHighlightColor,

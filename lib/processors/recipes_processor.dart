@@ -31,16 +31,7 @@ class RecipesProcessor {
 
   List<RecipeEntry> processEntries(List entries) {
     // Filter
-    entries = entries
-        .where((entry) => category != 'None'
-            ? entry['category'] == category
-            : true && source != "All"
-                ? (source == "Personal" ? entry["author"] == sourceUser : entry["author"] != sourceUser)
-                : true && _tagFilters.every((tag) => tagInTags(entry, tag)) && _search != ""
-                    ? (entry['recipe'].toLowerCase().contains(_search.toLowerCase()) ||
-                        entry['author'].toLowerCase().contains(_search.toLowerCase()))
-                    : true)
-        .toList();
+    entries = filterEntries(entries);
 
     // Sort
     if (sort["order"] == "asc") {
@@ -52,6 +43,30 @@ class RecipesProcessor {
     return entries.map((record) {
       return processEntry(record);
     }).toList();
+  }
+
+  List filterEntries(unfiltedEntries) {
+    // Category filter
+    var entries = unfiltedEntries.where((entry) => category != 'None' ? entry['category'] == category : true).toList();
+
+    // source filter
+    entries = entries
+        .where((entry) => source != "All"
+            ? (source == "Personal" ? entry["author"] == sourceUser : entry["author"] != sourceUser)
+            : true)
+        .toList();
+
+    // tags filter
+    entries = entries.where((entry) => _tagFilters.every((tag) => tagInTags(entry, tag))).toList();
+
+    // search
+    entries = entries
+        .where((entry) => _search != ""
+            ? (entry['recipe'].toLowerCase().contains(_search.toLowerCase()) ||
+                entry['author'].toLowerCase().contains(_search.toLowerCase()))
+            : true)
+        .toList();
+    return entries;
   }
 
   bool tagInTags(entry, tag) {
