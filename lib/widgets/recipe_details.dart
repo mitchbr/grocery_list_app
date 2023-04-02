@@ -142,7 +142,7 @@ class RecipeDetails extends StatelessWidget {
                   child: Text(recipeEntry.tags[index]),
                 ),
               ),
-              width: recipeEntry.tags[0].length * 10,
+              width: recipeEntry.tags[index].length * 10,
               height: 25,
             ),
             const SizedBox(
