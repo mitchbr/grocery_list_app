@@ -8,6 +8,7 @@ import 'package:groceries/widgets/filter_sort.dart';
 
 import 'package:groceries/widgets/firestore_list.dart';
 import 'package:groceries/processors/recipes_processor.dart';
+import 'package:groceries/widgets/recipe_tile.dart';
 
 class PersonalRecipesView extends StatefulWidget {
   final RecipesProcessor recipesProcessor;
@@ -75,19 +76,26 @@ class _PersonalRecipesViewState extends State<PersonalRecipesView> {
 
   void pushRecipeDetails(BuildContext context, recipe) {
     if (recipe.author == username) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => PersonalRecipeDetailsLayout(recipeEntry: recipe)))
-          .then((data) => setState(() => {}));
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PersonalRecipeDetailsLayout(recipeEntry: recipe),
+        ),
+      ).then((data) => setState(() => {}));
     } else {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => SavedRecipeDetailsLayout(recipeEntry: recipe)))
-          .then((data) => setState(() => {}));
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SavedRecipeDetailsLayout(recipeEntry: recipe),
+        ),
+      ).then((data) => setState(() => {}));
     }
   }
 
-  Widget groceryTile(var item) {
-    return ListTile(
-      title: Text(item.recipe),
-      subtitle: item.author == username ? const Text("Personal") : Text("Author: ${item.author}"),
-      onTap: () => pushRecipeDetails(context, item),
+  Widget groceryTile(RecipeEntry recipe) {
+    return RecipeTile(
+      recipe: recipe,
+      onTap: () => pushRecipeDetails(context, recipe),
     );
   }
 

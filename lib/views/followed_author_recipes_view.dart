@@ -6,6 +6,7 @@ import 'package:groceries/widgets/filter_sort.dart';
 
 import 'package:groceries/widgets/firestore_list.dart';
 import 'package:groceries/processors/recipes_processor.dart';
+import 'package:groceries/widgets/recipe_tile.dart';
 
 class FollowedAuthorRecipesView extends StatefulWidget {
   final String userId;
@@ -50,14 +51,18 @@ class _FollowedAuthorRecipesViewState extends State<FollowedAuthorRecipesView> {
   }
 
   void pushRecipeDetails(BuildContext context, recipe) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => AuthorsRecipeDetailsLayout(recipeEntry: recipe)))
-        .then((data) => setState(() => {}));
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AuthorsRecipeDetailsLayout(recipeEntry: recipe),
+      ),
+    ).then((data) => setState(() => {}));
   }
 
-  Widget groceryTile(var item) {
-    return ListTile(
-      title: Text(item.recipe),
-      onTap: () => pushRecipeDetails(context, item),
+  Widget groceryTile(RecipeEntry recipe) {
+    return RecipeTile(
+      recipe: recipe,
+      onTap: () => pushRecipeDetails(context, recipe),
     );
   }
 
