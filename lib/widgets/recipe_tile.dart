@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:groceries/custom_theme.dart';
 import 'package:groceries/processors/profile_processor.dart';
+import 'package:groceries/processors/recipes_processor.dart';
 import 'package:groceries/types/recipe_entry.dart';
 
 class RecipeTile extends StatefulWidget {
@@ -16,6 +17,7 @@ class RecipeTile extends StatefulWidget {
 class _RecipeTileState extends State<RecipeTile> {
   String username = '';
 
+  final recipesProcessor = RecipesProcessor();
   final profileProcessor = ProfileProcessor();
   final theme = CustomTheme();
 
@@ -35,66 +37,73 @@ class _RecipeTileState extends State<RecipeTile> {
     return InkWell(
       onTap: () => widget.onTap(),
       child: Padding(
-          padding: const EdgeInsets.all(5),
-          child: Column(
-            children: [
-              Container(
-                alignment: Alignment.topLeft,
-                decoration: BoxDecoration(
-                    color: theme.secondaryColor,
-                    borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.recipe.recipe,
-                        style: const TextStyle(fontSize: 20),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          const Icon(Icons.person_outline),
-                          const SizedBox(width: 5),
-                          Text(
-                            widget.recipe.author == username ? "You" : widget.recipe.author,
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                          const Spacer(),
-                          // const Text( // TODO: private recipes
-                          //   "Private",
-                          //   style: TextStyle(fontSize: 14),
-                          // )
-                        ],
-                      ),
-                    ],
-                  ),
+        padding: const EdgeInsets.all(5),
+        child: Column(
+          children: [
+            Container(
+              alignment: Alignment.topLeft,
+              decoration: BoxDecoration(
+                  color: theme.secondaryColor,
+                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.recipe.recipe,
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      children: [
+                        const Icon(Icons.person_outline),
+                        const SizedBox(width: 5),
+                        Text(
+                          widget.recipe.author == username ? "You" : widget.recipe.author,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                        const Spacer(),
+                        Text(
+                          widget.recipe.private == true ? "Private" : "",
+                          style: const TextStyle(fontSize: 14),
+                        )
+                      ],
+                    ),
+                  ],
                 ),
               ),
-              Container(
-                decoration: BoxDecoration(
-                    color: theme.accentColor,
-                    border: Border.all(color: theme.secondaryColor, width: 2),
-                    borderRadius:
-                        const BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10))),
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.takeout_dining_outlined),
-                      const SizedBox(width: 5),
-                      Text(widget.recipe.category),
-                      const Spacer(),
-                      // Icon(Icons.push_pin_outlined), // TODO: pinned recipe
-                    ],
-                  ),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                  color: theme.accentColor,
+                  border: Border.all(color: theme.secondaryColor, width: 2),
+                  borderRadius:
+                      const BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10))),
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Row(
+                  children: [
+                    Icon(widget.recipe.iconFromCategory()),
+                    const SizedBox(width: 5),
+                    Text(widget.recipe.category),
+                    const Spacer(),
+                    IconButton(
+                        onPressed: () async {
+                          await recipesProcessor.setPinned(widget.recipe);
+                        },
+                        icon: widget.recipe.pinned == true
+                            ? const Icon(Icons.push_pin)
+                            : const Icon(Icons.push_pin_outlined)),
+                  ],
                 ),
               ),
-            ],
-          )),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

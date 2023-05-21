@@ -34,20 +34,31 @@ class RecipesProcessor {
     entries = filterEntries(entries);
 
     // Sort
-    if (sort["order"] == "asc") {
-      entries.sort((a, b) => b[sort["key"]].compareTo(a[sort["key"]]));
-    } else {
-      entries.sort((a, b) => a[sort["key"]].compareTo(b[sort["key"]]));
-    }
+    entries.sort((a, b) {
+      // TODO: Remove pinned coercing after full migration?
+      if (!b.containsKey("pinned")) b["pinned"] = false;
+      if (!a.containsKey("pinned")) a["pinned"] = false;
+      // Sort by pinned first
+      int pinnedComp = b["pinned"].toString().compareTo(a["pinned"].toString());
+
+      // Then sort by chosen attribute
+      if (pinnedComp == 0 && sort["order"] == "asc") {
+        return b[sort["key"]].compareTo(a[sort["key"]]);
+      } else if ((pinnedComp == 0 && sort["order"] != "asc")) {
+        return a[sort["key"]].compareTo(b[sort["key"]]);
+      }
+      return pinnedComp;
+    });
 
     return entries.map((record) {
       return processEntry(record);
     }).toList();
   }
 
-  List filterEntries(unfiltedEntries) {
+  List filterEntries(unfilteredEntries) {
     // Category filter
-    var entries = unfiltedEntries.where((entry) => category != 'None' ? entry['category'] == category : true).toList();
+    var entries =
+        unfilteredEntries.where((entry) => category != 'None' ? entry['category'] == category : true).toList();
 
     // source filter
     entries = entries
@@ -90,7 +101,9 @@ class RecipesProcessor {
         updatedAt: entry['updatedAt'],
         createdAt: entry['createdAt'],
         timesMade: entry['timesMade'],
-        author: entry['author']);
+        author: entry['author'],
+        private: entry.containsKey('private') ? entry['private'] : false,
+        pinned: entry.containsKey('pinned') ? entry['pinned'] : false);
   }
 
   void setSort(newSort) {
@@ -143,6 +156,11 @@ class RecipesProcessor {
     updateItem(recipe);
   }
 
+  Future<void> setPinned(RecipeEntry recipe) async {
+    recipe.pinned = !recipe.pinned;
+    updateItem(recipe);
+  }
+
   Future<void> addItem(RecipeEntry entry) async {
     var recipesCollection = _fireStore.collection('recipes');
     recipesCollection.add({
@@ -154,7 +172,9 @@ class RecipesProcessor {
       'updatedAt': entry.updatedAt,
       'createdAt': entry.createdAt,
       'timesMade': entry.timesMade,
-      'author': entry.author
+      'author': entry.author,
+      'private': entry.private,
+      'pinned': entry.pinned
     });
   }
 
@@ -174,6 +194,8 @@ class RecipesProcessor {
       'updatedAt': recipe.updatedAt,
       'createdAt': recipe.createdAt,
       'timesMade': recipe.timesMade,
+      'private': recipe.private,
+      'pinned': recipe.pinned
     });
   }
 }

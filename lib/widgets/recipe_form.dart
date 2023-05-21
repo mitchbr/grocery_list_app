@@ -111,6 +111,7 @@ class _RecipeFormState extends State<RecipeForm> {
                     style: TextStyle(color: Color(0xFFA4A4A4)))),
             tagsListView(context),
             newTagTile(),
+            privateSelector(),
             saveButton(context),
           ],
         ));
@@ -398,6 +399,23 @@ class _RecipeFormState extends State<RecipeForm> {
         }
         return null;
       },
+    );
+  }
+
+  Widget privateSelector() {
+    return ListTile(
+      title: Row(children: [
+        const Text("Private"),
+        Switch(
+          value: widget.entryData.private,
+          activeColor: theme.accentHighlightColor,
+          onChanged: (bool value) {
+            setState(() {
+              widget.entryData.private = value;
+            });
+          },
+        )
+      ]),
     );
   }
 

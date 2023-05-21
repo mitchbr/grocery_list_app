@@ -23,7 +23,9 @@ class _CreateRecipeViewState extends State<CreateRecipeView> {
       updatedAt: DateTime.now().millisecondsSinceEpoch,
       createdAt: DateTime.now().millisecondsSinceEpoch,
       timesMade: 0,
-      author: '');
+      author: '',
+      private: false,
+      pinned: false);
 
   @override
   Widget build(BuildContext context) {
