@@ -46,7 +46,7 @@ class _RecipeTileState extends State<RecipeTile> {
                   color: theme.secondaryColor,
                   borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
               child: Padding(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -83,7 +83,7 @@ class _RecipeTileState extends State<RecipeTile> {
                   borderRadius:
                       const BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10))),
               child: Padding(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Row(
                   children: [
                     Icon(widget.recipe.iconFromCategory()),
