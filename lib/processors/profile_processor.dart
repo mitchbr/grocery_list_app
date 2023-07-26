@@ -47,17 +47,17 @@ class ProfileProcessor {
 
   Future<List> fetchFollowedAuthors() async {
     String username = await getUsername();
-    DocumentSnapshot recipes = await FirebaseFirestore.instance.collection('authors').doc(username).get();
-    return recipes.get('authors_following');
+    DocumentSnapshot author = await FirebaseFirestore.instance.collection('authors').doc(username).get();
+    return author.get('authors_following');
   }
 
   Future<void> addFollowedAuthor(authorId) async {
-    List recipesList = await fetchFollowedAuthors();
-    recipesList.add(authorId);
+    List followedAuthors = await fetchFollowedAuthors();
+    followedAuthors.add(authorId);
 
     String username = await getUsername();
-    DocumentReference recipes = FirebaseFirestore.instance.collection('authors').doc(username);
-    recipes.update({'authors_following': recipesList});
+    DocumentReference author = FirebaseFirestore.instance.collection('authors').doc(username);
+    author.update({'authors_following': followedAuthors});
   }
 
   Future<void> removeFollowedAuthor(authorId) async {
@@ -73,5 +73,34 @@ class ProfileProcessor {
     String username = await getUsername();
     DocumentSnapshot author = await FirebaseFirestore.instance.collection('authors').doc(username).get();
     return author.exists;
+  }
+
+  Future<List> fetchPinnedRecipes() async {
+    String username = await getUsername();
+    DocumentSnapshot author = await FirebaseFirestore.instance.collection('authors').doc(username).get();
+    Map authorData = author.data() as Map;
+    if (authorData.containsKey('pinned_recipes')) {
+      return author.get('pinned_recipes');
+    }
+
+    return [];
+  }
+
+  Future<void> addPinnedRecipe(recipeId) async {
+    List pinnedRecipes = await fetchPinnedRecipes();
+    pinnedRecipes.add(recipeId);
+
+    String username = await getUsername();
+    DocumentReference author = FirebaseFirestore.instance.collection('authors').doc(username);
+    author.update({'pinned_recipes': pinnedRecipes});
+  }
+
+  Future<void> removePinnedRecipe(recipeId) async {
+    List pinnedRecipes = await fetchPinnedRecipes();
+    pinnedRecipes.remove(recipeId);
+
+    String username = await getUsername();
+    DocumentReference author = FirebaseFirestore.instance.collection('authors').doc(username);
+    author.update({'pinned_recipes': pinnedRecipes});
   }
 }

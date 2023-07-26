@@ -62,7 +62,7 @@ class _PersonalRecipesViewState extends State<PersonalRecipesView> {
     );
   }
 
-  List<RecipeEntry> dataProcessor(snapshot, username) {
+  Future<List<RecipeEntry>> dataProcessor(snapshot, username) async {
     var personalRecipes = snapshot.data!.docs
         .where((element) => element['author'] == username)
         .map((e) => {'id': e.id, ...e.data()! as Map})
@@ -71,7 +71,7 @@ class _PersonalRecipesViewState extends State<PersonalRecipesView> {
         .where((element) => followedRecipes.contains(element.id))
         .map((e) => {'id': e.id, ...e.data()! as Map})
         .toList();
-    return widget.recipesProcessor.processEntries([...personalRecipes, ...savedRecipes]);
+    return await widget.recipesProcessor.processEntries([...personalRecipes, ...savedRecipes]);
   }
 
   void pushRecipeDetails(BuildContext context, recipe) {

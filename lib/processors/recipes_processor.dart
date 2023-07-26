@@ -29,17 +29,16 @@ class RecipesProcessor {
         _availableTags = [],
         sort = {"key": "updatedAt", "order": "asc"};
 
-  List<RecipeEntry> processEntries(List entries) {
+  Future<List<RecipeEntry>> processEntries(List entries) async {
+    List pinnedRecipes = await profileProcessor.fetchPinnedRecipes();
+
     // Filter
     entries = filterEntries(entries);
 
     // Sort
     entries.sort((a, b) {
-      // TODO: Remove pinned coercing after full migration?
-      if (!b.containsKey("pinned")) b["pinned"] = false;
-      if (!a.containsKey("pinned")) a["pinned"] = false;
       // Sort by pinned first
-      int pinnedComp = b["pinned"].toString().compareTo(a["pinned"].toString());
+      int pinnedComp = pinnedRecipes.contains(b["id"]).toString().compareTo(pinnedRecipes.contains(a["id"]).toString());
 
       // Then sort by chosen attribute
       if (pinnedComp == 0 && sort["order"] == "asc") {
@@ -51,7 +50,7 @@ class RecipesProcessor {
     });
 
     return entries.map((record) {
-      return processEntry(record);
+      return processEntry(record, pinnedRecipes);
     }).toList();
   }
 
@@ -86,24 +85,25 @@ class RecipesProcessor {
     return inTags;
   }
 
-  RecipeEntry processEntry(entry) {
+  RecipeEntry processEntry(entry, pinnedRecipes) {
     for (String tag in entry['tags']) {
       !_availableTags.contains(tag.toLowerCase()) ? _availableTags.add(tag.toLowerCase()) : null;
     }
 
     return RecipeEntry(
-        id: entry["id"],
-        recipe: entry['recipe'],
-        ingredients: entry['ingredients'],
-        instructions: entry['instructions'],
-        category: entry["category"],
-        tags: entry["tags"],
-        updatedAt: entry['updatedAt'],
-        createdAt: entry['createdAt'],
-        timesMade: entry['timesMade'],
-        author: entry['author'],
-        private: entry.containsKey('private') ? entry['private'] : false,
-        pinned: entry.containsKey('pinned') ? entry['pinned'] : false);
+      id: entry["id"],
+      recipe: entry['recipe'],
+      ingredients: entry['ingredients'],
+      instructions: entry['instructions'],
+      category: entry["category"],
+      tags: entry["tags"],
+      updatedAt: entry['updatedAt'],
+      createdAt: entry['createdAt'],
+      timesMade: entry['timesMade'],
+      author: entry['author'],
+      private: entry.containsKey('private') ? entry['private'] : false,
+      pinned: pinnedRecipes.contains(entry["id"]),
+    );
   }
 
   void setSort(newSort) {
@@ -156,11 +156,6 @@ class RecipesProcessor {
     updateItem(recipe);
   }
 
-  Future<void> setPinned(RecipeEntry recipe) async {
-    recipe.pinned = !recipe.pinned;
-    updateItem(recipe);
-  }
-
   Future<void> addItem(RecipeEntry entry) async {
     var recipesCollection = _fireStore.collection('recipes');
     recipesCollection.add({
@@ -173,8 +168,7 @@ class RecipesProcessor {
       'createdAt': entry.createdAt,
       'timesMade': entry.timesMade,
       'author': entry.author,
-      'private': entry.private,
-      'pinned': entry.pinned
+      'private': entry.private
     });
   }
 
@@ -195,7 +189,6 @@ class RecipesProcessor {
       'createdAt': recipe.createdAt,
       'timesMade': recipe.timesMade,
       'private': recipe.private,
-      'pinned': recipe.pinned
     });
   }
 }

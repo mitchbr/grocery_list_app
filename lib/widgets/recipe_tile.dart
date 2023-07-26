@@ -16,6 +16,7 @@ class RecipeTile extends StatefulWidget {
 
 class _RecipeTileState extends State<RecipeTile> {
   String username = '';
+  Icon pinnedIcon = const Icon(Icons.push_pin_outlined);
 
   final recipesProcessor = RecipesProcessor();
   final profileProcessor = ProfileProcessor();
@@ -26,6 +27,14 @@ class _RecipeTileState extends State<RecipeTile> {
     profileProcessor.getUsername().then((value) {
       setState(() {
         username = value;
+      });
+    });
+
+    profileProcessor.fetchPinnedRecipes().then((value) {
+      setState(() {
+        if (value.contains(widget.recipe.id)) {
+          pinnedIcon = const Icon(Icons.push_pin);
+        }
       });
     });
 
@@ -46,7 +55,7 @@ class _RecipeTileState extends State<RecipeTile> {
                   color: theme.secondaryColor,
                   borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                padding: const EdgeInsets.all(10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -55,7 +64,7 @@ class _RecipeTileState extends State<RecipeTile> {
                       style: const TextStyle(fontSize: 20),
                     ),
                     const SizedBox(
-                      height: 10,
+                      height: 30,
                     ),
                     Row(
                       children: [
@@ -91,12 +100,18 @@ class _RecipeTileState extends State<RecipeTile> {
                     Text(widget.recipe.category),
                     const Spacer(),
                     IconButton(
-                        onPressed: () async {
-                          await recipesProcessor.setPinned(widget.recipe);
-                        },
-                        icon: widget.recipe.pinned == true
-                            ? const Icon(Icons.push_pin)
-                            : const Icon(Icons.push_pin_outlined)),
+                      onPressed: () async {
+                        if (!widget.recipe.pinned) {
+                          await profileProcessor.addPinnedRecipe(widget.recipe.id);
+                        } else {
+                          await profileProcessor.removePinnedRecipe(widget.recipe.id);
+                        }
+                        setState(() {
+                          widget.recipe.pinned = !widget.recipe.pinned;
+                        });
+                      },
+                      icon: widget.recipe.pinned ? const Icon(Icons.push_pin) : const Icon(Icons.push_pin_outlined),
+                    )
                   ],
                 ),
               ),

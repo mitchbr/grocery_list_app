@@ -9,8 +9,14 @@ class FirestoreList extends StatefulWidget {
   final Function dataProcessor;
   final Function listTile;
   bool scroll;
+  bool asyncProcessor;
   FirestoreList(
-      {Key? key, required this.stream, required this.dataProcessor, required this.listTile, this.scroll = true})
+      {Key? key,
+      required this.stream,
+      required this.dataProcessor,
+      required this.listTile,
+      this.scroll = true,
+      this.asyncProcessor = true})
       : super(key: key);
 
   @override
@@ -18,7 +24,7 @@ class FirestoreList extends StatefulWidget {
 }
 
 class _FirestoreListState extends State<FirestoreList> {
-  List listData = [false];
+  List listData = [];
   String username = 'initial_username';
 
   ProfileProcessor profileProcessor = ProfileProcessor();
@@ -46,7 +52,16 @@ class _FirestoreListState extends State<FirestoreList> {
           return circularIndicator(context);
         }
 
-        listData = widget.dataProcessor(snapshot, username);
+        if (widget.asyncProcessor == true) {
+          widget.dataProcessor(snapshot, username).then((value) {
+            listData = value;
+            if (mounted) {
+              setState(() {});
+            }
+          });
+        } else {
+          listData = widget.dataProcessor(snapshot, username);
+        }
 
         if (listData.isEmpty) {
           return emptyWidget(context);

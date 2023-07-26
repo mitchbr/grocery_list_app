@@ -43,8 +43,8 @@ class _FollowedAuthorRecipesViewState extends State<FollowedAuthorRecipesView> {
     );
   }
 
-  List<RecipeEntry> dataProcessor(snapshot, username) {
-    return widget.recipesProcessor.processEntries(snapshot.data!.docs
+  Future<List<RecipeEntry>> dataProcessor(snapshot, username) async {
+    return await widget.recipesProcessor.processEntries(snapshot.data!.docs
         .where((element) => element['author'] == widget.userId)
         // TODO: Filter out private recipes
         // .where((element) => element['private'] == false)

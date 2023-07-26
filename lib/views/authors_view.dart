@@ -16,7 +16,12 @@ class _AuthorsViewState extends State<AuthorsView> {
 
   @override
   Widget build(BuildContext context) {
-    return FirestoreList(stream: _authorsStream, dataProcessor: dataProcessor, listTile: authorTile);
+    return FirestoreList(
+      stream: _authorsStream,
+      dataProcessor: dataProcessor,
+      listTile: authorTile,
+      asyncProcessor: false,
+    );
   }
 
   List<dynamic> dataProcessor(snapshot, username) {
