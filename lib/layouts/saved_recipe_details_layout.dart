@@ -78,10 +78,37 @@ class _SavedRecipeDetailsLayoutState extends State<SavedRecipeDetailsLayout> {
           await checklistProcessor.updateChecklistFromUnknown(entries);
           await recipesProcessor.incrementTimesMade(widget.recipeEntry);
 
-          Navigator.of(context).pop();
+          if (!widget.recipeEntry.pinned) {
+            showDialog<String>(context: context, builder: (BuildContext context) => pinRecipePopupDialog());
+          } else {
+            Navigator.of(context).pop();
+          }
         },
       ),
     );
+  }
+
+  Widget pinRecipePopupDialog() {
+    return AlertDialog(
+        title: const Text('Pin Recipe?'),
+        content: const Text('The recipe will appear at the top of your recipe list'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+            child: const Text('No'),
+          ),
+          TextButton(
+            onPressed: () {
+              profileProcessor.addPinnedRecipe(widget.recipeEntry.id);
+              Navigator.of(context).pop();
+              Navigator.pop(context);
+            },
+            child: const Text('Yes'),
+          ),
+        ]);
   }
 
   Widget shareRecipeId(BuildContext context) {

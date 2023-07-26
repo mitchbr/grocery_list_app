@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:groceries/custom_theme.dart';
 import 'package:groceries/processors/checklist_processor.dart';
+import 'package:groceries/processors/profile_processor.dart';
 import 'package:groceries/processors/recipes_processor.dart';
 import 'package:groceries/types/grocery_entry.dart';
 import 'package:groceries/types/recipe_entry.dart';
@@ -20,6 +21,7 @@ class PersonalRecipeDetailsLayout extends StatefulWidget {
 class _PersonalRecipeDetailsLayoutState extends State<PersonalRecipeDetailsLayout> {
   final checklistProcessor = ChecklistProcessor();
   final recipesProcessor = RecipesProcessor();
+  final profileProcessor = ProfileProcessor();
 
   final theme = CustomTheme();
 
@@ -81,7 +83,11 @@ class _PersonalRecipeDetailsLayoutState extends State<PersonalRecipeDetailsLayou
           await checklistProcessor.updateChecklistFromUnknown(entries);
           await recipesProcessor.incrementTimesMade(widget.recipeEntry);
 
-          Navigator.of(context).pop();
+          if (!widget.recipeEntry.pinned) {
+            showDialog<String>(context: context, builder: (BuildContext context) => pinRecipePopupDialog());
+          } else {
+            Navigator.of(context).pop();
+          }
         },
       ),
     );
@@ -92,6 +98,29 @@ class _PersonalRecipeDetailsLayoutState extends State<PersonalRecipeDetailsLayou
         .then((data) {
       setState(() => {});
     });
+  }
+
+  Widget pinRecipePopupDialog() {
+    return AlertDialog(
+        title: const Text('Pin Recipe?'),
+        content: const Text('The recipe will appear at the top of your recipe list'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+            child: const Text('No'),
+          ),
+          TextButton(
+            onPressed: () {
+              profileProcessor.addPinnedRecipe(widget.recipeEntry.id);
+              Navigator.of(context).pop();
+              Navigator.pop(context);
+            },
+            child: const Text('Yes'),
+          ),
+        ]);
   }
 
   Widget shareRecipeId(BuildContext context) {
